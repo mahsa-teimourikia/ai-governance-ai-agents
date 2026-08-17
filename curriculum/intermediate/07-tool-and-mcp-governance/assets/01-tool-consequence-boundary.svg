@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<title>Tools Are the Consequence Boundary</title>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#B9571D"/></marker></defs>
+<rect width="1600" height="900" fill="#F7F9FC"/>
+<g font-family="Arial,Helvetica,sans-serif">
+<text x="65" y="80" font-size="30" font-weight="800" fill="#082542">one<tspan fill="#B9571D">+</tspan>i</text>
+<text x="65" y="130" font-size="16" font-weight="700" fill="#082542">PRACTICAL <tspan fill="#B9571D">AI.</tspan> REAL <tspan fill="#B9571D">IMPACT.</tspan></text>
+<text x="65" y="205" font-size="44" font-weight="700" fill="#082542">Tools Are the Consequence Boundary</text>
+<text x="65" y="245" font-size="22" fill="#60758A">Govern the transition from an agent&#x27;s proposed action to an external side effect.</text>
+<rect x="90" y="360" width="270" height="190" rx="24" fill="#FFFFFF" stroke="#1769C2" stroke-width="3"/>
+<text x="225" y="420" text-anchor="middle" font-size="23" font-weight="700" fill="#1769C2">AGENT REASONING</text>
+<text x="225" y="468" text-anchor="middle" font-size="18" fill="#60758A">Plan • choose tool</text>
+<line x1="360" y1="455" x2="465" y2="455" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
+<rect x="480" y="315" width="360" height="280" rx="25" fill="#082542"/>
+<text x="660" y="375" text-anchor="middle" font-size="23" font-weight="700" fill="#B9571D">TOOL GOVERNANCE BOUNDARY</text>
+<text x="660" y="425" text-anchor="middle" font-size="17" fill="#FFFFFF">Schema • identity • authorization</text>
+<text x="660" y="462" text-anchor="middle" font-size="17" fill="#FFFFFF">parameter policy • approval • rate limit</text>
+<text x="660" y="510" text-anchor="middle" font-size="18" font-weight="700" fill="#FFFFFF">ALLOW / DENY / ESCALATE</text>
+<line x1="840" y1="455" x2="950" y2="455" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
+<rect x="965" y="350" width="250" height="210" rx="24" fill="#FFFFFF" stroke="#2F855A" stroke-width="3"/>
+<text x="1090" y="410" text-anchor="middle" font-size="23" font-weight="700" fill="#2F855A">TOOL / MCP</text>
+<text x="1090" y="460" text-anchor="middle" font-size="18" fill="#60758A">Creates consequence</text>
+<line x1="1215" y1="455" x2="1315" y2="455" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
+<rect x="1330" y="350" width="200" height="210" rx="24" fill="#FFFFFF" stroke="#C53030" stroke-width="3"/>
+<text x="1430" y="410" text-anchor="middle" font-size="22" font-weight="700" fill="#C53030">SIDE EFFECT</text>
+<text x="1430" y="455" text-anchor="middle" font-size="17" fill="#60758A">Money • data</text><text x="1430" y="490" text-anchor="middle" font-size="17" fill="#60758A">email • systems</text>
+<rect x="260" y="700" width="1080" height="70" rx="18" fill="#FFF0E7"/>
+<text x="800" y="744" text-anchor="middle" font-size="21" font-weight="700" fill="#B9571D">Tools are where probabilistic reasoning becomes real-world consequence.</text></g></svg>

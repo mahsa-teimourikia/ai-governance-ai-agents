@@ -1,0 +1,28 @@
+apiVersion: governance.oneplusi.io/v1
+kind: AgentCard
+metadata:
+  id: procurement-agent
+  version: 3.2.0
+spec:
+  businessOwner: Procurement VP
+  technicalOwner: AI Procurement Team
+  purpose: Bounded purchasing
+  autonomy: A2
+  riskTier: HIGH
+  permissions:
+    - vendor.read
+    - po.prepare
+    - po.create
+  dependencies:
+    - kind: model
+      name: foundation-model-x
+      version: "2026-07"
+      provider: Vendor A
+    - kind: mcp
+      name: procurement-mcp
+      version: 1.4.2
+      provider: Internal Platform
+  controls:
+    policyBundle: procurement-v7
+    humanApproval: risk-based
+    killSwitch: true
