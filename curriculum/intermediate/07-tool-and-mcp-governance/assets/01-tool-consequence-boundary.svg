@@ -14,8 +14,9 @@
 <rect x="480" y="315" width="360" height="280" rx="25" fill="#082542"/>
 <text x="660" y="375" text-anchor="middle" font-size="23" font-weight="700" fill="#B9571D">TOOL GOVERNANCE BOUNDARY</text>
 <text x="660" y="425" text-anchor="middle" font-size="17" fill="#FFFFFF">Schema • identity • authorization</text>
-<text x="660" y="462" text-anchor="middle" font-size="17" fill="#FFFFFF">parameter policy • approval • rate limit</text>
-<text x="660" y="510" text-anchor="middle" font-size="18" font-weight="700" fill="#FFFFFF">ALLOW / DENY / ESCALATE</text>
+<text x="660" y="460" text-anchor="middle" font-size="17" fill="#FFFFFF">parameter policy • approval</text>
+<text x="660" y="485" text-anchor="middle" font-size="17" fill="#FFFFFF">• rate limit</text>
+<text x="660" y="525" text-anchor="middle" font-size="18" font-weight="700" fill="#FFFFFF">ALLOW / DENY / ESCALATE</text>
 <line x1="840" y1="455" x2="950" y2="455" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
 <rect x="965" y="350" width="250" height="210" rx="24" fill="#FFFFFF" stroke="#2F855A" stroke-width="3"/>
 <text x="1090" y="410" text-anchor="middle" font-size="23" font-weight="700" fill="#2F855A">TOOL / MCP</text>
