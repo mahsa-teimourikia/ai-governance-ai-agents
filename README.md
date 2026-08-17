@@ -2,6 +2,8 @@
 
 A comprehensive curriculum for transitioning from AI model governance to Autonomous Agent governance. This repository hosts the learning hub, an initial knowledge check quiz, and deterministic Jupyter notebooks for every module in the curriculum.
 
+🚀 **[Access the Learning Hub](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/)** | 📝 **[Take the Initial Knowledge Quiz](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/quiz/)**
+
 ## Quickstart
 
 ### Prerequisites
