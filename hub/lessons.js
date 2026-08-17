@@ -8,7 +8,52 @@ export const lessons = [
     "outcome": "Governance must shift from information risk to action risk.",
     "material": "curriculum/beginner/01-from-ai-governance-to-agent-governance/README.md",
     "notebook": "curriculum/beginner/01-from-ai-governance-to-agent-governance/01_from_ai_governance_to_agent_governance.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10",
+        "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10"
+      },
+      {
+        "title": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+        "path": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+      },
+      {
+        "title": "https://airc.nist.gov/airmf-resources/playbook/",
+        "path": "https://airc.nist.gov/airmf-resources/playbook/"
+      },
+      {
+        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+        "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"
+      },
+      {
+        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+      },
+      {
+        "title": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd",
+        "path": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd"
+      },
+      {
+        "title": "https://www.iso.org/standard/42001",
+        "path": "https://www.iso.org/standard/42001"
+      },
+      {
+        "title": "https://genai.owasp.org/initiatives/agentic-security-initiative/",
+        "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
+      },
+      {
+        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+      },
+      {
+        "title": "https://airc.nist.gov/airmf-resources/playbook/govern/",
+        "path": "https://airc.nist.gov/airmf-resources/playbook/govern/"
+      },
+      {
+        "title": "https://airc.nist.gov/airmf-resources/playbook/map/",
+        "path": "https://airc.nist.gov/airmf-resources/playbook/map/"
+      }
+    ]
   },
   {
     "id": "b2",
@@ -19,7 +64,44 @@ export const lessons = [
     "outcome": "Autonomy levels dictate required controls.",
     "material": "curriculum/beginner/02-agent-risk-modeling-and-autonomy-classification/README.md",
     "notebook": "curriculum/beginner/02-agent-risk-modeling-and-autonomy-classification/02_agent_risk_modeling_and_autonomy_classification.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework"
+      },
+      {
+        "title": "https://airc.nist.gov/airmf-resources/airmf/",
+        "path": "https://airc.nist.gov/airmf-resources/airmf/"
+      },
+      {
+        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+        "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"
+      },
+      {
+        "title": "https://www.iso.org/standard/77304.html",
+        "path": "https://www.iso.org/standard/77304.html"
+      },
+      {
+        "title": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+        "path": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"
+      },
+      {
+        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+      },
+      {
+        "title": "https://genai.owasp.org/initiatives/agentic-security-initiative/",
+        "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
+      },
+      {
+        "title": "https://atlas.mitre.org/",
+        "path": "https://atlas.mitre.org/"
+      },
+      {
+        "title": "https://microsoft.github.io/PyRIT/latest/code/scoring/scoring/",
+        "path": "https://microsoft.github.io/PyRIT/latest/code/scoring/scoring/"
+      }
+    ]
   },
   {
     "id": "b3",
@@ -30,7 +112,56 @@ export const lessons = [
     "outcome": "Frameworks provide structural assurance.",
     "material": "curriculum/beginner/03-standards-regulation-and-governance-operating-model/README.md",
     "notebook": "curriculum/beginner/03-standards-regulation-and-governance-operating-model/03_standards_regulation_and_governance_operating_model.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework"
+      },
+      {
+        "title": "https://airc.nist.gov/",
+        "path": "https://airc.nist.gov/"
+      },
+      {
+        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+        "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"
+      },
+      {
+        "title": "https://pages.nist.gov/OSCAL/",
+        "path": "https://pages.nist.gov/OSCAL/"
+      },
+      {
+        "title": "https://www.iso.org/standard/42001",
+        "path": "https://www.iso.org/standard/42001"
+      },
+      {
+        "title": "https://www.iso.org/standard/42005",
+        "path": "https://www.iso.org/standard/42005"
+      },
+      {
+        "title": "https://www.iso.org/standard/77304.html",
+        "path": "https://www.iso.org/standard/77304.html"
+      },
+      {
+        "title": "https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act",
+        "path": "https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act"
+      },
+      {
+        "title": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-governance-and-enforcement",
+        "path": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-governance-and-enforcement"
+      },
+      {
+        "title": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation",
+        "path": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation"
+      },
+      {
+        "title": "https://genai.owasp.org/initiatives/agentic-security-initiative/",
+        "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
+      },
+      {
+        "title": "https://github.com/oscal-compass/compliance-trestle",
+        "path": "https://github.com/oscal-compass/compliance-trestle"
+      }
+    ]
   },
   {
     "id": "b4",
@@ -41,7 +172,56 @@ export const lessons = [
     "outcome": "Agents need identity.",
     "material": "curriculum/beginner/04-agent-identity-and-delegated-authority/README.md",
     "notebook": "curriculum/beginner/04-agent-identity-and-delegated-authority/04_agent_identity_and_delegated_authority.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd",
+        "path": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd"
+      },
+      {
+        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+      },
+      {
+        "title": "https://openfga.dev/docs/modeling/agents/task-based-authorization",
+        "path": "https://openfga.dev/docs/modeling/agents/task-based-authorization"
+      },
+      {
+        "title": "https://openfga.dev/docs/getting-started/install-sdk",
+        "path": "https://openfga.dev/docs/getting-started/install-sdk"
+      },
+      {
+        "title": "https://spiffe.io/docs/latest/spiffe-specs/spiffe/",
+        "path": "https://spiffe.io/docs/latest/spiffe-specs/spiffe/"
+      },
+      {
+        "title": "https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/",
+        "path": "https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/"
+      },
+      {
+        "title": "https://spiffe.io/docs/latest/spire-about/spire-concepts/",
+        "path": "https://spiffe.io/docs/latest/spire-about/spire-concepts/"
+      },
+      {
+        "title": "https://datatracker.ietf.org/doc/rfc8693/",
+        "path": "https://datatracker.ietf.org/doc/rfc8693/"
+      },
+      {
+        "title": "https://datatracker.ietf.org/doc/rfc9700/",
+        "path": "https://datatracker.ietf.org/doc/rfc9700/"
+      },
+      {
+        "title": "https://docs.cedarpolicy.com/",
+        "path": "https://docs.cedarpolicy.com/"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/verifiedpermissions/",
+        "path": "https://docs.aws.amazon.com/verifiedpermissions/"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
+      }
+    ]
   },
   {
     "id": "b5",
@@ -52,7 +232,52 @@ export const lessons = [
     "outcome": "Authz is context dependent.",
     "material": "curriculum/beginner/05-fine-grained-authorization-for-agents/README.md",
     "notebook": "curriculum/beginner/05-fine-grained-authorization-for-agents/05_fine_grained_authorization_for_agents.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://openfga.dev/docs/modeling/agents",
+        "path": "https://openfga.dev/docs/modeling/agents"
+      },
+      {
+        "title": "https://openfga.dev/docs/modeling/agents/task-based-authorization",
+        "path": "https://openfga.dev/docs/modeling/agents/task-based-authorization"
+      },
+      {
+        "title": "https://openfga.dev/docs/modeling/agents/agents-as-principals",
+        "path": "https://openfga.dev/docs/modeling/agents/agents-as-principals"
+      },
+      {
+        "title": "https://docs.cedarpolicy.com/",
+        "path": "https://docs.cedarpolicy.com/"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs",
+        "path": "https://www.openpolicyagent.org/docs"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs/policy-language",
+        "path": "https://www.openpolicyagent.org/docs/policy-language"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/verifiedpermissions/",
+        "path": "https://docs.aws.amazon.com/verifiedpermissions/"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
+      },
+      {
+        "title": "https://arxiv.org/abs/2607.03656",
+        "path": "https://arxiv.org/abs/2607.03656"
+      },
+      {
+        "title": "https://arxiv.org/abs/2603.15799",
+        "path": "https://arxiv.org/abs/2603.15799"
+      },
+      {
+        "title": "https://arxiv.org/abs/2607.27267",
+        "path": "https://arxiv.org/abs/2607.27267"
+      }
+    ]
   },
   {
     "id": "i1",
@@ -63,7 +288,48 @@ export const lessons = [
     "outcome": "PDP/PEP architecture.",
     "material": "curriculum/intermediate/06-policy-as-code-and-runtime-governance/README.md",
     "notebook": "curriculum/intermediate/06-policy-as-code-and-runtime-governance/06_policy_as_code_and_runtime_governance.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://docs.cedarpolicy.com/",
+        "path": "https://docs.cedarpolicy.com/"
+      },
+      {
+        "title": "https://docs.cedarpolicy.com/auth/authorization.html",
+        "path": "https://docs.cedarpolicy.com/auth/authorization.html"
+      },
+      {
+        "title": "https://docs.cedarpolicy.com/policies/validation.html",
+        "path": "https://docs.cedarpolicy.com/policies/validation.html"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs",
+        "path": "https://www.openpolicyagent.org/docs"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs/policy-language",
+        "path": "https://www.openpolicyagent.org/docs/policy-language"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs/policy-testing",
+        "path": "https://www.openpolicyagent.org/docs/policy-testing"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/verifiedpermissions/",
+        "path": "https://docs.aws.amazon.com/verifiedpermissions/"
+      }
+    ]
   },
   {
     "id": "i2",
@@ -74,7 +340,44 @@ export const lessons = [
     "outcome": "MCP trust boundaries.",
     "material": "curriculum/intermediate/07-tool-and-mcp-governance/README.md",
     "notebook": "curriculum/intermediate/07-tool-and-mcp-governance/07_tool_and_mcp_governance.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://blog.modelcontextprotocol.io/posts/2026-07-28/",
+        "path": "https://blog.modelcontextprotocol.io/posts/2026-07-28/"
+      },
+      {
+        "title": "https://modelcontextprotocol.io/specification/2026-07-28",
+        "path": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      {
+        "title": "https://owasp.org/www-project-mcp-top-10/",
+        "path": "https://owasp.org/www-project-mcp-top-10/"
+      },
+      {
+        "title": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure",
+        "path": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure"
+      },
+      {
+        "title": "https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai",
+        "path": "https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html"
+      },
+      {
+        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-http-passthrough.html",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-http-passthrough.html"
+      }
+    ]
   },
   {
     "id": "i3",
@@ -85,7 +388,40 @@ export const lessons = [
     "outcome": "Meaningful human control.",
     "material": "curriculum/intermediate/08-human-oversight-and-bounded-autonomy/README.md",
     "notebook": "curriculum/intermediate/08-human-oversight-and-bounded-autonomy/08_human_oversight_and_bounded_autonomy.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://openai.github.io/openai-agents-python/human_in_the_loop/",
+        "path": "https://openai.github.io/openai-agents-python/human_in_the_loop/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/running_agents/",
+        "path": "https://openai.github.io/openai-agents-python/running_agents/"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/agent-framework/workflows/human-in-the-loop",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/human-in-the-loop"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/agent-framework/integrations/ag-ui/human-in-the-loop",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/integrations/ag-ui/human-in-the-loop"
+      },
+      {
+        "title": "https://www.iso.org/standard/42001",
+        "path": "https://www.iso.org/standard/42001"
+      },
+      {
+        "title": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+        "path": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+      },
+      {
+        "title": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/",
+        "path": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/"
+      },
+      {
+        "title": "https://owasp.org/APTS/standard/3_Human_Oversight/",
+        "path": "https://owasp.org/APTS/standard/3_Human_Oversight/"
+      }
+    ]
   },
   {
     "id": "i4",
@@ -96,7 +432,40 @@ export const lessons = [
     "outcome": "Memory poisoning mitigation.",
     "material": "curriculum/intermediate/09-data-rag-and-memory-governance/README.md",
     "notebook": "curriculum/intermediate/09-data-rag-and-memory-governance/09_data_rag_and_memory_governance.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://openai.github.io/openai-agents-python/sessions/",
+        "path": "https://openai.github.io/openai-agents-python/sessions/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/sandbox/memory/",
+        "path": "https://openai.github.io/openai-agents-python/sandbox/memory/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/running_agents/",
+        "path": "https://openai.github.io/openai-agents-python/running_agents/"
+      },
+      {
+        "title": "https://docs.langchain.com/oss/python/langgraph/memory",
+        "path": "https://docs.langchain.com/oss/python/langgraph/memory"
+      },
+      {
+        "title": "https://www.nist.gov/news-events/news/2026/01/caisi-issues-request-information-about-securing-ai-agent-systems",
+        "path": "https://www.nist.gov/news-events/news/2026/01/caisi-issues-request-information-about-securing-ai-agent-systems"
+      },
+      {
+        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework"
+      },
+      {
+        "title": "https://genai.owasp.org/",
+        "path": "https://genai.owasp.org/"
+      },
+      {
+        "title": "https://www.iso.org/standard/42001",
+        "path": "https://www.iso.org/standard/42001"
+      }
+    ]
   },
   {
     "id": "i5",
@@ -107,7 +476,48 @@ export const lessons = [
     "outcome": "Agent-to-agent boundaries.",
     "material": "curriculum/intermediate/10-multi-agent-governance-and-delegation/README.md",
     "notebook": "curriculum/intermediate/10-multi-agent-governance-and-delegation/10_multi_agent_governance_and_delegation.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+      },
+      {
+        "title": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure",
+        "path": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/multi_agent/",
+        "path": "https://openai.github.io/openai-agents-python/multi_agent/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/handoffs/",
+        "path": "https://openai.github.io/openai-agents-python/handoffs/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/tools/",
+        "path": "https://openai.github.io/openai-agents-python/tools/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/tracing/",
+        "path": "https://openai.github.io/openai-agents-python/tracing/"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff"
+      },
+      {
+        "title": "https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html",
+        "path": "https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html"
+      },
+      {
+        "title": "https://owasp.org/APTS/standard/appendix/Authority_Delegation_Matrix_Template.html",
+        "path": "https://owasp.org/APTS/standard/appendix/Authority_Delegation_Matrix_Template.html"
+      }
+    ]
   },
   {
     "id": "i6",
@@ -118,7 +528,48 @@ export const lessons = [
     "outcome": "Goal hijacking.",
     "material": "curriculum/intermediate/11-guardrails-and-agent-security/README.md",
     "notebook": "curriculum/intermediate/11-guardrails-and-agent-security/11_guardrails_and_agent_security.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+      },
+      {
+        "title": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/",
+        "path": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/"
+      },
+      {
+        "title": "https://genai.owasp.org/initiatives/agentic-security-initiative/",
+        "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/guardrails/",
+        "path": "https://openai.github.io/openai-agents-python/guardrails/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/ref/tool_guardrails/",
+        "path": "https://openai.github.io/openai-agents-python/ref/tool_guardrails/"
+      },
+      {
+        "title": "https://openai.github.io/openai-guardrails-python/",
+        "path": "https://openai.github.io/openai-guardrails-python/"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/agent-framework/agents/safety",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/agents/safety"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/agent-framework/agents/security",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/agents/security"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/agent-framework/agents/middleware/termination",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/agents/middleware/termination"
+      },
+      {
+        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+      }
+    ]
   },
   {
     "id": "i7",
@@ -129,7 +580,44 @@ export const lessons = [
     "outcome": "Continuous red teaming.",
     "material": "curriculum/intermediate/12-agent-red-teaming-and-adversarial-testing/README.md",
     "notebook": "curriculum/intermediate/12-agent-red-teaming-and-adversarial-testing/12_agent_red_teaming_and_adversarial_testing.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://genai.owasp.org/initiatives/ai-red-teaming-initiative/",
+        "path": "https://genai.owasp.org/initiatives/ai-red-teaming-initiative/"
+      },
+      {
+        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/security/ai-red-team/",
+        "path": "https://learn.microsoft.com/en-us/security/ai-red-team/"
+      },
+      {
+        "title": "https://github.com/Azure/PyRIT",
+        "path": "https://github.com/Azure/PyRIT"
+      },
+      {
+        "title": "https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/run-scans-ai-red-teaming-agent",
+        "path": "https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/run-scans-ai-red-teaming-agent"
+      },
+      {
+        "title": "https://github.com/NVIDIA/garak",
+        "path": "https://github.com/NVIDIA/garak"
+      },
+      {
+        "title": "https://docs.garak.ai/",
+        "path": "https://docs.garak.ai/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/tracing/",
+        "path": "https://openai.github.io/openai-agents-python/tracing/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/",
+        "path": "https://openai.github.io/openai-agents-python/"
+      }
+    ]
   },
   {
     "id": "a1",
@@ -140,7 +628,32 @@ export const lessons = [
     "outcome": "Evidence retention.",
     "material": "curriculum/advanced/13-observability-as-goveernance-evidence/README.md",
     "notebook": "curriculum/advanced/13-observability-as-goveernance-evidence/13_observability_as_goveernance_evidence.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://opentelemetry.io/blog/2026/genai-observability/",
+        "path": "https://opentelemetry.io/blog/2026/genai-observability/"
+      },
+      {
+        "title": "https://opentelemetry.io/docs/specs/semconv/",
+        "path": "https://opentelemetry.io/docs/specs/semconv/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/tracing/",
+        "path": "https://openai.github.io/openai-agents-python/tracing/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/ref/tracing/",
+        "path": "https://openai.github.io/openai-agents-python/ref/tracing/"
+      },
+      {
+        "title": "https://docs.langchain.com/langsmith/observability",
+        "path": "https://docs.langchain.com/langsmith/observability"
+      },
+      {
+        "title": "https://arize.com/docs/phoenix",
+        "path": "https://arize.com/docs/phoenix"
+      }
+    ]
   },
   {
     "id": "a2",
@@ -151,7 +664,52 @@ export const lessons = [
     "outcome": "Evaluation metrics.",
     "material": "curriculum/advanced/14-agent-evaluation-and-continuous-governance/README.md",
     "notebook": "curriculum/advanced/14-agent-evaluation-and-continuous-governance/14_agent_evaluation_and_continuous_governance.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework"
+      },
+      {
+        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+        "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"
+      },
+      {
+        "title": "https://airc.nist.gov/",
+        "path": "https://airc.nist.gov/"
+      },
+      {
+        "title": "https://www.nist.gov/programs-projects/generative-artificial-intelligence-evaluation-program-genai",
+        "path": "https://www.nist.gov/programs-projects/generative-artificial-intelligence-evaluation-program-genai"
+      },
+      {
+        "title": "https://www.nist.gov/publications/challenges-monitoring-deployed-ai-systems-center-ai-standards-and-innovation",
+        "path": "https://www.nist.gov/publications/challenges-monitoring-deployed-ai-systems-center-ai-standards-and-innovation"
+      },
+      {
+        "title": "https://openai.com/index/introducing-agentkit/",
+        "path": "https://openai.com/index/introducing-agentkit/"
+      },
+      {
+        "title": "https://openai.github.io/openai-agents-python/",
+        "path": "https://openai.github.io/openai-agents-python/"
+      },
+      {
+        "title": "https://docs.langchain.com/langsmith/evaluation",
+        "path": "https://docs.langchain.com/langsmith/evaluation"
+      },
+      {
+        "title": "https://arize.com/docs/phoenix/evaluation",
+        "path": "https://arize.com/docs/phoenix/evaluation"
+      },
+      {
+        "title": "https://opentelemetry.io/blog/2026/genai-observability/",
+        "path": "https://opentelemetry.io/blog/2026/genai-observability/"
+      },
+      {
+        "title": "https://opentelemetry.io/docs/specs/semconv/",
+        "path": "https://opentelemetry.io/docs/specs/semconv/"
+      }
+    ]
   },
   {
     "id": "a3",
@@ -162,7 +720,40 @@ export const lessons = [
     "outcome": "Control plane vs data plane.",
     "material": "curriculum/advanced/15-governance-control-plane-architecture/README.md",
     "notebook": "curriculum/advanced/15-governance-control-plane-architecture/15_governance_control_plane_architecture.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+      },
+      {
+        "title": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd",
+        "path": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs/policy-language",
+        "path": "https://www.openpolicyagent.org/docs/policy-language"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs/http-api-authorization",
+        "path": "https://www.openpolicyagent.org/docs/http-api-authorization"
+      },
+      {
+        "title": "https://www.openpolicyagent.org/docs/security",
+        "path": "https://www.openpolicyagent.org/docs/security"
+      },
+      {
+        "title": "https://opentelemetry.io/blog/2026/genai-observability/",
+        "path": "https://opentelemetry.io/blog/2026/genai-observability/"
+      },
+      {
+        "title": "https://opentelemetry.io/docs/specs/semconv/",
+        "path": "https://opentelemetry.io/docs/specs/semconv/"
+      },
+      {
+        "title": "https://arxiv.org/abs/2606.12320",
+        "path": "https://arxiv.org/abs/2606.12320"
+      }
+    ]
   },
   {
     "id": "a4",
@@ -184,7 +775,32 @@ export const lessons = [
     "outcome": "Trade-offs.",
     "material": "curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/README.md",
     "notebook": "curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/17_capstone_governed_autonomous_enterprise_agent.ipynb",
-    "refs": []
+    "refs": [
+      {
+        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework"
+      },
+      {
+        "title": "https://www.nist.gov/itl/ai-risk-management-framework/",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework/"
+      },
+      {
+        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+      },
+      {
+        "title": "https://owasp.org/www-project-top-10-for-agentic-applications/",
+        "path": "https://owasp.org/www-project-top-10-for-agentic-applications/"
+      },
+      {
+        "title": "https://opentelemetry.io/docs/specs/semconv/gen-ai/",
+        "path": "https://opentelemetry.io/docs/specs/semconv/gen-ai/"
+      },
+      {
+        "title": "https://openssf.org/",
+        "path": "https://openssf.org/"
+      }
+    ]
   }
 ];
 
