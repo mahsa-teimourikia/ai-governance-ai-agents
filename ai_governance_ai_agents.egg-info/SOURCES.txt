@@ -1,8 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-ai_governance_ai_agents.egg-info/PKG-INFO
-ai_governance_ai_agents.egg-info/SOURCES.txt
-ai_governance_ai_agents.egg-info/dependency_links.txt
-ai_governance_ai_agents.egg-info/requires.txt
-ai_governance_ai_agents.egg-info/top_level.txt
