@@ -17,8 +17,8 @@ def test_every_course_topic_is_present_in_hub():
 def test_quiz_has_comprehensive_questions():
     questions = (ROOT / "hub" / "quiz" / "questions.js").read_text()
     question_ids = re.findall(r'id:\s*"([^"]+)"', questions)
-    assert len(question_ids) == 34
-    assert len(set(question_ids)) == 34
+    assert len(question_ids) == 51
+    assert len(set(question_ids)) == 51
 
 def test_js_modules_are_valid_syntax():
     # Only tests files that don't depend heavily on DOM being present or can parse without DOM
