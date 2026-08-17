@@ -32,7 +32,7 @@
 <text x="625" y="540" text-anchor="middle" font-size="18" fill="#D8E6F1">Enforces decision</text>
 
 <line x1="780" y1="420" x2="885" y2="420" stroke="#B9571D" stroke-width="5" marker-end="url(#arrow)"/>
-<line x1="885" y1="505" x2="780" y2="505" stroke="#129B96" stroke-width="5" marker-end="url(#arrow)"/>
+<line x1="900" y1="505" x2="795" y2="505" stroke="#129B96" stroke-width="5" marker-end="url(#arrow)"/>
 
 <rect x="900" y="315" width="330" height="280" rx="24" fill="#FFFFFF" stroke="#129B96" stroke-width="3"/>
 <text x="1065" y="375" text-anchor="middle" font-size="24" font-weight="700" fill="#129B96">PDP</text>
@@ -41,7 +41,7 @@
 <text x="1065" y="505" text-anchor="middle" font-size="18" fill="#60758A">ALLOW / DENY</text>
 <text x="1065" y="540" text-anchor="middle" font-size="18" fill="#60758A">Reason + policy evidence</text>
 
-<line x1="780" y1="650" x2="1300" y2="650" stroke="#2F855A" stroke-width="5" marker-end="url(#arrow)"/>
+<path d="M 625 595 L 625 650 L 1285 650" stroke="#2F855A" stroke-width="5" fill="none" marker-end="url(#arrow)" />
 <rect x="1300" y="585" width="230" height="130" rx="22" fill="#FFFFFF" stroke="#2F855A" stroke-width="3"/>
 <text x="1415" y="635" text-anchor="middle" font-size="21" font-weight="700" fill="#2F855A">TOOL / API</text>
 <text x="1415" y="675" text-anchor="middle" font-size="18" fill="#60758A">Runs only if allowed</text>
