@@ -1,5 +1,21 @@
 name: Validate learning materials
-on: [pull_request, push]
+on:
+  push:
+    paths:
+      - 'curriculum/**/*.ipynb'
+      - 'pyproject.toml'
+      - 'Makefile'
+      - 'tests/**'
+      - 'hub/lessons.js'
+      - '.github/workflows/validate-learning.yml'
+  pull_request:
+    paths:
+      - 'curriculum/**/*.ipynb'
+      - 'pyproject.toml'
+      - 'Makefile'
+      - 'tests/**'
+      - 'hub/lessons.js'
+      - '.github/workflows/validate-learning.yml'
 jobs:
   validate:
     runs-on: ubuntu-latest
