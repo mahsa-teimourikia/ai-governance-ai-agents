@@ -43,3 +43,6 @@ contributor = [
   "pytest",
   "ipykernel"
 ]
+
+[tool.setuptools]
+py-modules = []
