@@ -16,7 +16,9 @@ function render(show = false) {
         if (show && picked === q.answer) correctAnswers++;
         
         lessonHTML += `<h2 style="margin-top:15px; font-size:1.2rem;">Q. ${q.question}</h2>
+        <div class="choices">
         ${q.choices.map((choice, i) => `<label class="quiz-choice ${show ? (i === q.answer ? "correct" : picked === i ? "incorrect" : "") : ""}"><input type="radio" name="${key}" value="${i}" ${picked === i ? "checked" : ""}> ${choice}</label>`).join("")}
+        </div>
         ${show ? `<p class="feedback">${picked === q.answer ? "Correct. " : "Review this: "}${q.explanation}</p>` : ""}`;
     });
     lessonHTML += `</article>`;
