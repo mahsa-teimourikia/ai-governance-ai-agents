@@ -12,7 +12,7 @@
 <text x="225" y="468" text-anchor="middle" font-size="18" fill="#60758A">Plan • choose tool</text>
 <line x1="360" y1="455" x2="465" y2="455" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
 <rect x="480" y="315" width="360" height="280" rx="25" fill="#082542"/>
-<text x="660" y="375" text-anchor="middle" font-size="23" font-weight="700" fill="#B9571D">TOOL GOVERNANCE BOUNDARY</text>
+<text x="660" y="375" text-anchor="middle" font-size="19" font-weight="700" fill="#B9571D">TOOL GOVERNANCE BOUNDARY</text>
 <text x="660" y="425" text-anchor="middle" font-size="17" fill="#FFFFFF">Schema • identity • authorization</text>
 <text x="660" y="460" text-anchor="middle" font-size="17" fill="#FFFFFF">parameter policy • approval</text>
 <text x="660" y="485" text-anchor="middle" font-size="17" fill="#FFFFFF">• rate limit</text>
