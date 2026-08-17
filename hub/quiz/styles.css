@@ -1,5 +1,0 @@
-body { font-family: 'Inter', sans-serif; background: #f5f2eb; color: #1a1a18; }
-.button.primary { background: #1d6d5c; color: #fff; padding: 8px 16px; border: none; cursor: pointer; }
-.button.primary:hover { background: #287763; }
-footer { margin-top: 64px; text-align: center; padding-top: 32px; border-top: 1px solid #d4cfc4; }
-footer a { color: #d98b54; text-decoration: none; font-weight: bold; }
