@@ -7,7 +7,6 @@ setup:
 setup-contributor:
 	uv venv
 	uv pip install -e '.[contributor]'
-	@if [ -f package.json ]; then npm ci; fi
 
 test:
 	uv run pytest

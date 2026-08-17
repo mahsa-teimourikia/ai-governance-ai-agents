@@ -18,11 +18,9 @@ Run the following command to set up both the Python and Node.js environments:
 make setup-contributor
 ```
 
-### Running the Learning Hub locally
+### Viewing the Learning Hub locally
 
-```bash
-npm run dev
-```
+Simply open `hub/index.html` in your web browser. No local development server is required for the hub!
 
 ### Running Tests
 
