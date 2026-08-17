@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#B9571D"/></marker></defs>
+<rect width="1600" height="900" fill="#F7F9FC"/><g font-family="Arial,Helvetica,sans-serif">
+<text x="65" y="80" font-size="30" font-weight="800" fill="#082542">one<tspan fill="#B9571D">+</tspan>i</text>
+<text x="65" y="130" font-size="16" font-weight="700" fill="#082542">PRACTICAL <tspan fill="#B9571D">AI.</tspan> REAL <tspan fill="#B9571D">IMPACT.</tspan></text>
+<text x="65" y="205" font-size="44" font-weight="700" fill="#082542">Test Attack Chains, Not Isolated Prompts</text>
+<text x="65" y="245" font-size="22" fill="#60758A">Agentic vulnerabilities compound across retrieval, reasoning, authority and tools.</text>
+<rect x="70" y="360" width="240" height="160" rx="22" fill="#FFFFFF" stroke="#805AD5" stroke-width="3"/><text x="190" y="420" text-anchor="middle" font-size="20" font-weight="700" fill="#805AD5">POISONED RAG</text><text x="190" y="462" text-anchor="middle" font-size="15" fill="#60758A">low-integrity input</text>
+<line x1="310" y1="440" x2="390" y2="440" stroke="#B9571D" stroke-width="5" marker-end="url(#arrow)"/>
+<rect x="405" y="360" width="240" height="160" rx="22" fill="#FFFFFF" stroke="#C53030" stroke-width="3"/><text x="525" y="420" text-anchor="middle" font-size="20" font-weight="700" fill="#C53030">GOAL HIJACK</text><text x="525" y="462" text-anchor="middle" font-size="15" fill="#60758A">intent changes</text>
+<line x1="645" y1="440" x2="725" y2="440" stroke="#B9571D" stroke-width="5" marker-end="url(#arrow)"/>
+<rect x="740" y="360" width="240" height="160" rx="22" fill="#FFFFFF" stroke="#B9571D" stroke-width="3"/><text x="860" y="420" text-anchor="middle" font-size="20" font-weight="700" fill="#B9571D">TOOL ABUSE</text><text x="860" y="462" text-anchor="middle" font-size="15" fill="#60758A">over-privileged action</text>
+<line x1="980" y1="440" x2="1060" y2="440" stroke="#B9571D" stroke-width="5" marker-end="url(#arrow)"/>
+<rect x="1075" y="360" width="240" height="160" rx="22" fill="#FFFFFF" stroke="#1769C2" stroke-width="3"/><text x="1195" y="420" text-anchor="middle" font-size="20" font-weight="700" fill="#1769C2">EXFILTRATE</text><text x="1195" y="462" text-anchor="middle" font-size="15" fill="#60758A">external consequence</text>
+<line x1="1315" y1="440" x2="1390" y2="440" stroke="#B9571D" stroke-width="5" marker-end="url(#arrow)"/>
+<circle cx="1470" cy="440" r="65" fill="#082542"/><text x="1470" y="432" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">REAL</text><text x="1470" y="458" text-anchor="middle" font-size="17" font-weight="700" fill="#FFFFFF">IMPACT</text>
+<text x="800" y="705" text-anchor="middle" font-size="21" font-weight="700" fill="#082542">The most serious failures often emerge from chains of individually plausible steps.</text></g></svg>

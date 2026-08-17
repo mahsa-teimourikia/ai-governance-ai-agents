@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+ <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#B9571D"/></marker>
+</defs>
+<rect width="1600" height="900" fill="#F7F9FC"/>
+<g font-family="Arial,Helvetica,sans-serif">
+<text x="65" y="75" font-size="30" font-weight="800" fill="#082542">one<tspan fill="#B9571D">+</tspan>i</text>
+<text x="65" y="120" font-size="16" font-weight="700" fill="#082542">PRACTICAL <tspan fill="#B9571D">AI.</tspan> REAL <tspan fill="#B9571D">IMPACT.</tspan></text>
+<text x="65" y="190" font-size="42" font-weight="700" fill="#082542">Agent Cards as Governance Records</text>
+<text x="65" y="230" font-size="21" fill="#60758A">A living system card links ownership, risk, dependencies, controls, evidence and lifecycle state.</text>
+
+<rect x="180" y="300" width="1240" height="450" rx="28" fill="#FFFFFF" stroke="#082542" stroke-width="3"/>
+<text x="230" y="355" font-size="22" font-weight="700" fill="#082542">AGENT / SYSTEM CARD</text>
+<text x="235" y="395" font-size="15" font-weight="700" fill="#1769C2">IDENTITY</text><text x="385" y="395" font-size="14" fill="#60758A">agent_id • version • owner • business unit</text><text x="830" y="395" font-size="15" font-weight="700" fill="#805AD5">PURPOSE</text><text x="980" y="395" font-size="14" fill="#60758A">intended use • prohibited use • users</text><text x="235" y="473" font-size="15" font-weight="700" fill="#B9571D">AUTONOMY</text><text x="385" y="473" font-size="14" fill="#60758A">classification • delegated authority • limits</text><text x="830" y="473" font-size="15" font-weight="700" fill="#129B96">DEPENDENCIES</text><text x="980" y="473" font-size="14" fill="#60758A">model • data • RAG • memory • tools • MCP</text><text x="235" y="551" font-size="15" font-weight="700" fill="#C53030">RISK</text><text x="385" y="551" font-size="14" fill="#60758A">tier • impacts • threat model • regulatory scope</text><text x="830" y="551" font-size="15" font-weight="700" fill="#2F855A">CONTROLS</text><text x="980" y="551" font-size="14" fill="#60758A">authorization • approval • guardrails • kill switch</text><text x="235" y="629" font-size="15" font-weight="700" fill="#B7791F">EVIDENCE</text><text x="385" y="629" font-size="14" fill="#60758A">evaluations • red team • attestations • incidents</text><text x="830" y="629" font-size="15" font-weight="700" fill="#082542">LIFECYCLE</text><text x="980" y="629" font-size="14" fill="#60758A">approval • deployment • review • retirement</text><text x="800" y="805" text-anchor="middle" font-size="19" font-weight="700" fill="#082542">The agent card is the governance system-of-record entry—not a static marketing document.</text></g></svg>

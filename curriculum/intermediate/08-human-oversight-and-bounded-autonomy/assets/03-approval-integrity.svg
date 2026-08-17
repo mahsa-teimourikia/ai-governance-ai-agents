@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<title>Approval Integrity</title>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#B9571D"/></marker></defs>
+<rect width="1600" height="900" fill="#F7F9FC"/><g font-family="Arial,Helvetica,sans-serif">
+<text x="65" y="80" font-size="30" font-weight="800" fill="#082542">one<tspan fill="#B9571D">+</tspan>i</text>
+<text x="65" y="130" font-size="16" font-weight="700" fill="#082542">PRACTICAL <tspan fill="#B9571D">AI.</tspan> REAL <tspan fill="#B9571D">IMPACT.</tspan></text>
+<text x="65" y="205" font-size="44" font-weight="700" fill="#082542">Approval Integrity</text>
+<text x="65" y="245" font-size="22" fill="#60758A">Bind human approval to the exact normalized action and re-check before execution.</text>
+<rect x="80" y="350" width="250" height="190" rx="22" fill="#FFFFFF" stroke="#1769C2" stroke-width="3"/><text x="205" y="410" text-anchor="middle" font-size="22" font-weight="700" fill="#1769C2">PROPOSE</text><text x="205" y="458" text-anchor="middle" font-size="17" fill="#60758A">Normalize action</text>
+<line x1="330" y1="445" x2="420" y2="445" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
+<rect x="435" y="320" width="320" height="250" rx="24" fill="#082542"/><text x="595" y="380" text-anchor="middle" font-size="22" font-weight="700" fill="#B9571D">APPROVAL REQUEST</text><text x="595" y="425" text-anchor="middle" font-size="17" fill="#FFFFFF">Exact tool • parameters</text><text x="595" y="460" text-anchor="middle" font-size="17" fill="#FFFFFF">risk • reason • reversibility</text><text x="595" y="505" text-anchor="middle" font-size="17" fill="#FFFFFF">action digest</text>
+<line x1="755" y1="445" x2="850" y2="445" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
+<rect x="865" y="350" width="270" height="190" rx="22" fill="#FFFFFF" stroke="#805AD5" stroke-width="3"/><text x="1000" y="410" text-anchor="middle" font-size="22" font-weight="700" fill="#805AD5">HUMAN</text><text x="1000" y="458" text-anchor="middle" font-size="17" fill="#60758A">Approve / reject</text>
+<line x1="1135" y1="445" x2="1225" y2="445" stroke="#B9571D" stroke-width="5" marker-end="url(#a)"/>
+<rect x="1240" y="335" width="290" height="220" rx="22" fill="#FFFFFF" stroke="#2F855A" stroke-width="3"/><text x="1385" y="395" text-anchor="middle" font-size="22" font-weight="700" fill="#2F855A">RE-VALIDATE</text><text x="1385" y="440" text-anchor="middle" font-size="17" fill="#60758A">Digest • expiry • policy</text><text x="1385" y="477" text-anchor="middle" font-size="17" fill="#60758A">authority • context</text><text x="1385" y="520" text-anchor="middle" font-size="18" font-weight="700" fill="#2F855A">EXECUTE</text>
+<rect x="260" y="710" width="1080" height="70" rx="18" fill="#EAF1F7"/><text x="800" y="753" text-anchor="middle" font-size="20" font-weight="700" fill="#082542">Approval authorizes one defined action—not whatever the agent decides to do afterward.</text></g></svg>
