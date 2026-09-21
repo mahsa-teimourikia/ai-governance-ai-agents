@@ -7,6 +7,43 @@
 
 ---
 
+## Module thesis
+
+After this module, a learner should be able to classify autonomy from observable
+authority, build operational and adversarial risk scenarios with visible
+dimensions and evidence, analyze downstream blast radius, translate inherent
+risk into control requirements, and refuse to lower residual risk when control
+claims are untested, stale, or irrelevant to the scenario.
+
+## Prerequisites
+
+- [Module 1 — From AI Governance to Agent Governance](../01-from-ai-governance-to-agent-governance/README.md).
+- Basic Python, API, graph, and risk-register literacy.
+- No cloud account, model credential, policy server, or production system is
+  required. The canonical lab is deterministic and credential-free.
+
+## Success criteria
+
+You have completed the module when you can:
+
+- explain why autonomy, impact, access, irreversibility, uncertainty, and scope
+  must remain visible instead of being hidden behind one score;
+- produce separate operational-failure and adversarial-misuse scenarios;
+- report exact reachable, writable, severe, cross-zone, and delegated graph
+  facts;
+- distinguish inherent risk from residual risk without inventing control-
+  effectiveness percentages; and
+- connect every accepted risk reduction to current, scenario-specific evidence.
+
+## Non-goals and boundaries
+
+The lesson does not define a universal enterprise risk formula, legal
+classification, or automatic deployment authority. Its tier rules are a
+versioned teaching policy. Organizations must adapt thresholds to their risk
+appetite, sector, obligations, affected people, assets, and evidence. A model may
+suggest candidate scenarios; accountable humans and trusted governance systems
+own classification, treatment, acceptance, and exceptions.
+
 ## Learning objectives
 
 By the end of this module, you should be able to:
@@ -379,7 +416,11 @@ Classic Risk Priority Numbers often multiply ordinal ratings such as:
 
 `Severity × Occurrence × Detectability`
 
-Use caution: the numeric result is an **ordering aid**, not objective truth.
+Use caution: ordinal categories do not become measured probabilities merely
+because they are multiplied. Different severity/occurrence/detectability vectors
+can produce the same RPN while requiring different treatment. Treat RPN as an
+**ordering aid**, retain the vector, and add explicit override rules for severe,
+irreversible, broad, privileged, safety, or regulatory consequences.
 
 For agent systems, keep the raw dimensions visible.
 
@@ -446,7 +487,16 @@ Risk rises when:
 - write operations dominate read operations,
 - access crosses trust zones.
 
-The practical notebook uses **NetworkX** to calculate a simplified blast-radius score.
+The practical notebook uses **NetworkX** to report inspectable graph facts:
+
+- exact reachable and writable assets;
+- severe downstream assets;
+- trust-zone crossings;
+- delegated hops; and
+- the delta after a capability or edge is removed.
+
+This is more actionable than a normalized blast-radius decimal whose units and
+denominator are difficult to defend.
 
 ---
 
@@ -479,6 +529,10 @@ Risk appetite is a **business/governance decision**, not something the agent cho
 ![Risk tier control profiles](assets/04-risk-tier-control-profiles.svg)
 
 A risk assessment should produce engineering requirements.
+
+Treat higher-tier profiles as cumulative minimums: a critical capability still
+needs the ownership, validation, telemetry, traceability, identity, and
+authorization controls introduced at lower tiers.
 
 Example:
 
@@ -528,12 +582,17 @@ Do not pretend `0.63` is objectively safer than `0.67`.
 
 Use bands and expert judgment.
 
-## Mistake 3 — Ignoring controls
+## Mistake 3 — Giving controls automatic credit
 
 Assess both:
 
 - **inherent risk** before controls,
 - **residual risk** after controls.
+
+But do not lower a dimension because a control is named in a spreadsheet. Bind
+the claim to a scenario and dimension, then require current test or operational
+evidence that covers the relevant failure. Documented design intent is useful,
+but it is not operating-effectiveness proof.
 
 ## Mistake 4 — Scoring only the model
 
@@ -604,45 +663,57 @@ Example risk scenarios:
 7. Payment tool is called without approval.
 8. Procurement data leaks to an external service.
 
-Learners should score each scenario twice:
+Learners should assess each scenario twice:
 
 - **before controls**
 - **after controls**
 
-This demonstrates whether controls actually reduce risk.
+The second assessment may lower a dimension only when evidence supports the
+specific mitigation claim. Otherwise residual risk remains equal to inherent
+risk and the decision requests more evidence.
 
 ---
 
-# 16. Practical notebook specification
+# 16. Practical lab and experiments
 
-Notebook:
+The canonical artifacts are:
 
-`02_agent_risk_modeling_and_autonomy_classification.ipynb`
+- [`02_agent_risk_modeling_and_autonomy_classification.ipynb`](02_agent_risk_modeling_and_autonomy_classification.ipynb) — guided offline lab;
+- [`lab.py`](lab.py) — reusable evidence-aware implementation; and
+- [`tests/test_module02_risk_modeling.py`](../../../tests/test_module02_risk_modeling.py) — invariant tests.
 
-It should implement:
+Run them from the repository root:
 
-- Pydantic risk contracts,
-- autonomy classifier,
-- multidimensional risk profile,
-- FMEA-style analysis,
-- inherent vs residual risk,
-- NetworkX blast-radius graph,
-- OWASP/MITRE threat mappings,
-- risk-tier → control-profile generator,
-- Monte Carlo sensitivity analysis,
-- risk-regression tests,
-- enterprise risk report export,
-- optional LLM-assisted scenario extraction with structured output.
+```bash
+make course-02
+```
 
-Libraries:
+The lab compares an opaque weighted-average baseline with explicit decision
+rules, classifies autonomy from observable authority, keeps risk dimensions and
+assumptions visible, separates failures from attacks, measures graph reachability
+with NetworkX, and demonstrates that documented, expired, or wrong-scenario
+controls receive no residual-risk credit.
 
-- **Pydantic**
-- **pandas**
-- **NumPy**
-- **NetworkX**
-- **matplotlib**
-- **OpenAI SDK / Agents SDK** optional
-- **PyRIT** preview for later red-team validation
+The labelled fixture reports its exact three-case denominator. Its 100% local
+classification result proves only that the teaching rules match those three
+labels; it is not evidence of production safety or generalization.
+
+## 16.1 Technology and method landscape
+
+| Need | Common method or tool | Strength | Limitation / selection criterion |
+|---|---|---|---|
+| Enterprise AI risk lifecycle | NIST AI RMF, ISO/IEC 23894 | Connects context, measurement, treatment, ownership, and review | Neither supplies one universal agent-risk score |
+| Operational failure | FMEA, bow-tie analysis, STPA for safety constraints | Makes failure, cause, effect, prevention, detection, and recovery inspectable | RPNs can hide different risk shapes; STPA requires deeper system modeling |
+| Adversarial threat | OWASP Agentic Top 10, MITRE ATLAS, NIST AI 100-2 | Current threat language, techniques, mitigations, and attack paths | Taxonomy mapping is not proof that a control works |
+| Capability/dependency graph | NetworkX, architecture inventories, attack-graph platforms | Exact reachability and trust-zone analysis | Results are only as current as inventory and permission data |
+| Structured risk artifacts | Pydantic, JSON Schema, governance systems of record | Repeatable validation and versionable records | Schema-valid inputs can still be unsupported or wrong |
+| Adversarial validation | PyRIT and deterministic custom harnesses | Converts threats into executable tests with explicit targets and scorers | Oracles, datasets, and environments must be representative |
+| Candidate discovery | LLM structured extraction | Accelerates scenario brainstorming | Model candidates remain untrusted and cannot accept risk |
+
+Use the smallest combination that produces traceable decisions. Spreadsheets can
+support workshops; code improves repeatability; graph tools reveal capability
+paths; red-team harnesses test exploitability. No library replaces accountable
+risk ownership.
 
 ---
 
@@ -658,10 +729,50 @@ Libraries:
 - Reassess after tool/model/policy changes.
 - Test risk assumptions with telemetry and red teaming.
 - Increase autonomy only after evidence supports it.
+- Keep internal risk tier, regulatory applicability, and business risk-acceptance
+  decisions separate but linked.
+- Version the methodology, graph snapshot, thresholds, evidence, exceptions, and
+  review triggers.
 
 ---
 
-# 18. Knowledge check
+# 18. State of the art — September 2026 snapshot
+
+## Established practice
+
+System risk management, least privilege, threat modeling, FMEA, separation of
+duties, secure software practices, attack-surface analysis, release gates, and
+incident response remain foundational. Agent systems extend these methods to
+model-driven tool selection, long trajectories, memory, delegation, and
+probabilistic behavior.
+
+## Current agent-specific practice
+
+OWASP's 2026 agentic list offers an operational starting point for agent goal
+hijacking, tool misuse, privilege abuse, supply-chain compromise, memory/context
+poisoning, insecure inter-agent behavior, and cascading failures. MITRE ATLAS is
+a living knowledge base and currently exposes an Agentic AI platform filter,
+including techniques for agent context/tool poisoning and tool invocation.
+
+NIST AI 800-5 summarizes 2026 stakeholder input on agent security. It reports
+broad agreement that existing cybersecurity principles remain relevant but need
+adaptation, and highlights the need for measurement, implementation guidance,
+information sharing, and standards. It is evidence about ecosystem needs—not a
+complete risk methodology or control certification.
+
+## Research frontier and open problems
+
+Open problems include representative long-horizon risk datasets, calibrated
+agent failure likelihoods, compositional risk across agents and tools,
+authorization-aware attack graphs, human/agent coordination risk, drift and
+recertification triggers, cross-organization evidence exchange, and measuring
+whether autonomy produces enough value to justify added exposure and control
+cost. These gaps are a reason to expose uncertainty, not to manufacture decimal
+precision.
+
+---
+
+# 19. Knowledge check
 
 1. Why is autonomy not equivalent to risk?
 2. What does irreversibility capture that impact does not?
@@ -676,26 +787,26 @@ Libraries:
 
 ---
 
-# 19. Practitioner assignment
+# 20. Practitioner assignment
 
 For one enterprise agent:
 
 1. Build a capability inventory.
 2. Assign an autonomy level.
-3. Score the six risk dimensions.
+3. Rate the risk dimensions and document evidence, assumptions, and uncertainty.
 4. Build 10 failure scenarios.
 5. Add 5 adversarial scenarios.
 6. Perform FMEA on the top 5 inherent failures.
 7. Build a blast-radius graph.
-8. Assign an inherent risk tier.
+8. Assign an inherent risk tier using explicit, versioned decision rules.
 9. Add current/planned controls.
-10. Recalculate residual risk.
+10. Reassess residual risk only for evidence-backed mitigation claims.
 11. Generate a minimum control profile.
 12. Define evidence required for approval.
 
 ---
 
-# 20. Primary references
+# 21. Primary references
 
 1. NIST AI Risk Management Framework  
    https://www.nist.gov/itl/ai-risk-management-framework
@@ -722,11 +833,17 @@ For one enterprise agent:
    https://atlas.mitre.org/
 
 9. PyRIT Scoring  
-   https://microsoft.github.io/PyRIT/latest/code/scoring/scoring/
+   https://azure.github.io/PyRIT/
+
+10. NIST AI 800-5 — Summary Analysis of Responses Regarding Security Considerations for AI Agents
+    https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai
+
+11. NetworkX documentation
+    https://networkx.org/documentation/stable/
 
 ---
 
-# 21. Next module
+# 22. Next module
 
 ## Module 3 — Standards, Regulation & Governance Operating Model
 

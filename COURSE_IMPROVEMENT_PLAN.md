@@ -35,9 +35,9 @@ Each course pass will:
 
 | Order | Module | Improvement focus | Status |
 |---:|---|---|---|
-| 1 | From AI Governance to Agent Governance | System/action boundary, runtime PEP, bound approvals, idempotency, evidence, architecture baseline | Implemented and locally validated |
-| 2 | Agent Risk Modeling & Autonomy Classification | Transparent risk dimensions, FMEA/abuse cases, calibrated control profiles, sensitivity analysis | Next |
-| 3 | Standards, Regulation & Governance Operating Model | Current NIST/ISO/EU/OWASP crosswalk, evidence artifacts, accountable RACI and lifecycle gates | Planned |
+| 1 | From AI Governance to Agent Governance | System/action boundary, runtime PEP, bound approvals, idempotency, evidence, architecture baseline | Merged in PR #9 |
+| 2 | Agent Risk Modeling & Autonomy Classification | Transparent risk dimensions, failure/threat separation, evidence-bound residual risk, graph deltas | Implemented and locally validated |
+| 3 | Standards, Regulation & Governance Operating Model | Current NIST/ISO/EU/OWASP crosswalk, evidence artifacts, accountable RACI and lifecycle gates | Next |
 | 4 | Agent Identity & Delegated Authority | Authenticated workload identity, OAuth token exchange, attenuation, revocation, non-repudiation | Planned |
 | 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Planned |
 | 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Planned |
@@ -83,3 +83,34 @@ Each course pass will:
 | Retries do not duplicate effects | Production and failure sections | Idempotency ledger keyed to action digest | Same-action retry and changed-action conflict tests |
 | Evidence supports review without hidden reasoning | Observability section | Structured `EvidenceEvent` with reason and policy version | Notebook reconstructs decisions from evidence |
 | Governance improves outcomes on the teaching fixture | Evaluation section | Labelled scenario dataset and architecture comparison | Explicit populations and forbidden-outcome rate |
+
+## Course 2 claim-to-proof map
+
+### Course 2 audit decisions
+
+- **Retain:** the multidimensional risk model, capability-level assessment,
+  autonomy taxonomy, FMEA concepts, failure/attack distinction, procurement
+  scenario, OWASP/MITRE sources, NetworkX graph idea, and existing SVGs.
+- **Deepen:** evidence quality, uncertainty, explicit risk gates, control-claim
+  scope, stale evidence, architecture deltas, disposition ownership, method/tool
+  comparison, and state-of-the-art/open-problem framing.
+- **Consolidate:** move contracts, classification, graph analysis, evidence
+  validation, control profiles, and labelled evaluation into one tested `lab.py`
+  imported by the notebook.
+- **Repair:** remove arbitrary weighted risk decimals, additive fictional control-
+  effectiveness percentages, normalized blast-radius scores, random Monte Carlo
+  outputs presented without empirical distributions, automatic residual-risk
+  reduction, notebook package installation, live API paths, and file writes.
+- **Add:** an explicit false-precision baseline, exact reachability facts,
+  scenario-specific mitigation claims, tested/current evidence gates, expired and
+  wrong-scenario failure cases, three-case labelled evaluation, production
+  upgrades, focused tests, and Hub navigation.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Autonomy is observable authority, not a framework label | Autonomy model | `classify_autonomy` uses state-change, approval, planning, delegation, and termination signals | Same-autonomy/different-impact test |
+| One decimal must not hide risk shape | Scoring pitfalls and lab baseline | Explicit `RiskDimensions` and versioned gate rules | Two vectors share an average but require different reasoning |
+| Failure and attack require distinct analysis | FMEA plus OWASP/NIST/ATLAS sections | Typed `ScenarioKind` and separate fixtures | Scenario-kind regression test |
+| Blast radius should be inspectable | Graph-analysis section | NetworkX returns reachable, writable, severe, cross-zone, and delegated facts | Removing payment reachability changes exact graph facts |
+| Controls reduce risk only with evidence | Residual-risk section | `MitigationClaim` plus scenario-bound `ControlEvidence` | Documented, expired, stale, and wrong-scenario evidence is rejected |
+| Fixture results have explicit scope | Evaluation section | Three labelled cases with numerator and denominator | Exact evaluation-report assertion |
