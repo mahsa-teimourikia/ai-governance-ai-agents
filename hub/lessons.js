@@ -336,6 +336,18 @@ export const lessons = [
     "run": "make course-05",
     "refs": [
       {
+        "title": "NIST Role-Based Access Control",
+        "path": "https://csrc.nist.gov/projects/role-based-access-control"
+      },
+      {
+        "title": "NIST SP 800-162 Attribute-Based Access Control",
+        "path": "https://csrc.nist.gov/pubs/sp/800/162/upd2/final"
+      },
+      {
+        "title": "Zanzibar authorization system paper",
+        "path": "https://www.usenix.org/conference/atc19/presentation/pang"
+      },
+      {
         "title": "OpenFGA authorization for agents",
         "path": "https://openfga.dev/docs/modeling/agents"
       },
