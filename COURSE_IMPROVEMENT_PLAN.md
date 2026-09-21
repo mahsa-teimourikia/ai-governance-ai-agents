@@ -38,9 +38,9 @@ Each course pass will:
 | 1 | From AI Governance to Agent Governance | System/action boundary, runtime PEP, bound approvals, idempotency, evidence, architecture baseline | Merged in PR #9 |
 | 2 | Agent Risk Modeling & Autonomy Classification | Transparent risk dimensions, failure/threat separation, evidence-bound residual risk, graph deltas | Merged in PR #10 |
 | 3 | Standards, Regulation & Governance Operating Model | Current NIST/ISO/EU/OWASP crosswalk, evidence artifacts, accountable RACI and lifecycle gates | Merged in PR #11 |
-| 4 | Agent Identity & Delegated Authority | Authenticated workload identity, OAuth token exchange, attenuation, revocation, evidence limits | Implemented and locally validated |
-| 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Next |
-| 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Planned |
+| 4 | Agent Identity & Delegated Authority | Authenticated workload identity, OAuth token exchange, attenuation, revocation, evidence limits | Merged in PR #12 |
+| 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Implemented and locally validated |
+| 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Next |
 | 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Planned |
 | 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Planned |
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Planned |
@@ -182,3 +182,36 @@ Each course pass will:
 | Parent revocation invalidates descendants | Revocation lifecycle section | lineage traversal in `GrantLedger` | Revoked ancestor blocks child use and new child issuance |
 | Audit evidence has explicit limits | Evidence section | `AuditEvent` records identities, versions, reasons, and digests | Raw bearer token is absent; prose distinguishes authorization from actual effect |
 | Metrics expose safety errors | Evaluation section | seven-case `run_evaluation` summary | Exact forbidden and legitimate populations plus race-test denominator |
+
+## Course 5 claim-to-proof map
+
+### Course 5 audit decisions
+
+- **Retain:** the RBAC/ABAC/ReBAC/contextual comparison, PDP/PEP boundary,
+  dual user/task authorization, OpenFGA/Cedar/OPA selection guidance, managed
+  AWS options, TOCTOU/cache discussion, procurement scenario, and research
+  pointers.
+- **Deepen:** authoritative attribute provenance, hard deny versus escalation,
+  request-bound approval, decision/effect separation, atomic call consumption,
+  idempotent retries, outage recovery, consistency/version evidence, explicit
+  evaluation populations, and live-engine integration boundaries.
+- **Consolidate:** place reusable identity, relationship, attribute, policy,
+  approval, PEP, effect, evidence, SDK-request, and evaluation behavior in one
+  deterministic `lab.py` imported by the notebook and focused tests.
+- **Repair:** remove runtime package installation, wall-clock and random IDs,
+  notebook-only mutable policy state, file writes, optional network calls that
+  hide failures, boolean approval, and fabricated purchase success.
+- **Add:** a deliberately unsafe role-only baseline, current OpenFGA SDK request
+  objects, ten labelled comparison cases, stale-state reauthorization, an
+  eight-worker call-budget race, unknown-outcome handling, accessible diagrams,
+  a judgment-focused Hub checkpoint, and a Course 5 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Role/scope is not sufficient | Models and boundary sections | unsafe role-only baseline | Baseline allows all seven forbidden evaluation cases |
+| User and task authority are independent | Dual authorization section | local relationship evaluator and OpenFGA SDK checks | Wrong actor, resource, subject, and tenant tests |
+| Context is authoritative and current | Source-of-truth section | versioned task/resource/vendor/risk records | Missing, stale, mismatched, sanctioned, and high-risk tests |
+| Approval is narrow | Approval section | exact request-bound single-use receipt | Mutation, expiry, role, reuse, and hard-deny tests |
+| PEP protects effects | PDP/PEP and TOCTOU sections | immediate re-evaluation and observable adapter | Deny/escalate do not invoke; changed vendor blocks execution |
+| Retries and budgets do not widen authority | Caching/retry sections | operation ledger and locked consumption | Mutated replay, idempotent effect, unknown outcome, concurrency tests |
+| Evaluation semantics are explicit | Evaluation section | ten-case baseline/PDP comparison | Forbidden-allowed, false-denial, and missed-escalation populations |
