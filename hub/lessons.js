@@ -328,53 +328,55 @@ export const lessons = [
     "level": "Beginner",
     "step": 5,
     "title": "Fine Grained Authorization for Agents",
-    "summary": "Task-based authorization.",
-    "outcome": "Authz is context dependent.",
+    "summary": "Compose user/resource relationships, task/agent authority, current attributes, narrow approvals, and effect-bound enforcement into one observable decision.",
+    "outcome": "Implement and test a default-deny procurement PDP/PEP with OpenFGA request mappings, Cedar/Rego artifacts, atomic limits, idempotency, and explicit safety metrics.",
     "material": "curriculum/beginner/05-fine-grained-authorization-for-agents/README.md",
     "notebook": "curriculum/beginner/05-fine-grained-authorization-for-agents/05_fine_grained_authorization_for_agents.ipynb",
+    "lab": "curriculum/beginner/05-fine-grained-authorization-for-agents/lab.py",
+    "run": "make course-05",
     "refs": [
       {
-        "title": "https://openfga.dev/docs/modeling/agents",
+        "title": "OpenFGA authorization for agents",
         "path": "https://openfga.dev/docs/modeling/agents"
       },
       {
-        "title": "https://openfga.dev/docs/modeling/agents/task-based-authorization",
+        "title": "OpenFGA task-based authorization",
         "path": "https://openfga.dev/docs/modeling/agents/task-based-authorization"
       },
       {
-        "title": "https://openfga.dev/docs/modeling/agents/agents-as-principals",
+        "title": "OpenFGA agents as principals",
         "path": "https://openfga.dev/docs/modeling/agents/agents-as-principals"
       },
       {
-        "title": "https://docs.cedarpolicy.com/",
+        "title": "Cedar Policy Language",
         "path": "https://docs.cedarpolicy.com/"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs",
+        "title": "Open Policy Agent documentation",
         "path": "https://www.openpolicyagent.org/docs"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs/policy-language",
+        "title": "OPA Rego policy language",
         "path": "https://www.openpolicyagent.org/docs/policy-language"
       },
       {
-        "title": "https://docs.aws.amazon.com/verifiedpermissions/",
+        "title": "Amazon Verified Permissions",
         "path": "https://docs.aws.amazon.com/verifiedpermissions/"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "title": "Amazon Bedrock AgentCore Policy",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
       },
       {
-        "title": "https://arxiv.org/abs/2607.03656",
+        "title": "AutoCedar research paper",
         "path": "https://arxiv.org/abs/2607.03656"
       },
       {
-        "title": "https://arxiv.org/abs/2603.15799",
+        "title": "Prose2Policy research paper",
         "path": "https://arxiv.org/abs/2603.15799"
       },
       {
-        "title": "https://arxiv.org/abs/2607.27267",
+        "title": "FAVA research paper",
         "path": "https://arxiv.org/abs/2607.27267"
       }
     ]
@@ -1047,37 +1049,37 @@ export const checks = {
   ],
   "b5": [
     {
-      "question": "What is the difference between RBAC and ReBAC in agent authorization?",
+      "question": "A user may create purchase orders for Department A, and a task grant allows the procurement agent to create purchase orders only for Department B. What should dual authorization return for Department A?",
       "choices": [
-        "They are the same thing",
-        "ReBAC allows permissions based on relationships between resources, while RBAC is role-based",
-        "RBAC is faster than ReBAC",
-        "ReBAC relies on user passwords"
+        "Allow because the user has authority",
+        "Allow because either check is sufficient",
+        "Deny because user authority and task authority must both cover the same resource",
+        "Ask the model to choose the broader resource"
+      ],
+      "answer": 2,
+      "explanation": "The checks are an intersection. A valid user relationship does not widen a task grant, and a task grant does not create user authority."
+    },
+    {
+      "question": "A preview returned ALLOW, but the vendor was suspended before the tool invocation. What should the PEP do?",
+      "choices": [
+        "Reuse the preview because it was previously valid",
+        "Reauthorize against current versions immediately before the effect and deny",
+        "Execute, then remove the audit row",
+        "Let the model estimate whether the suspension matters"
       ],
       "answer": 1,
-      "explanation": "Relationship-Based Access Control (ReBAC) provides finer granularity by evaluating graph relationships, unlike static Role-Based Access Control (RBAC)."
+      "explanation": "A preview is not an execution permit. Reauthorization closes the time-of-check/time-of-use gap and observes the current vendor state."
     },
     {
-      "question": "What is 'Zero Standing Privilege' for an agent?",
+      "question": "A manager approves a CAD 6,000 purchase, but the vendor is sanctioned. How should policy combine the approval and hard restriction?",
       "choices": [
-        "The agent has no permissions by default and must request just-in-time access for operations",
-        "The agent cannot be audited",
-        "The agent has read-only access permanently",
-        "The agent is blocked from all APIs"
+        "Allow because human approval overrides policy",
+        "Escalate repeatedly until another manager approves",
+        "Deny because approval may satisfy a soft threshold but cannot override a hard prohibition",
+        "Allow if the agent explains its reasoning"
       ],
-      "answer": 0,
-      "explanation": "ZSP ensures that agents do not hold dormant, highly-privileged access that attackers could exploit."
-    },
-    {
-      "question": "What is Contextual Authorization?",
-      "choices": [
-        "Evaluating permissions dynamically based on the current state, such as time of day, location, or the specific step in an approval workflow",
-        "Authorizing based on the length of the prompt",
-        "Using context windows for authorization",
-        "Bypassing passwords if on the corporate network"
-      ],
-      "answer": 0,
-      "explanation": "Contextual Authorization adds situational awareness (like IP, time, or workflow state) to the authorization decision."
+      "answer": 2,
+      "explanation": "Approval is a narrow policy input, not universal authority. Sanctions, tenant isolation, and task bounds remain hard denies."
     }
   ],
   "i1": [
