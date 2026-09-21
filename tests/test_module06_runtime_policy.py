@@ -403,6 +403,9 @@ def test_release_evidence_is_bound_to_exact_candidate(lab):
     forged = metrics.model_copy(update={"candidate_bundle_digest": "0" * 64})
     with pytest.raises(ValueError, match="candidate bundle"):
         control.promote(candidate.version, forged)
+    wrong_corpus = metrics.model_copy(update={"evaluation_corpus_digest": "1" * 64})
+    with pytest.raises(ValueError, match="approved corpus"):
+        control.promote(candidate.version, wrong_corpus)
 
 
 def test_rollback_rejects_never_active_draft(lab):
