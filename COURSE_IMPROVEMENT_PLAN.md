@@ -37,9 +37,9 @@ Each course pass will:
 |---:|---|---|---|
 | 1 | From AI Governance to Agent Governance | System/action boundary, runtime PEP, bound approvals, idempotency, evidence, architecture baseline | Merged in PR #9 |
 | 2 | Agent Risk Modeling & Autonomy Classification | Transparent risk dimensions, failure/threat separation, evidence-bound residual risk, graph deltas | Merged in PR #10 |
-| 3 | Standards, Regulation & Governance Operating Model | Current NIST/ISO/EU/OWASP crosswalk, evidence artifacts, accountable RACI and lifecycle gates | Implemented and locally validated |
-| 4 | Agent Identity & Delegated Authority | Authenticated workload identity, OAuth token exchange, attenuation, revocation, non-repudiation | Next |
-| 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Planned |
+| 3 | Standards, Regulation & Governance Operating Model | Current NIST/ISO/EU/OWASP crosswalk, evidence artifacts, accountable RACI and lifecycle gates | Merged in PR #11 |
+| 4 | Agent Identity & Delegated Authority | Authenticated workload identity, OAuth token exchange, attenuation, revocation, evidence limits | Implemented and locally validated |
+| 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Next |
 | 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Planned |
 | 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Planned |
 | 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Planned |
@@ -147,3 +147,38 @@ Each course pass will:
 | Exceptions are bounded | Exception section | `ExceptionRecord` plus eligibility and expiry checks | Authorization exceptions and expired records are refused |
 | Change triggers recertification | Change-management section | `assess_change` returns exact triggers and review scopes | Expanded authority, jurisdiction, and affected groups require full review |
 | Machine-readable artifacts remain honest | OSCAL section | Package JSON Schema and OSCAL 1.2.3 teaching projection | Projection is labelled non-conformant and requires official validation |
+
+## Course 4 claim-to-proof map
+
+### Course 4 audit decisions
+
+- **Retain:** the human/agent/workload distinction, identity-versus-authorization
+  boundary, SPIFFE/SPIRE introduction, RFC 8693 and RFC 9700 coverage, task
+  authority, OpenFGA/Cedar/OPA comparison, confused-deputy example,
+  procurement scenario, and existing SVGs.
+- **Deepen:** authenticated source-of-truth binding, delegation versus
+  impersonation, strict JWT validation, sender constraint, operation
+  idempotency, atomic consumption, complete attenuation, revocation lineage,
+  evidence semantics, method/tool selection, and emerging WIMSE work.
+- **Consolidate:** move all reusable identity, grant, verification, attenuation,
+  ledger, evidence, and evaluation logic into one tested `lab.py` imported by
+  the canonical notebook.
+- **Repair:** remove notebook package installation, UUIDs, wall-clock behavior,
+  generated RSA keys, mutable global authorization state, non-atomic call-count
+  checks, a vague optional live SDK cell, permission-only attenuation, and the
+  implication that a signed log automatically proves non-repudiation.
+- **Add:** a scope-only unsafe baseline, registered workload selectors,
+  deterministic Ed25519 teaching tokens, intent digests, actor/policy versions,
+  exact context binding, thread-safe operation consumption, descendant
+  revocation, seven labelled cases, focused concurrency/security tests, Hub lab
+  navigation, accessible diagram descriptions, and a Course 4 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Identity derives from trusted state | Identity and workload sections | `bind_trusted_context` resolves registered principals and selectors | Cross-tenant, stale, untrusted-domain, and mismatched-workload tests |
+| A signed token is not sufficient authority | OAuth/JWT and enforcement sections | `verify_training_token` then `GrantLedger.authorize_and_consume` | Tampering, wrong header/algorithm, audience, time, task, resource, and amount tests |
+| Delegation cannot exceed approved intent | Grant and attenuation sections | `build_root_grant` binds `TaskIntent` digest and constraints | Action, resource, vendor, amount, call, lifetime, audience, and depth amplification tests |
+| One-call authority survives concurrency and retries | Security properties and lifecycle sections | locked consumption plus operation/request digest ledger | Eight concurrent operations permit exactly one; altered retry is denied |
+| Parent revocation invalidates descendants | Revocation lifecycle section | lineage traversal in `GrantLedger` | Revoked ancestor blocks child use and new child issuance |
+| Audit evidence has explicit limits | Evidence section | `AuditEvent` records identities, versions, reasons, and digests | Raw bearer token is absent; prose distinguishes authorization from actual effect |
+| Metrics expose safety errors | Evaluation section | seven-case `run_evaluation` summary | Exact forbidden and legitimate populations plus race-test denominator |

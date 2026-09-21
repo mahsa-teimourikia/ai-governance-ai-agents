@@ -1,4 +1,4 @@
-.PHONY: setup setup-contributor test course-01 course-02 course-03 clean
+.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 clean
 
 setup:
 	uv venv
@@ -22,6 +22,10 @@ course-02:
 course-03:
 	uv run python scripts/execute-notebooks.py curriculum/beginner/03-standards-regulation-and-governance-operating-model/03_standards_regulation_and_governance_operating_model.ipynb
 	uv run pytest -q tests/test_module03_governance_operating_model.py tests/test_notebooks.py::test_course_03_notebook_executes_top_to_bottom
+
+course-04:
+	uv run python scripts/execute-notebooks.py curriculum/beginner/04-agent-identity-and-delegated-authority/04_agent_identity_and_delegated_authority.ipynb
+	uv run pytest -q tests/test_module04_agent_identity.py tests/test_notebooks.py::test_course_04_notebook_executes_top_to_bottom
 
 clean:
 	rm -rf .venv
