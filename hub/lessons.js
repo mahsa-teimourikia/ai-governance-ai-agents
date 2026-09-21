@@ -74,13 +74,15 @@ export const lessons = [
     "level": "Beginner",
     "step": 2,
     "title": "Agent Risk Modeling and Autonomy Classification",
-    "summary": "Autonomy levels and impact.",
-    "outcome": "Autonomy levels dictate required controls.",
+    "summary": "Classify autonomy and risk without hiding assumptions behind false precision.",
+    "outcome": "Build evidence-aware scenarios, inspect blast radius, and translate inherent risk into defensible control and review requirements.",
     "material": "curriculum/beginner/02-agent-risk-modeling-and-autonomy-classification/README.md",
     "notebook": "curriculum/beginner/02-agent-risk-modeling-and-autonomy-classification/02_agent_risk_modeling_and_autonomy_classification.ipynb",
+    "lab": "curriculum/beginner/02-agent-risk-modeling-and-autonomy-classification/lab.py",
+    "run": "make course-02",
     "refs": [
       {
-        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "title": "NIST AI Risk Management Framework",
         "path": "https://www.nist.gov/itl/ai-risk-management-framework"
       },
       {
@@ -96,11 +98,11 @@ export const lessons = [
         "path": "https://www.iso.org/standard/77304.html"
       },
       {
-        "title": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+        "title": "NIST AI 100-2e2025: Adversarial ML Taxonomy",
         "path": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"
       },
       {
-        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "title": "OWASP Top 10 for Agentic Applications 2026",
         "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
       },
       {
@@ -108,12 +110,20 @@ export const lessons = [
         "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
       },
       {
-        "title": "https://atlas.mitre.org/",
+        "title": "MITRE ATLAS",
         "path": "https://atlas.mitre.org/"
       },
       {
-        "title": "https://microsoft.github.io/PyRIT/latest/code/scoring/scoring/",
-        "path": "https://microsoft.github.io/PyRIT/latest/code/scoring/scoring/"
+        "title": "NIST AI 800-5: Security Considerations for AI Agents",
+        "path": "https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai"
+      },
+      {
+        "title": "NetworkX documentation",
+        "path": "https://networkx.org/documentation/stable/"
+      },
+      {
+        "title": "PyRIT documentation",
+        "path": "https://azure.github.io/PyRIT/"
       }
     ]
   },
@@ -856,37 +866,37 @@ export const checks = {
   ],
   "b2": [
     {
-      "question": "What are the key dimensions used to calculate an agent's autonomy risk tier?",
+      "question": "A sandbox agent and a payment agent have the same autonomy level. Why can their risk tiers differ?",
       "choices": [
-        "Cost, Speed, Accuracy, Latency",
-        "Impact, Access, Irreversibility, Uncertainty",
-        "Parameters, Context Window, Training Data",
-        "User count, Database size, API calls"
+        "Autonomy is only one dimension; impact, privilege, irreversibility, scope, likelihood, and evidence differ",
+        "Payment agents always use larger language models",
+        "Sandbox agents cannot make planning decisions",
+        "Risk tiers are determined by framework name"
       ],
-      "answer": 1,
-      "explanation": "Risk is calculated based on the potential Impact, the Access the agent has, whether actions are Irreversible, and the level of Uncertainty."
+      "answer": 0,
+      "explanation": "Autonomy describes independent authority, not total risk. Consequence, access, reversibility, exposure, blast radius, uncertainty, and evidence shape treatment."
     },
     {
-      "question": "What is a 'blast radius' in agent risk modeling?",
+      "question": "A risk register says runtime policy is 18% effective but cites only a design document. How should residual risk be treated?",
       "choices": [
-        "The physical distance a server covers",
-        "The maximum possible negative impact if the agent acts maliciously or fails",
-        "The speed at which the agent executes tools",
-        "The number of users interacting with the agent"
+        "Reduce the score by exactly 18%",
+        "Let the agent estimate a more precise percentage",
+        "Do not grant operating-effectiveness credit until current scenario-specific tests or observations support the claim",
+        "Delete the inherent-risk assessment"
       ],
-      "answer": 1,
-      "explanation": "Blast radius refers to the worst-case scenario boundaries of an agent's failure or misuse."
+      "answer": 2,
+      "explanation": "Documented design intent is useful but does not prove that a control operates against the relevant scenario. Residual-risk reduction needs scoped, current evidence."
     },
     {
-      "question": "How does 'Uncertainty' factor into an agent's risk profile?",
+      "question": "Which blast-radius result is most useful for an architecture decision?",
       "choices": [
-        "The likelihood that the agent's cloud provider will go down",
-        "The likelihood that the agent will encounter novel, out-of-distribution scenarios that were not anticipated during design",
-        "The chance of the model hallucinates a fact",
-        "The unpredictability of API costs"
+        "An unexplained normalized score of 0.73",
+        "A list of exact reachable and writable assets, severe resources, trust-zone crossings, delegated hops, and the delta after removing a capability",
+        "The average number of graph nodes in unrelated systems",
+        "A model-generated statement that the graph is safe"
       ],
       "answer": 1,
-      "explanation": "Higher autonomy involves navigating open-ended environments, increasing the risk of unpredictable agent behavior."
+      "explanation": "Exact graph facts are inspectable and actionable: reviewers can see which capability or edge creates exposure and verify the effect of an architectural treatment."
     }
   ],
   "b3": [
