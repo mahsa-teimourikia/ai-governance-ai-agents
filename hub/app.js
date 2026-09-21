@@ -26,11 +26,14 @@ function renderWorkspace() {
   
   let learnBody = `<p class="outcome">${selected.outcome}</p><p>Read the in-depth theory, trade-offs, failure modes, and cited sources before opening the executable notebook.</p><a class="button" href="${link(selected.material)}" target="_blank">Read lesson ↗</a>`;
   
-  let notebookBody = `<p class="outcome">The notebook is the practical learning artifact: deterministic fixtures, implementation, assertions, an experiment, and reflection live together.</p><p>It runs without an API key or external side effects. Use <code>make notebooks</code> to execute every course notebook locally.</p>`;
+  let notebookBody = `<p class="outcome">The notebook is the practical learning artifact: deterministic fixtures, implementation, assertions, experiments, evaluation, and reflection live together.</p><p>The audited lab runs without an API key or external side effects.${selected.run ? ` Run <code>${selected.run}</code> from the repository root.` : " Follow the notebook setup notes for this module."}</p>`;
   if (Array.isArray(selected.notebook)) {
       notebookBody += selected.notebook.map(nb => `<a class="button" style="display:block; margin-bottom: 8px;" href="${link(nb.path)}" target="_blank">Open ${nb.title} ↗</a>`).join("");
   } else {
       notebookBody += `<a class="button" href="${link(selected.notebook)}" target="_blank">Open self-contained notebook ↗</a>`;
+  }
+  if (selected.lab) {
+      notebookBody += `<a class="button" style="display:block; margin-top: 8px;" href="${link(selected.lab)}" target="_blank">Open reusable lab implementation ↗</a>`;
   }
   
   let checkBody = `<p class="outcome">Knowledge Check</p>`;

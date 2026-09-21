@@ -4,6 +4,10 @@ A comprehensive curriculum for transitioning from AI model governance to Autonom
 
 🚀 **[Access the Learning Hub](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/)** | 📝 **[Take the Initial Knowledge Quiz](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/quiz/)**
 
+The curriculum is being deepened one module at a time. See the
+**[course improvement plan](COURSE_IMPROVEMENT_PLAN.md)** for quality gates,
+claim-to-proof expectations, current status, and the ordered roadmap.
+
 ## Quickstart
 
 ### Prerequisites
@@ -26,6 +30,12 @@ Simply open `hub/index.html` in your web browser. No local development server is
 
 ```bash
 make test
+```
+
+To run the fully audited Course 1 lab and its focused invariant tests:
+
+```bash
+make course-01
 ```
 
 ## Curriculum Structure
@@ -60,9 +70,9 @@ The curriculum is structured into three continuous tracks representing the matur
 
 ## Repository Layout
 
-- **`curriculum/`**: Contains the Jupyter notebooks (`.ipynb`) and deep-dive documentation for all 17 modules, separated by track.
-- **`app/`**: The React/Vite-based interactive Learning Hub, which dynamically loads the 17 subjects and provides the Field Guide interface.
-- **`quiz/`**: A standalone vanilla JS initial knowledge check. Automatically integrated during the static site build.
+- **`curriculum/`**: Contains deep-dive lessons, notebooks, topic assets, and—beginning with the audited modules—reusable labs.
+- **`hub/`**: The static Learning Hub, lesson registry, checkpoints, progress tracking, and full knowledge quiz deployed by GitHub Pages.
+- **`tests/`**: Repository and course-specific validation, including runtime invariants and top-to-bottom notebook execution for audited modules.
 - **`.github/workflows/`**: Automated CI/CD pipelines including notebook parsing, Python testing, and GitHub Pages deployment.
 
 ## Contributing
