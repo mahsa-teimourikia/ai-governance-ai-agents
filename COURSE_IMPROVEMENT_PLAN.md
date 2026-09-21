@@ -40,7 +40,7 @@ Each course pass will:
 | 3 | Standards, Regulation & Governance Operating Model | Current NIST/ISO/EU/OWASP crosswalk, evidence artifacts, accountable RACI and lifecycle gates | Merged in PR #11 |
 | 4 | Agent Identity & Delegated Authority | Authenticated workload identity, OAuth token exchange, attenuation, revocation, evidence limits | Merged in PR #12 |
 | 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Merged in PR #13; evidence follow-up in PR #14 |
-| 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Next |
+| 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Implemented in current branch |
 | 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Planned |
 | 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Planned |
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Planned |
@@ -215,3 +215,39 @@ Each course pass will:
 | PEP protects effects | PDP/PEP and TOCTOU sections | immediate re-evaluation and observable adapter | Deny/escalate do not invoke; changed vendor blocks execution |
 | Retries and budgets do not widen authority | Caching/retry sections | operation ledger and locked consumption | Mutated replay, idempotent effect, unknown outcome, concurrency tests |
 | Evaluation semantics are explicit | Evaluation section | ten-case baseline/PDP comparison | Forbidden-allowed, false-denial, and missed-escalation populations |
+
+## Course 6 claim-to-proof map
+
+### Course 6 audit decisions
+
+- **Retain:** the governance-document-to-runtime-control progression, layered
+  policy domains, PDP/PEP distinction, Cedar and Rego introductions,
+  risk-based escalation, policy lifecycle, shadow/canary deployment, drift,
+  AgentCore example, procurement scenario, and existing diagrams.
+- **Deepen:** trusted input provenance, immutable bundle digests, schema versus
+  semantic validation, signed distribution, release-evidence binding,
+  forbidden-to-escalation regressions, stable canary cohorts, known-good
+  rollback, tenant-safe idempotency, unknown effects, minimized audit evidence,
+  and OPA/AgentCore operational boundaries.
+- **Consolidate:** move policy contracts, composition, control-plane lifecycle,
+  gateway/adapter enforcement, evaluation, engine artifacts, and metrics into
+  one deterministic `lab.py` imported by the notebook and tests.
+- **Repair:** remove notebook package installation, UUIDs, wall-clock values,
+  file writes, optional live-network calls, mutable notebook-only policy state,
+  fabricated purchase success, and unbound release metrics.
+- **Add:** an unsafe first-match baseline, ten labelled cases, semantic mutation
+  killing, exact shadow metrics, content/corpus digests, non-bypassable effects,
+  eight-worker retry testing, cross-tenant operation isolation, fail-closed
+  outages, unknown-effect reconciliation, judgment checkpoints, and a Course 6
+  CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Model claims are not policy facts | Thesis and trusted-context sections | `ActionProposal` is separate from `TrustedFacts` | Positive model claims cannot override a sanctioned-vendor deny |
+| Layered decisions compose deterministically | Policy-composition section | `evaluate_policy` evaluates authorization, business, risk, and safety | Hard denials dominate simultaneous escalation conditions |
+| Static validity is not semantic safety | Testing and automated-reasoning sections | `validate_bundle`, labelled corpus, and `shadow_metrics` | Hard-limit mutation passes static checks but is killed by `forbidden_not_denied` |
+| Releases are exact and reversible | Lifecycle and deployment sections | immutable registry, digest-bound metrics, shadow, canary, promote, rollback | Wrong bundle evidence, skipped stages, invalid drafts, and never-active rollback targets fail |
+| PEP protects real effects | Architecture and failure sections | `RuntimeGateway` capability plus `ProcurementAdapter` receipt | Outage, deny, escalate, direct bypass, altered replay, and unknown outcome do not create a new effect |
+| Retries and tenants remain isolated | Runtime-evidence section | tenant/operation ledger and locked adapter | Eight concurrent retries create one effect; identical operation IDs across tenants remain distinct |
+| Evidence is observable but minimized | Runtime-policy-evidence section | `DecisionAuditEvent` stores digests, versions, outcomes, and reasons | Raw vendor and subject records are absent from decision evidence |
+| Metrics name their populations | Policy-testing section | ten-case `EvaluationSummary` and `ShadowMetrics` | Exact hard-deny, legitimate-allow, escalation, incorrect, and decision-flip denominators |

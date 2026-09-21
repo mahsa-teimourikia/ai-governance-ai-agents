@@ -80,3 +80,14 @@ def test_course_05_notebook_executes_top_to_bottom(monkeypatch):
         / "05_fine_grained_authorization_for_agents.ipynb"
     )
     execute_notebook(path, monkeypatch)
+
+
+def test_course_06_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the sixth fully audited notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/intermediate/06-policy-as-code-and-runtime-governance"
+        / "06_policy_as_code_and_runtime_governance.ipynb"
+    )
+    execute_notebook(path, monkeypatch)
