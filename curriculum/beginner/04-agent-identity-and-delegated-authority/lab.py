@@ -636,11 +636,21 @@ class GrantLedger:
                     decision_id=decision.decision_id,
                     operation_id=request.operation_id,
                     grant_id=None,
+                    parent_grant_id=None,
                     subject_id=context.subject_id,
                     actor_id=context.actor_id,
+                    actor_version=context.actor_version,
                     workload_id=context.workload_id,
                     tenant_id=context.tenant_id,
                     task_id=context.task_id,
+                    audience=request.audience,
+                    action=request.action,
+                    resource=request.resource,
+                    amount_cents=request.amount_cents,
+                    vendor_id=request.vendor_id,
+                    intent_digest=None,
+                    constraints_digest=None,
+                    grant_expires_at=None,
                     request_digest=decision.request_digest,
                     token_digest=digest,
                     outcome=DecisionOutcome.DENY,
@@ -661,14 +671,18 @@ class GrantLedger:
         now: datetime,
     ) -> AuthorizationDecision:
         request_digest = stable_digest(request)
+        operation_fingerprint = stable_digest(
+            {"grant_id": grant.grant_id, "request": request.model_dump(mode="python")}
+        )
         digest = token_digest(token)
         with self._lock:
-            previous = self._operations.get(request.operation_id)
+            operation_key = (context.tenant_id, request.operation_id)
+            previous = self._operations.get(operation_key)
             if previous:
-                previous_digest, decision = previous
-                if previous_digest == request_digest:
+                previous_fingerprint, decision = previous
+                if previous_fingerprint == operation_fingerprint:
                     return decision.model_copy(update={"replayed_decision": True})
-                return AuthorizationDecision(
+                collision = AuthorizationDecision(
                     decision_id=_decision_id(grant.grant_id, request),
                     outcome=DecisionOutcome.DENY,
                     reason_codes=("operation_id_reused_with_different_request",),
@@ -680,6 +694,35 @@ class GrantLedger:
                     ledger_version=self._version,
                     remaining_calls=self._remaining_calls(grant),
                 )
+                self._audit.append(
+                    AuditEvent(
+                        decision_id=collision.decision_id,
+                        operation_id=request.operation_id,
+                        grant_id=grant.grant_id,
+                        parent_grant_id=grant.parent_grant_id,
+                        subject_id=context.subject_id,
+                        actor_id=context.actor_id,
+                        actor_version=context.actor_version,
+                        workload_id=context.workload_id,
+                        tenant_id=context.tenant_id,
+                        task_id=context.task_id,
+                        audience=request.audience,
+                        action=request.action,
+                        resource=request.resource,
+                        amount_cents=request.amount_cents,
+                        vendor_id=request.vendor_id,
+                        intent_digest=grant.intent_digest,
+                        constraints_digest=stable_digest(grant.constraints),
+                        grant_expires_at=grant.expires_at,
+                        request_digest=request_digest,
+                        token_digest=digest,
+                        outcome=collision.outcome,
+                        reason_codes=collision.reason_codes,
+                        policy_version=POLICY_VERSION,
+                        observed_at=now,
+                    )
+                )
+                return collision
 
             reasons: list[str] = []
             registered = self._grants.get(grant.grant_id)
@@ -739,17 +782,27 @@ class GrantLedger:
                 ledger_version=self._version,
                 remaining_calls=self._remaining_calls(grant),
             )
-            self._operations[request.operation_id] = (request_digest, decision)
+            self._operations[operation_key] = (operation_fingerprint, decision)
             self._audit.append(
                 AuditEvent(
                     decision_id=decision.decision_id,
                     operation_id=request.operation_id,
                     grant_id=grant.grant_id,
+                    parent_grant_id=grant.parent_grant_id,
                     subject_id=context.subject_id,
                     actor_id=context.actor_id,
+                    actor_version=context.actor_version,
                     workload_id=context.workload_id,
                     tenant_id=context.tenant_id,
                     task_id=context.task_id,
+                    audience=request.audience,
+                    action=request.action,
+                    resource=request.resource,
+                    amount_cents=request.amount_cents,
+                    vendor_id=request.vendor_id,
+                    intent_digest=grant.intent_digest,
+                    constraints_digest=stable_digest(grant.constraints),
+                    grant_expires_at=grant.expires_at,
                     request_digest=request_digest,
                     token_digest=digest,
                     outcome=outcome,

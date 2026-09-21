@@ -248,6 +248,26 @@ def test_identical_operation_retry_is_idempotent_but_mutated_reuse_is_denied(lab
     assert retry.decision_id == first.decision_id
     assert collision.outcome is lab.DecisionOutcome.DENY
     assert collision.reason_codes == ("operation_id_reused_with_different_request",)
+    assert ledger.audit_events[-1].reason_codes == collision.reason_codes
+
+
+def test_operation_retry_is_bound_to_the_original_grant(lab):
+    context, grant, token, ledger = lab.build_demo_authority()
+    replacement = grant.model_copy(update={"grant_id": "GRANT-ROOT-002"})
+    replacement_token = lab.issue_training_token(replacement)
+    ledger.register(replacement)
+    request = lab.demo_request()
+
+    first = lab.authorize_token(ledger, token, request, context, now=lab.REFERENCE_TIME)
+    replay_under_another_grant = lab.authorize_token(
+        ledger, replacement_token, request, context, now=lab.REFERENCE_TIME
+    )
+
+    assert first.outcome is lab.DecisionOutcome.ALLOW
+    assert replay_under_another_grant.outcome is lab.DecisionOutcome.DENY
+    assert replay_under_another_grant.reason_codes == (
+        "operation_id_reused_with_different_request",
+    )
 
 
 def test_call_limit_consumption_is_atomic_under_concurrency(lab):
@@ -452,7 +472,7 @@ def test_revoked_parent_invalidates_child_and_prevents_new_delegation(lab):
 
 
 def test_audit_evidence_contains_digests_not_raw_token(lab):
-    context, _, token, ledger = lab.build_demo_authority()
+    context, grant, token, ledger = lab.build_demo_authority()
     lab.authorize_token(ledger, token, lab.demo_request(), context, now=lab.REFERENCE_TIME)
     events = ledger.audit_events
     assert len(events) == 1
@@ -460,6 +480,13 @@ def test_audit_evidence_contains_digests_not_raw_token(lab):
     assert token not in payload
     assert len(events[0].token_digest) == 64
     assert events[0].policy_version == lab.POLICY_VERSION
+    assert events[0].actor_version == context.actor_version
+    assert events[0].audience == grant.audience
+    assert events[0].action == "purchase_order:create"
+    assert events[0].resource == "department:data-ai"
+    assert events[0].intent_digest == grant.intent_digest
+    assert events[0].constraints_digest == lab.stable_digest(grant.constraints)
+    assert events[0].grant_expires_at == grant.expires_at
 
 
 def test_rfc8693_example_is_request_shape_not_claimed_live_implementation(lab):
