@@ -398,49 +398,59 @@ export const lessons = [
     "level": "Intermediate",
     "step": 6,
     "title": "Policy as Code and Runtime Governance",
-    "summary": "Separating reasoning from authority.",
-    "outcome": "PDP/PEP architecture.",
+    "summary": "Turn governance requirements into tested, versioned runtime controls without letting model claims become authority.",
+    "outcome": "Build and evaluate a non-bypassable procurement policy control plane with trusted inputs, layered decisions, safe rollout, rollback, tenant-safe effects, and auditable evidence.",
     "material": "curriculum/intermediate/06-policy-as-code-and-runtime-governance/README.md",
     "notebook": "curriculum/intermediate/06-policy-as-code-and-runtime-governance/06_policy_as_code_and_runtime_governance.ipynb",
+    "lab": "curriculum/intermediate/06-policy-as-code-and-runtime-governance/lab.py",
+    "run": "make course-06",
     "refs": [
       {
-        "title": "https://docs.cedarpolicy.com/",
+        "title": "Cedar Policy Language reference",
         "path": "https://docs.cedarpolicy.com/"
       },
       {
-        "title": "https://docs.cedarpolicy.com/auth/authorization.html",
+        "title": "Cedar authorization semantics",
         "path": "https://docs.cedarpolicy.com/auth/authorization.html"
       },
       {
-        "title": "https://docs.cedarpolicy.com/policies/validation.html",
+        "title": "Cedar policy validation",
         "path": "https://docs.cedarpolicy.com/policies/validation.html"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs",
+        "title": "Open Policy Agent documentation",
         "path": "https://www.openpolicyagent.org/docs"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs/policy-language",
+        "title": "Rego policy language",
         "path": "https://www.openpolicyagent.org/docs/policy-language"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs/policy-testing",
+        "title": "OPA policy testing",
         "path": "https://www.openpolicyagent.org/docs/policy-testing"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "title": "OPA policy bundles and signing",
+        "path": "https://www.openpolicyagent.org/docs/management-bundles"
+      },
+      {
+        "title": "OPA decision logs",
+        "path": "https://www.openpolicyagent.org/docs/management-decision-logs"
+      },
+      {
+        "title": "Amazon Bedrock AgentCore Policy",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html",
+        "title": "AgentCore Policy core concepts and Dogwood",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html",
-        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html"
+        "title": "AgentCore policy generation validation",
+        "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-generation-validation.html"
       },
       {
-        "title": "https://docs.aws.amazon.com/verifiedpermissions/",
+        "title": "Amazon Verified Permissions",
         "path": "https://docs.aws.amazon.com/verifiedpermissions/"
       }
     ]
@@ -1096,37 +1106,37 @@ export const checks = {
   ],
   "i1": [
     {
-      "question": "In a Policy-as-Code architecture, what is the role of the Policy Enforcement Point (PEP)?",
+      "question": "A candidate bundle passes syntax and schema validation but changes one labelled sanctioned-vendor case from DENY to ESCALATE. What should the release gate do?",
       "choices": [
-        "To write the policy",
-        "To intercept requests and enforce the decision made by the Policy Decision Point (PDP)",
-        "To log errors",
-        "To train the model"
+        "Promote because ESCALATE is safer than ALLOW",
+        "Block promotion because a hard denial escaped, even though the candidate remains default-deny",
+        "Promote only for administrators",
+        "Ask the model whether the changed decision is reasonable"
       ],
       "answer": 1,
-      "explanation": "The PEP is the gateway that blocks or allows actions based on the PDP's evaluation of the policy."
+      "explanation": "A hard-deny case becoming any non-DENY outcome is a safety regression. Static validity does not prove semantic equivalence or acceptable behavior."
     },
     {
-      "question": "Why should runtime policies default to 'deny'?",
+      "question": "During shadow rollout, the candidate returns DENY while the active bundle returns ALLOW. Which result may the PEP enforce?",
       "choices": [
-        "To ensure any unspecified or novel agent actions are blocked by default",
-        "To save cloud costs",
-        "To prevent the agent from starting",
-        "To force users to write more code"
+        "The candidate result because it is stricter",
+        "Whichever result the agent prefers",
+        "Only the active result; the candidate result is comparison evidence until an authorized promotion",
+        "Both results in alternating requests"
       ],
-      "answer": 0,
-      "explanation": "Default deny ensures that unexpected or hallucinated tool calls are stopped before causing harm."
+      "answer": 2,
+      "explanation": "Shadow evaluation must not change effects. The active bundle remains authoritative until the release lifecycle promotes the exact validated candidate."
     },
     {
-      "question": "How does Policy-as-Code facilitate governance testing?",
+      "question": "A valid allow decision was cached, then trusted vendor facts expired before execution. What is the safest PEP behavior?",
       "choices": [
-        "By training LLMs on policies",
-        "Policies can be statically analyzed and unit-tested in CI/CD pipelines before deployment",
-        "By auto-generating the code",
-        "By bypassing manual QA"
+        "Execute because the decision was once valid",
+        "Re-resolve current authoritative facts and re-evaluate before the effect; deny if freshness cannot be established",
+        "Let the model refresh the approval field",
+        "Execute and repair the audit log later"
       ],
       "answer": 1,
-      "explanation": "Treating policy as code allows governance teams to use standard software testing practices (like unit tests) to verify rules."
+      "explanation": "Policy correctness depends on both policy and current inputs. Consequential effects require fresh trusted facts and immediate enforcement, not a stale cached allow."
     }
   ],
   "i2": [
