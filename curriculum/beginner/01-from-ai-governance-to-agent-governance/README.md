@@ -8,6 +8,42 @@
 
 ---
 
+## Module thesis
+
+After this module, a learner should be able to explain why agent governance is
+system governance, implement a deterministic consequence boundary around an
+agent proposal, evaluate that boundary on labelled positive and negative cases,
+and identify the controls needed to move the teaching design toward production.
+
+## Prerequisites
+
+- Basic Python and JSON literacy.
+- Familiarity with APIs and the difference between authentication and
+  authorization; Modules 4 and 5 teach those mechanisms in depth.
+- No LLM credential, policy server, cloud account, or procurement system is
+  required. The canonical lab is deterministic and runs in memory.
+
+## Success criteria
+
+You have completed the module when you can:
+
+- identify the exact point where reasoning becomes an enterprise consequence;
+- explain why typed data, an agent role, or model confidence does not grant
+  authority;
+- make unapproved-vendor, over-budget, cross-tenant, stale-grant, altered-
+  approval, approval-replay, and changed-idempotency requests fail closed; and
+- report evaluation numerators and denominators without presenting fixture
+  results as model-quality or production-safety evidence.
+
+## Non-goals and risk boundary
+
+This foundation module does not make the in-memory example production-ready and
+does not claim that one framework prevents agent failures. It introduces the
+trust boundary. Later modules deepen identity, fine-grained authorization,
+policy engines, MCP/tool governance, human oversight, RAG/memory, security,
+observability, evaluation, and control-plane operations. All lab side effects
+are simulated locally.
+
 ## Learning objectives
 
 By the end of this module, you should be able to:
@@ -746,6 +782,28 @@ Ask:
 
 > Which framework helps us solve each layer of the governance problem?
 
+## 12.1 Technology landscape: different tools solve different layers
+
+Do not collapse orchestration, validation, authorization, policy, approval, and
+telemetry into a single “guardrails” category.
+
+| Concern | Representative options | Strength | Important limitation | Use when |
+|---|---|---|---|---|
+| Agent loop and tools | OpenAI Agents SDK, LangGraph, Microsoft Agent Framework, custom loop | Tool schemas, loop state, handoffs, pause/resume | A runtime does not automatically grant or verify enterprise authority | The application needs model/tool orchestration |
+| Boundary contracts | Pydantic, JSON Schema, Protobuf | Reject malformed structures and support versioned interfaces | Schema-valid data may still be unauthorized, stale, or false | Every trust-boundary input and output |
+| General policy decision | OPA/Rego | Domain-neutral policy decision point with externalized policy | Resource relationships and lifecycle data still need careful modeling | Rules span rich request/resource/context attributes |
+| Principal/action/resource authorization | Cedar and compatible policy services | Authorization-focused model with analyzable policies | Does not replace orchestration, approval workflow, or evidence storage | Fine-grained application authorization fits its model |
+| Relationship/task authorization | OpenFGA and Zanzibar-style services | Models resource relationships, task binding, delegation, and conditional access | Application code must still authenticate callers and enforce the decision | Access depends on graph relationships and delegated tasks |
+| Human approval | Workflow engines plus a transactional receipt store; framework pause/resume hooks | Durable routing and resumable execution | A click or Boolean is insufficient unless bound to the exact action and consumed once | Consequential actions need accountable review |
+| Governance evidence | OpenTelemetry plus a protected audit store | Correlates model, retrieval, tool, policy, approval, and outcome events | Telemetry is not automatically complete, private, tamper-evident, or proof of success | Operators must reconstruct and verify trajectories |
+
+The canonical lab uses Pydantic and explicit Python policy so the primitive is
+visible. Modules 5 and 6 compare and implement external authorization and policy
+engines. Framework approval hooks are useful orchestration mechanisms, but the
+trusted application must still validate the proposal, authorize the principal,
+bind the approval, enforce single use, execute idempotently, and verify the
+result.
+
 ---
 
 # 13. Enterprise governance-by-design
@@ -1245,6 +1303,9 @@ Use this checklist when reviewing a new agent use case.
 
 # 22. State of the art — what is changing now?
 
+> **Snapshot:** September 2026. Re-verify fast-moving standards, SDKs, and
+> security guidance before using this section for an architecture decision.
+
 The important trend is not a new single governance library.
 
 The trend is the convergence of several previously separate disciplines:
@@ -1271,6 +1332,12 @@ Agent Governance Engineering
 
 Current developments worth tracking include:
 
+### Established practice
+
+Classic least privilege, separation of duties, workload identity, policy
+enforcement, idempotency, audit logging, and incident response remain the base.
+Agent systems adapt these disciplines; they do not make them obsolete.
+
 ### Agent standards and identity
 
 NIST's 2026 Agent Standards Initiative and agent identity/authorization concept work indicate that secure agent authentication, authorization, auditing, and interoperability are becoming dedicated standards topics.
@@ -1278,6 +1345,12 @@ NIST's 2026 Agent Standards Initiative and agent identity/authorization concept 
 ### Agent-specific security taxonomies
 
 OWASP's Agentic Security Initiative and Top 10 for Agentic Applications 2026 provide threat categories aimed specifically at autonomous, tool-using systems.
+
+NIST AI 800-5, published in May 2026, summarizes responses to NIST's request for
+information on agent security. It reports broad agreement that existing
+cybersecurity practices remain relevant but need adaptation for agent systems.
+Treat this as ecosystem evidence and direction—not as a finished control
+standard.
 
 ### Runtime governance
 
@@ -1291,131 +1364,48 @@ Agent observability is increasingly expected to record not only model calls, but
 
 A mature enterprise pattern is to begin with constrained permissions and increase autonomy only after evaluation and production evidence justify additional authority.
 
+### Research frontier and open problems
+
+Open problems include interoperable agent identity and delegation, portable
+authorization semantics across agent/tool protocols, trustworthy evaluation of
+long trajectories, authorization-data freshness, evidence integrity across
+organizational boundaries, safe recovery from unknown external outcomes, and
+measuring whether additional autonomy creates enough value to justify its
+coordination and control cost.
+
 ---
 
-# 23. Module 1 practical notebook specification
+# 23. Practical lab and experiments
 
-The companion notebook should be named:
+The canonical artifacts are:
 
-```text
-01_from_ai_governance_to_agent_governance.ipynb
-```
+- [`01_from_ai_governance_to_agent_governance.ipynb`](01_from_ai_governance_to_agent_governance.ipynb) — guided, credential-free lab;
+- [`lab.py`](lab.py) — reusable typed implementation; and
+- [`tests/test_module01_governance.py`](../../../tests/test_module01_governance.py) — executable invariant tests.
 
-## Scenario
-
-**Enterprise Procurement Agent**
-
-## Notebook objectives
-
-Learners will:
-
-1. Implement a minimal agent-like decision loop without external credentials.
-2. Compare an informational assistant with an action-capable agent.
-3. Define tool metadata for read-only and state-changing capabilities.
-4. Classify actions by impact and autonomy.
-5. Build an Agent Governance Surface Map programmatically.
-6. Generate a Governance Boundary Map.
-7. Create a starter risk register.
-8. Simulate `ALLOW / DENY / ESCALATE` decisions with simple deterministic Python rules.
-9. Demonstrate why prompt-only restrictions are weaker than external enforcement.
-10. Produce a governance evidence record for a simulated transaction.
-
-## Suggested notebook flow
-
-### Part A — Baseline assistant
-
-Input:
+The notebook follows one procurement scenario through:
 
 ```text
-"I need 10 laptops for the new analytics team."
+direct adapter baseline
+    -> typed authority envelope
+    -> deterministic policy decision and enforcement
+    -> bound single-use approval
+    -> idempotent retry
+    -> prompt-injection failure injection
+    -> structured evidence
+    -> labelled architecture evaluation
 ```
 
-Output:
+Run the focused lab and tests from the repository root:
 
-```text
-Recommended vendor and product.
+```bash
+make course-01
 ```
 
-No action.
-
-### Part B — Add capability
-
-Expose:
-
-```python
-create_purchase_order(...)
-```
-
-Discuss how the risk model changes.
-
-### Part C — Add autonomy levels
-
-```python
-INFORMATIONAL
-ASSISTED
-BOUNDED
-HIGH_AUTONOMY
-```
-
-### Part D — Add deterministic boundary
-
-Example:
-
-```python
-def authorize_purchase(amount: float, approved_vendor: bool):
-    if not approved_vendor:
-        return "DENY"
-    if amount > 5_000:
-        return "ESCALATE"
-    return "ALLOW"
-```
-
-The function is deliberately simple. The point is architectural separation, not a production policy engine.
-
-### Part E — Compare prompt-only vs. external policy
-
-Simulate a malicious or mistaken agent proposal:
-
-```python
-proposal = {
-    "vendor": "unapproved_vendor",
-    "amount": 25_000,
-}
-```
-
-Show:
-
-```text
-Agent wants to proceed
-Policy layer denies
-```
-
-### Part F — Produce governance evidence
-
-Example record:
-
-```json
-{
-  "task_id": "T-001",
-  "agent_id": "procurement-agent-v1",
-  "delegated_by": "employee-123",
-  "proposed_action": "create_purchase_order",
-  "amount": 25000,
-  "vendor": "vendor-x",
-  "policy_decision": "DENY",
-  "reason": "vendor_not_approved",
-  "executed": false
-}
-```
-
-### Part G — Reflection questions
-
-1. What controls belong in prompts?
-2. What controls require deterministic enforcement?
-3. When did this application become an agent-governance problem?
-4. Which risks came from the model?
-5. Which risks came from authority and system design?
-6. What would need to change before real enterprise deployment?
+The evaluation compares direct tool access with the governed gateway using
+explicit positive, boundary, and negative cases. Its metrics report their
+populations and apply only to the deterministic fixture; they are not presented
+as model-quality benchmarks or production certification.
 
 ---
 
@@ -1529,23 +1519,38 @@ That question is an excellent test of whether you are thinking about **agent gov
 6. **NIST NCCoE — Accelerating the Adoption of Software and AI Agent Identity and Authorization (2026 concept paper)**  
    https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd
 
-7. **ISO/IEC 42001:2023 — Artificial intelligence management systems**  
+7. **NIST AI 800-5 — Summary Analysis of Responses to the RFI Regarding Security Considerations for AI Agents (2026)**
+   https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai
+
+8. **ISO/IEC 42001:2023 — Artificial intelligence management systems**
    https://www.iso.org/standard/42001
 
 ## Security
 
-8. **OWASP — Agentic Security Initiative**  
+9. **OWASP — Agentic Security Initiative**
    https://genai.owasp.org/initiatives/agentic-security-initiative/
 
-9. **OWASP — Top 10 for Agentic Applications 2026**  
+10. **OWASP — Top 10 for Agentic Applications 2026**
    https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/
 
 ## Suggested supplementary reading
 
-10. **NIST AI RMF Playbook — GOVERN**  
+11. **Open Policy Agent — Deployment and PDP/PEP architecture**
+    https://www.openpolicyagent.org/docs/deploy
+
+12. **Cedar — Official documentation**
+    https://docs.cedarpolicy.com/
+
+13. **OpenFGA — Task-based authorization for agents**
+    https://openfga.dev/docs/modeling/agents/task-based-authorization
+
+14. **OpenAI Agents SDK — Human-in-the-loop approvals**
+    https://openai.github.io/openai-agents-python/human_in_the_loop/
+
+15. **NIST AI RMF Playbook — GOVERN**
     https://airc.nist.gov/airmf-resources/playbook/govern/
 
-11. **NIST AI RMF Playbook — MAP**  
+16. **NIST AI RMF Playbook — MAP**
     https://airc.nist.gov/airmf-resources/playbook/map/
 
 ---

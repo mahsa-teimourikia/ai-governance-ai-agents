@@ -2,19 +2,27 @@ name: Validate learning materials
 on:
   push:
     paths:
-      - 'curriculum/**/*.ipynb'
+      - 'curriculum/**'
+      - 'README.md'
+      - 'COURSE_IMPROVEMENT_PLAN.md'
+      - 'course_content.md'
       - 'pyproject.toml'
       - 'Makefile'
+      - 'scripts/**'
       - 'tests/**'
-      - 'hub/lessons.js'
+      - 'hub/**'
       - '.github/workflows/validate-learning.yml'
   pull_request:
     paths:
-      - 'curriculum/**/*.ipynb'
+      - 'curriculum/**'
+      - 'README.md'
+      - 'COURSE_IMPROVEMENT_PLAN.md'
+      - 'course_content.md'
       - 'pyproject.toml'
       - 'Makefile'
+      - 'scripts/**'
       - 'tests/**'
-      - 'hub/lessons.js'
+      - 'hub/**'
       - '.github/workflows/validate-learning.yml'
 jobs:
   validate:

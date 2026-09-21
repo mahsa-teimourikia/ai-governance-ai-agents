@@ -4,13 +4,15 @@ export const lessons = [
     "level": "Beginner",
     "step": 1,
     "title": "From AI Governance to Agent Governance",
-    "summary": "Understand the shift from models to autonomous agents.",
-    "outcome": "Governance must shift from information risk to action risk.",
+    "summary": "Move from model review to enforceable runtime control over agent actions.",
+    "outcome": "Map the complete agent system, enforce its consequence boundary, and evaluate the control with labelled cases.",
     "material": "curriculum/beginner/01-from-ai-governance-to-agent-governance/README.md",
     "notebook": "curriculum/beginner/01-from-ai-governance-to-agent-governance/01_from_ai_governance_to_agent_governance.ipynb",
+    "lab": "curriculum/beginner/01-from-ai-governance-to-agent-governance/lab.py",
+    "run": "make course-01",
     "refs": [
       {
-        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10",
+        "title": "NIST AI Risk Management Framework 1.0",
         "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10"
       },
       {
@@ -26,12 +28,16 @@ export const lessons = [
         "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"
       },
       {
-        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "title": "NIST AI Agent Standards Initiative",
         "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
       },
       {
-        "title": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd",
+        "title": "NIST NCCoE: Software and AI Agent Identity and Authorization",
         "path": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd"
+      },
+      {
+        "title": "NIST AI 800-5: Security Considerations for AI Agents",
+        "path": "https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai"
       },
       {
         "title": "https://www.iso.org/standard/42001",
@@ -42,8 +48,16 @@ export const lessons = [
         "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
       },
       {
-        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "title": "OWASP Top 10 for Agentic Applications 2026",
         "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+      },
+      {
+        "title": "OpenFGA: Task-Based Authorization for Agents",
+        "path": "https://openfga.dev/docs/modeling/agents/task-based-authorization"
+      },
+      {
+        "title": "OpenAI Agents SDK: Human-in-the-Loop",
+        "path": "https://openai.github.io/openai-agents-python/human_in_the_loop/"
       },
       {
         "title": "https://airc.nist.gov/airmf-resources/playbook/govern/",
@@ -807,37 +821,37 @@ export const lessons = [
 export const checks = {
   "b1": [
     {
-      "question": "What is the fundamental difference between AI Model Governance and Autonomous Agent Governance?",
+      "question": "Two applications use the same model, but only one can issue refunds. Why does the second need a stronger governance architecture?",
       "choices": [
-        "Shift from Information Risk to Action Risk",
-        "Shift from structured data to unstructured data",
-        "Shift from cloud to on-premise",
-        "Shift from manual to automated training"
+        "Its tools and delegated authority can create state changes, so policy must be enforced at the consequence boundary",
+        "Refund text uses more tokens than ordinary responses",
+        "The model becomes deterministic when connected to a payment API",
+        "A larger system prompt provides the missing authorization"
       ],
       "answer": 0,
-      "explanation": "Model governance focuses on what the AI says (Information Risk), while agent governance focuses on what the AI does (Action Risk)."
+      "explanation": "Governance follows the complete capability chain. The same model has a different blast radius when a trusted application gives it state-changing tools and authority."
     },
     {
-      "question": "In the context of agent governance, what is 'Governance-by-design'?",
+      "question": "A manager approved a $12,000 purchase order, but the agent changes the vendor before execution. What should the enforcement point do?",
       "choices": [
-        "Writing policies after deployment",
-        "Embedding controls into the agent's architecture directly",
-        "Using manual human approval for every action",
-        "Relying strictly on model alignment"
-      ],
-      "answer": 1,
-      "explanation": "Governance-by-design means building authorization, observability, and guardrails directly into the agent architecture."
-    },
-    {
-      "question": "What is the defining characteristic of an agent compared to a standard LLM?",
-      "choices": [
-        "It runs locally on edge devices",
-        "It strictly requires internet access",
-        "The ability to act autonomously on its environment using tools to achieve a goal",
-        "It generates code faster"
+        "Execute because the amount did not change",
+        "Ask the agent whether the change is safe",
+        "Reject the old receipt and require approval for the new proposal digest",
+        "Reuse the receipt if the same model produced both proposals"
       ],
       "answer": 2,
-      "explanation": "Agents are distinguished by their agency: the ability to plan, use tools, and alter their environment autonomously."
+      "explanation": "Consequential approval must bind the exact action, target, tenant, task, policy version, and proposal digest. Any material change invalidates it."
+    },
+    {
+      "question": "Which evaluation result most directly shows whether unauthorized side effects occurred in the labelled negative cases?",
+      "choices": [
+        "Average model confidence",
+        "Forbidden outcomes divided by all cases labelled DENY or approval-required without a receipt",
+        "The total number of policy log lines",
+        "The percentage of responses containing the word ALLOW"
+      ],
+      "answer": 1,
+      "explanation": "The forbidden outcome rate measures actual prohibited effects over the relevant negative/boundary population; blocked attempts and model confidence are different quantities."
     }
   ],
   "b2": [
