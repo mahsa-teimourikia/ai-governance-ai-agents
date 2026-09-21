@@ -226,58 +226,100 @@ export const lessons = [
     "level": "Beginner",
     "step": 4,
     "title": "Agent Identity and Delegated Authority",
-    "summary": "Agent as principal.",
-    "outcome": "Agents need identity.",
+    "summary": "Bind authenticated humans, versioned logical agents, and attested workloads to narrow task authority that is verified, atomically consumed, attenuated, revoked, and evidenced.",
+    "outcome": "Implement and test an intent-bound delegated-authority chain with strict token validation, trusted context, idempotent operations, concurrency-safe call limits, and descendant revocation.",
     "material": "curriculum/beginner/04-agent-identity-and-delegated-authority/README.md",
     "notebook": "curriculum/beginner/04-agent-identity-and-delegated-authority/04_agent_identity_and_delegated_authority.ipynb",
+    "lab": "curriculum/beginner/04-agent-identity-and-delegated-authority/lab.py",
+    "run": "make course-04",
     "refs": [
       {
-        "title": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd",
+        "title": "NIST NCCoE: Software and AI Agent Identity and Authorization",
         "path": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd"
       },
       {
-        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "title": "NIST AI Agent Standards Initiative",
         "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
       },
       {
-        "title": "https://openfga.dev/docs/modeling/agents/task-based-authorization",
+        "title": "OpenFGA authorization for agents",
+        "path": "https://openfga.dev/docs/modeling/agents"
+      },
+      {
+        "title": "OpenFGA task-based authorization",
         "path": "https://openfga.dev/docs/modeling/agents/task-based-authorization"
       },
       {
-        "title": "https://openfga.dev/docs/getting-started/install-sdk",
+        "title": "OpenFGA Python SDK",
         "path": "https://openfga.dev/docs/getting-started/install-sdk"
       },
       {
-        "title": "https://spiffe.io/docs/latest/spiffe-specs/spiffe/",
+        "title": "SPIFFE standards",
         "path": "https://spiffe.io/docs/latest/spiffe-specs/spiffe/"
       },
       {
-        "title": "https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/",
+        "title": "SPIFFE Workload API",
         "path": "https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/"
       },
       {
-        "title": "https://spiffe.io/docs/latest/spire-about/spire-concepts/",
+        "title": "SPIRE concepts",
         "path": "https://spiffe.io/docs/latest/spire-about/spire-concepts/"
       },
       {
-        "title": "https://datatracker.ietf.org/doc/rfc8693/",
+        "title": "RFC 8693: OAuth 2.0 Token Exchange",
         "path": "https://datatracker.ietf.org/doc/rfc8693/"
       },
       {
-        "title": "https://datatracker.ietf.org/doc/rfc9700/",
+        "title": "RFC 9700: OAuth 2.0 Security Best Current Practice",
         "path": "https://datatracker.ietf.org/doc/rfc9700/"
       },
       {
-        "title": "https://docs.cedarpolicy.com/",
+        "title": "RFC 8707: OAuth 2.0 Resource Indicators",
+        "path": "https://datatracker.ietf.org/doc/rfc8707/"
+      },
+      {
+        "title": "RFC 8725: JSON Web Token Best Current Practices",
+        "path": "https://datatracker.ietf.org/doc/rfc8725/"
+      },
+      {
+        "title": "RFC 9068: JWT Profile for OAuth 2.0 Access Tokens",
+        "path": "https://datatracker.ietf.org/doc/rfc9068/"
+      },
+      {
+        "title": "RFC 9396: OAuth 2.0 Rich Authorization Requests",
+        "path": "https://datatracker.ietf.org/doc/rfc9396/"
+      },
+      {
+        "title": "RFC 9449: OAuth 2.0 Demonstrating Proof of Possession",
+        "path": "https://datatracker.ietf.org/doc/rfc9449/"
+      },
+      {
+        "title": "IETF WIMSE working group",
+        "path": "https://datatracker.ietf.org/wg/wimse/"
+      },
+      {
+        "title": "IETF draft: AI Identity Management System",
+        "path": "https://datatracker.ietf.org/doc/draft-ietf-wimse-aims/"
+      },
+      {
+        "title": "Cedar authorization documentation",
         "path": "https://docs.cedarpolicy.com/"
       },
       {
-        "title": "https://docs.aws.amazon.com/verifiedpermissions/",
+        "title": "Amazon Verified Permissions",
         "path": "https://docs.aws.amazon.com/verifiedpermissions/"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "title": "Amazon Bedrock AgentCore Policy",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
+      },
+      {
+        "title": "Open Policy Agent documentation",
+        "path": "https://www.openpolicyagent.org/docs/policy-language"
+      },
+      {
+        "title": "PyJWT documentation",
+        "path": "https://pyjwt.readthedocs.io/"
       }
     ]
   },
@@ -970,37 +1012,37 @@ export const checks = {
   ],
   "b4": [
     {
-      "question": "What does it mean for an agent to have a 'Workload Identity'?",
+      "question": "A request contains a valid SPIFFE-shaped workload string and a correctly signed task token. What must happen before a purchase is authorized?",
       "choices": [
-        "The agent uses the user's password",
-        "The agent has no identity",
-        "The agent acts as a principal with its own credentials, rather than impersonating the user indefinitely",
-        "The agent is treated as an anonymous guest"
+        "Trust both values because their formats are valid",
+        "Ask the language model whether the workload is legitimate",
+        "Bind current attestation and the registered agent/workload relationship, then evaluate task, audience, resource, lifecycle, and request constraints",
+        "Check only whether the token has not expired"
       ],
       "answer": 2,
-      "explanation": "Workload Identity allows the agent to authenticate itself to services securely without hardcoded human credentials."
+      "explanation": "A SPIFFE ID is a name, and a signature establishes token integrity under a key. Trusted application state must still prove the current workload binding and authorize the exact operation."
     },
     {
-      "question": "What is the principle of 'Task-scoped credentials'?",
+      "question": "Eight workers concurrently use a grant with max_calls=1 and different operation IDs. Which result demonstrates correct consumption?",
       "choices": [
-        "Issuing short-lived tokens restricted to the exact permissions needed for a specific task",
-        "Giving the agent full admin access permanently",
-        "Using the same API key for all users",
-        "Requiring a password for every single API call"
-      ],
-      "answer": 0,
-      "explanation": "Task-scoped credentials adhere to the principle of least privilege, reducing the risk if the token is compromised."
-    },
-    {
-      "question": "Why is impersonation dangerous for agent identities?",
-      "choices": [
-        "It slows down the network",
-        "If an agent acts fully under a human's identity, malicious actions cannot be distinguished from legitimate human actions in audit logs",
-        "It uses more tokens",
-        "It breaks OAuth"
+        "All eight pass because the signature is valid",
+        "Exactly one passes because validation and consumption are atomic",
+        "The first four pass because half the workers are trusted",
+        "The language model chooses which requests count"
       ],
       "answer": 1,
-      "explanation": "Agents must use delegation constructs so logs clearly show 'Agent X acting on behalf of User Y', rather than just 'User Y'."
+      "explanation": "A check-then-increment race can overspend a one-use grant. The authoritative store must validate and consume in one transaction or equivalent atomic operation."
+    },
+    {
+      "question": "A research sub-agent receives fewer actions but a broader resource set and longer expiry than its parent. Is the delegation attenuated?",
+      "choices": [
+        "Yes, because only the action list matters",
+        "Yes, if both agents use the same model",
+        "No; every authority dimension must remain equal or narrower and the child must preserve subject, tenant, task, intent, and lineage bindings",
+        "No, but a model-generated approval can repair it"
+      ],
+      "answer": 2,
+      "explanation": "Permission-only narrowing is incomplete. Resources, vendors, amount, calls, lifetime, audience transitions, and delegation depth can each amplify authority."
     }
   ],
   "b5": [
