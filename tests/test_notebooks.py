@@ -47,3 +47,14 @@ def test_course_02_notebook_executes_top_to_bottom(monkeypatch):
         / "02_agent_risk_modeling_and_autonomy_classification.ipynb"
     )
     execute_notebook(path, monkeypatch)
+
+
+def test_course_03_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the third fully audited notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/beginner/03-standards-regulation-and-governance-operating-model"
+        / "03_standards_regulation_and_governance_operating_model.ipynb"
+    )
+    execute_notebook(path, monkeypatch)

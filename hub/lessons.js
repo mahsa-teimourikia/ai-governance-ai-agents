@@ -132,58 +132,92 @@ export const lessons = [
     "level": "Beginner",
     "step": 3,
     "title": "Standards Regulation and Governance Operating Model",
-    "summary": "NIST, ISO, OWASP.",
-    "outcome": "Frameworks provide structural assurance.",
+    "summary": "Turn NIST, ISO, EU, OWASP, and OSCAL inputs into owned controls, current evidence, specialist review, and lifecycle decisions.",
+    "outcome": "Build and test a version-bound governance package with accountable RACI, exact evidence gates, bounded exceptions, and change-triggered recertification.",
     "material": "curriculum/beginner/03-standards-regulation-and-governance-operating-model/README.md",
     "notebook": "curriculum/beginner/03-standards-regulation-and-governance-operating-model/03_standards_regulation_and_governance_operating_model.ipynb",
+    "lab": "curriculum/beginner/03-standards-regulation-and-governance-operating-model/lab.py",
+    "run": "make course-03",
     "refs": [
       {
-        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "title": "NIST AI Risk Management Framework",
         "path": "https://www.nist.gov/itl/ai-risk-management-framework"
       },
       {
-        "title": "https://airc.nist.gov/",
-        "path": "https://airc.nist.gov/"
+        "title": "NIST AI RMF crosswalks",
+        "path": "https://airc.nist.gov/airmf-resources/crosswalks/"
       },
       {
-        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
+        "title": "NIST AI RMF Generative AI Profile",
         "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"
       },
       {
-        "title": "https://pages.nist.gov/OSCAL/",
+        "title": "NIST OSCAL",
         "path": "https://pages.nist.gov/OSCAL/"
       },
       {
-        "title": "https://www.iso.org/standard/42001",
+        "title": "ISO/IEC 42001:2023",
         "path": "https://www.iso.org/standard/42001"
       },
       {
-        "title": "https://www.iso.org/standard/42005",
+        "title": "ISO/IEC 42005:2025",
         "path": "https://www.iso.org/standard/42005"
       },
       {
-        "title": "https://www.iso.org/standard/77304.html",
+        "title": "ISO/IEC 42006:2025",
+        "path": "https://www.iso.org/standard/42006"
+      },
+      {
+        "title": "ISO/IEC 23894:2023",
         "path": "https://www.iso.org/standard/77304.html"
       },
       {
-        "title": "https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act",
+        "title": "European Commission AI Act FAQ",
         "path": "https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act"
       },
       {
-        "title": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-governance-and-enforcement",
-        "path": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-governance-and-enforcement"
+        "title": "European Commission AI Act overview and timeline",
+        "path": "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
       },
       {
-        "title": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation",
+        "title": "European Commission AI Act enforcement",
+        "path": "https://digital-strategy.ec.europa.eu/en/policies/enforcement-ai-act"
+      },
+      {
+        "title": "European Commission AI Act standardisation",
         "path": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation"
       },
       {
-        "title": "https://genai.owasp.org/initiatives/agentic-security-initiative/",
+        "title": "OWASP Agentic Security Initiative",
         "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
       },
       {
-        "title": "https://github.com/oscal-compass/compliance-trestle",
+        "title": "OWASP Top 10 for Agentic Applications 2026",
+        "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+      },
+      {
+        "title": "NIST AI 100-2e2025: Adversarial ML Taxonomy",
+        "path": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"
+      },
+      {
+        "title": "MITRE ATLAS",
+        "path": "https://atlas.mitre.org/"
+      },
+      {
+        "title": "NIST OSCAL release notes",
+        "path": "https://pages.nist.gov/OSCAL/about/blog/"
+      },
+      {
+        "title": "Compliance Trestle",
         "path": "https://github.com/oscal-compass/compliance-trestle"
+      },
+      {
+        "title": "Compliance Trestle releases",
+        "path": "https://github.com/oscal-compass/compliance-trestle/releases"
+      },
+      {
+        "title": "IIA Three Lines statements",
+        "path": "https://www.theiia.org/en/resources/statements-of-position"
       }
     ]
   },
@@ -901,37 +935,37 @@ export const checks = {
   ],
   "b3": [
     {
-      "question": "How does the ISO/IEC 42001 framework map to agent governance?",
+      "question": "What does an internal-control crosswalk prove about an external framework or regulation?",
       "choices": [
-        "By enforcing specific code libraries",
-        "By providing a PDCA (Plan, Do, Check, Act) lifecycle for continuous improvement",
-        "By banning autonomous agents",
-        "By focusing solely on data privacy"
+        "That one internal control automatically establishes compliance",
+        "That the control contributes evidence to a cited expectation, subject to its stated limits",
+        "That legal review is no longer required",
+        "That every framework is interchangeable"
       ],
       "answer": 1,
-      "explanation": "ISO 42001 provides a management system framework based on continuous improvement (Plan-Do-Check-Act)."
+      "explanation": "A crosswalk organizes claims and evidence. It must preserve sources and limitations and cannot by itself establish legal compliance, framework conformance, or certification."
     },
     {
-      "question": "Why is an AI inventory critical for an enterprise agent operating model?",
+      "question": "Why can a high internal agent-risk tier not determine the EU AI Act classification?",
       "choices": [
-        "To track agent versions, capabilities, and approved scopes",
-        "To charge users for API calls",
-        "To store training data",
-        "To bypass compliance checks"
+        "Risk and regulation use different reviewed criteria, roles, jurisdictions, and sources",
+        "The EU AI Act applies only to model providers",
+        "Autonomy always makes a system legally high-risk",
+        "Internal risk tiers are legally binding"
       ],
       "answer": 0,
-      "explanation": "An inventory ensures visibility into what agents are deployed, what they can do, and who owns them."
+      "explanation": "The application may route an applicability review, but a named specialist owns the legal interpretation. Internal engineering risk remains a separate, connected record."
     },
     {
-      "question": "What is a Control Crosswalk in governance?",
+      "question": "Why does the Course 3 gate check each evidence requirement instead of an average completeness score?",
       "choices": [
-        "A physical security gate at a data center",
-        "A matrix mapping enterprise internal policies to multiple external frameworks like NIST AI RMF and ISO 42001 simultaneously",
-        "A tool for migrating databases",
-        "A method for crossing cloud regions"
+        "Averages make audit reports too long",
+        "One missing non-waivable artifact must block even when most other evidence is complete",
+        "Every artifact has the same risk significance",
+        "The model should choose which missing evidence to ignore"
       ],
       "answer": 1,
-      "explanation": "Crosswalks prevent duplicate work by demonstrating how one internal security control satisfies multiple regulatory frameworks."
+      "explanation": "Exact, current, version-bound requirements prevent a high aggregate percentage from masking missing authorization, assurance, or other critical evidence."
     }
   ],
   "b4": [

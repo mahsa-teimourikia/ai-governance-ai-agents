@@ -28,6 +28,64 @@ By the end of this module, you should be able to:
 
 ---
 
+## Module thesis
+
+After this module, a learner should be able to translate external expectations
+and internal policy into a versioned inventory, accountable operating model,
+claim-bounded control crosswalk, current evidence package, defensible release
+decision, and material-change recertification workflow—without confusing an
+internal risk tier or framework mapping with legal compliance.
+
+## Prerequisites
+
+- [Module 1 — From AI Governance to Agent Governance](../01-from-ai-governance-to-agent-governance/README.md).
+- [Module 2 — Agent Risk Modeling & Autonomy Classification](../02-agent-risk-modeling-and-autonomy-classification/README.md).
+- Basic Python, API, risk-register, and software-delivery literacy.
+- No legal database, cloud account, GRC platform, model credential, or paid ISO
+  text is required for the canonical lab.
+
+## Success criteria
+
+You have completed the module when you can:
+
+- explain what NIST AI RMF, ISO/IEC 42001, ISO/IEC 42005, ISO/IEC 23894,
+  ISO/IEC 42006, regulation, OWASP, and OSCAL do—and do not do;
+- route a regulatory question without fabricating a legal classification;
+- select internal controls from observable system facts and describe mappings as
+  `supports`, not `satisfies`;
+- bind every accepted evidence item and gate request to the exact system version;
+- block one missing required artifact instead of averaging it away; and
+- identify which changes require targeted or full recertification.
+
+## Non-goals and boundaries
+
+This course does not provide legal advice, reproduce paid standards, certify an
+AIMS, implement a universal control catalog, or authorize a real deployment.
+The included controls and thresholds are versioned teaching policy. A production
+organization must adapt them to its sector, jurisdictions, risk appetite,
+affected people, contractual duties, and authenticated decision authority.
+
+---
+
+## Course audit and claim-to-proof map
+
+This revision retains the standards landscape, three-lines model, inventory, crosswalk, stage gates, RACI, exception, recertification, OSCAL, and procurement scenario. It replaces the notebook-only prototype with one reusable, tested [`lab.py`](lab.py) imported by the notebook.
+
+| Course promise | Executable proof | Negative or evaluation proof |
+|---|---|---|
+| Legal applicability remains separate from internal risk | `build_applicability_record` routes named specialist reviews and preserves methodology sources | An EU deployment with an incomplete EU AI Act review returns `specialist_review_required` |
+| Crosswalks support rather than establish compliance | Every `FrameworkMapping` is source-linked and fixed to the relationship `supports` | `GateDecision` rejects any claim that the internal gate establishes legal compliance |
+| Evidence is exact and current | `assess_evidence` binds artifacts to system, version, control requirement, result, age, and validity | Wrong-version, failed, expired, future-dated, and unrequired evidence is rejected with reason codes |
+| Accountability is testable | `RACIEntry` requires exactly one accountable role and at least one responsible role | Duplicate or missing activities and ambiguous accountability fail validation |
+| One missing critical artifact cannot be averaged away | `evaluate_gate` requires every selected-control evidence item | Removing one of eleven required items blocks the release despite high aggregate completeness |
+| Exceptions are bounded | `ExceptionRecord` requires separation of requester and accepter, evidence, compensation, remediation, and expiry | Expired, wrongly bound, unknown, and non-exception-eligible control exceptions fail |
+| Material changes trigger scoped recertification | `assess_change` reports exact triggers, scopes, and full-review need | Jurisdiction, authority, and affected-group expansion force full reassessment |
+| Machine-readable exchange is honestly scoped | Governance package schema plus `oscal_component_projection` | Projection is labelled non-conformant and requires official OSCAL validation |
+
+The canonical path is deterministic, credential-free, and uses synthetic data. It does not install packages, call a model, make a legal determination, write generated files into the repository, or claim certification.
+
+---
+
 # 1. Why enterprises need an operating model
 
 A governance framework alone does not govern an AI system.
@@ -138,6 +196,17 @@ Primary source:
 
 https://www.iso.org/standard/42005
 
+## ISO/IEC 42006:2025
+
+ISO/IEC 42006 specifies additional requirements for bodies that audit and
+certify an ISO/IEC 42001 artificial intelligence management system. It explains
+the assurance context for credible AIMS certification, but it does not turn an
+internal control mapping or a product test into certification.
+
+Primary source:
+
+https://www.iso.org/standard/42006
+
 ## ISO/IEC 23894:2023
 
 ISO/IEC 23894 provides guidance on AI-related risk management.
@@ -174,7 +243,7 @@ https://pages.nist.gov/OSCAL/
 
 ---
 
-# 3. Current EU AI Act context — August 2026
+# 3. Current EU AI Act context — September 2026
 
 The EU AI Act is **law**, not merely a best-practice framework.
 
@@ -196,19 +265,22 @@ Do not confuse the legal classification with the internal risk tier.
 
 ## Current high-level timeline
 
-According to the European Commission's current 2026 implementation guidance:
+According to the European Commission guidance checked on **20 September 2026**:
 
 - prohibited practices, definitions, and AI literacy provisions have applied since **2 February 2025**;
 - governance rules and GPAI obligations became applicable on **2 August 2025**;
+- the Act became generally applicable on **2 August 2026**, including enforcement powers and transparency duties for certain AI systems;
+- the additional prohibition covering specified non-consensual intimate material and child sexual abuse material applies from **2 December 2026**;
 - following the 2026 AI Omnibus, rules for certain high-risk AI systems are scheduled for **2 December 2027**;
 - rules for high-risk AI embedded in regulated physical products are scheduled for **2 August 2028**.
 
-The regulatory landscape continues to evolve. Always verify the current European Commission guidance before using dates operationally.
+The regulatory landscape continues to evolve. The application must store the source and methodology date, route the question to a named specialist, and require a fresh review instead of hard-coding this timeline as legal logic.
 
 Primary sources:
 
 - https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act
-- https://digital-strategy.ec.europa.eu/en/policies/ai-act-governance-and-enforcement
+- https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai
+- https://digital-strategy.ec.europa.eu/en/policies/enforcement-ai-act
 - https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation
 
 ### Practical lesson
@@ -664,9 +736,7 @@ OSCAL can help create a standards-based representation that tools can exchange.
 
 ## Compliance Trestle
 
-The OSCAL Compass **compliance-trestle** project is an actively developed open-source compliance-as-code platform.
-
-Its current v4 line supports OSCAL 1.2.1 and Git/CI-oriented compliance artifact workflows.
+The OSCAL Compass **compliance-trestle** project is an actively developed open-source compliance-as-code platform. As of the course snapshot, its current release is **v5.1.0** and its documentation reports OSCAL 1.2.1 support; NIST's current OSCAL patch release is **v1.2.3**. Version-pin the selected toolchain, test compatibility, and review security advisories before resolving remote or untrusted OSCAL imports.
 
 Project:
 
@@ -675,7 +745,7 @@ https://github.com/oscal-compass/compliance-trestle
 Install:
 
 ```bash
-pip install compliance-trestle
+pip install "compliance-trestle>=5,<6"
 ```
 
 Trestle is useful for:
@@ -727,9 +797,22 @@ Useful operating-model metrics include:
 
 ## Recertification
 
-- overdue reviews,
-- systems changed without reassessment,
-- exception expirations.
+- overdue reviews / approved systems due for review,
+- systems changed without reassessment / materially changed systems,
+- expired exceptions / open exceptions.
+
+Every metric needs a named population, numerator, denominator, unit, time
+window, direction, owner, and decision it informs. For example:
+
+```text
+current evidence rate
+= current passing required evidence items
+  / all required evidence items for the selected cohort and profile version
+```
+
+Do not combine design documents, passing tests, runtime observations, and failed
+artifacts into an unexplained “evidence score.” Keep counts and failure reasons
+visible.
 
 Avoid optimizing only for:
 
@@ -758,34 +841,61 @@ The practical notebook implements these artifacts as structured data.
 
 ---
 
-# 17. Practical notebook specification
+# 17. Practical lab and notebook
 
 Notebook:
 
-`03_standards_regulation_governance_operating_model.ipynb`
+[`03_standards_regulation_and_governance_operating_model.ipynb`](03_standards_regulation_and_governance_operating_model.ipynb)
 
-Libraries/tools:
+Canonical tools:
 
-- **Pydantic** — typed inventory/control/evidence artifacts
-- **pandas** — crosswalks and governance dashboards
-- **NetworkX** — dependency / responsibility analysis
-- **jsonschema** — governance artifact validation
-- **Compliance Trestle / OSCAL** — optional compliance-as-code workflow
-- **Jinja2** — evidence/approval pack generation
-- **OpenAI SDK** — optional structured extraction from architecture descriptions
+- **Pydantic** — immutable, typed inventory, controls, reviews, evidence, RACI, gate, exception, change, and package contracts.
+- **jsonschema** — machine-readable governance-package validation.
+- **OSCAL 1.2.3 concepts** — a deliberately non-conformant teaching projection that learners can promote to an officially validated component definition.
+- **Compliance Trestle 5.x** — optional production extension for Git/CI-oriented OSCAL workflows.
 
-Lab outcomes:
+The course intentionally does not need an LLM SDK. Structured extraction may assist intake in production, but a human owner must verify every resulting governance field.
+
+The notebook imports [`lab.py`](lab.py) and demonstrates:
 
 - AI inventory,
-- applicability classifier,
+- specialist applicability-review router,
 - RACI,
 - control library,
 - standard/regulatory crosswalk,
 - stage-gate decision,
 - exception process,
 - material-change detector,
-- evidence completeness score,
-- machine-readable export.
+- exact evidence requirement populations rather than one completeness average,
+- machine-readable package validation and an honestly labelled OSCAL projection,
+- five labelled governance-gate cases with an explicit denominator.
+
+Run the focused course gate:
+
+```bash
+make course-03
+```
+
+Production upgrades include persistent identity and workflow state, signed evidence provenance, official OSCAL schema validation, GRC and ticket integrations, retention/access controls, notification and appeal workflows, and organization-specific legal and assurance review.
+
+## 17.1 Technology and method landscape
+
+| Need | Common method or tool | Strength | Limitation / selection criterion |
+|---|---|---|---|
+| Enterprise AI risk outcomes | NIST AI RMF 1.0 and Playbook | Flexible, rights-preserving, cross-sector lifecycle | AI RMF 1.0 is under revision; pin profiles, mappings, and methodology dates |
+| AI management system | ISO/IEC 42001:2023 | Organization-wide AIMS and continual improvement | Certification is scope-specific and does not establish product safety |
+| Risk and impact | ISO/IEC 23894:2023; ISO/IEC 42005:2025 | Integrates AI risk and lifecycle effects on people and society | Requires organization-specific context and stakeholder evidence |
+| Assurance | IIA Three Lines; RACI/RASCI; ISO/IEC 42006:2025 | Separates ownership, challenge, and independent assurance | A matrix cannot prove real authority, competence, or independence |
+| Agent security | OWASP Agentic Top 10 2026; MITRE ATLAS; NIST AI 100-2 | Current threat language and test ideas | A taxonomy mapping is not evidence that a control operates |
+| Structured contracts | Pydantic; JSON Schema | Typed, versioned, testable governance artifacts | Schema-valid content can still be false, stale, or unauthorized |
+| Control exchange | OSCAL 1.2.3; Compliance Trestle 5.x | Machine-readable catalog, profile, implementation, and assessment workflows | Model/tool versions differ; validate against the selected official schema |
+| Enterprise workflow | GRC/IRM and AI-governance platforms | Portfolio inventory, workflow, attestations, issues, dashboards | Prefer exportability, APIs, evidence provenance, identity integration, and version binding over lock-in |
+| Delivery integration | Git, CI/CD, artifact stores, ticketing, policy services | Generates evidence close to engineering work | CI success alone is neither production approval nor legal compliance |
+
+Use the smallest stack that preserves authority, provenance, and lifecycle
+state. A spreadsheet can support discovery workshops; a registry and workflow
+engine are usually necessary once multiple teams, versions, jurisdictions, and
+recertification events must be coordinated.
 
 ---
 
@@ -839,12 +949,52 @@ Regulatory dates, standards, and guidance evolve.
 
 ---
 
-# 20. Primary references
+# 20. State of the art — September 2026 snapshot
+
+## Established practice
+
+The durable foundation is not agent-specific: management systems, enterprise
+risk management, impact assessment, Three Lines accountability, separation of
+duties, internal controls, evidence retention, audit, change management, and
+incident response. NIST AI RMF 1.0 remains a widely used voluntary structure,
+while NIST states that it is being revised. ISO/IEC 42001:2023 supplies the AIMS
+requirements; ISO/IEC 23894:2023 and ISO/IEC 42005:2025 deepen risk and impact;
+ISO/IEC 42006:2025 addresses bodies auditing and certifying an AIMS.
+
+## Current implementation direction
+
+Organizations are moving from document-only assessments toward versioned system
+inventories, reusable control libraries, policy-linked delivery gates, evidence
+APIs, continuous control monitoring, and machine-readable exchange. NIST OSCAL
+1.2.3 is the current official release at this snapshot. Compliance Trestle's v5
+line is actively developed, while its documented OSCAL compatibility must be
+checked against the chosen NIST release rather than assumed.
+
+The EU AI Act is now in its staged application and enforcement period. The 2026
+AI Omnibus changed dates and some duties, illustrating why regulatory content
+needs source snapshots, effective dates, named owners, and recertification—not
+hard-coded notebook logic. OWASP's 2026 agentic work adds a practical security
+layer for systems that plan, call tools, use memory, and delegate.
+
+## Research frontier and open problems
+
+Open problems include interoperable AI inventory schemas, trustworthy exchange
+of control evidence across organizations, automated change-impact analysis,
+authorization of governance actions themselves, evidence freshness semantics,
+assurance of adaptive and multi-agent systems, mapping control effectiveness to
+real-world outcomes, and measuring governance latency without rewarding weak
+review. Automated regulatory reasoning remains especially sensitive: tools may
+retrieve and route sources, but accountable specialists must own interpretation.
+
+---
+
+# 21. Primary references
 
 ## NIST
 
 - AI RMF: https://www.nist.gov/itl/ai-risk-management-framework
 - AI Resource Center: https://airc.nist.gov/
+- AI RMF crosswalks: https://airc.nist.gov/airmf-resources/crosswalks/
 - GenAI Profile: https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence
 - OSCAL: https://pages.nist.gov/OSCAL/
 
@@ -852,26 +1002,37 @@ Regulatory dates, standards, and guidance evolve.
 
 - ISO/IEC 42001:2023: https://www.iso.org/standard/42001
 - ISO/IEC 42005:2025: https://www.iso.org/standard/42005
+- ISO/IEC 42006:2025: https://www.iso.org/standard/42006
 - ISO/IEC 23894:2023: https://www.iso.org/standard/77304.html
 
 ## EU
 
 - AI Act navigation FAQ: https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act
-- Governance/enforcement: https://digital-strategy.ec.europa.eu/en/policies/ai-act-governance-and-enforcement
+- AI Act overview/timeline: https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai
+- Enforcement: https://digital-strategy.ec.europa.eu/en/policies/enforcement-ai-act
 - Standardisation: https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation
 
 ## Agent security
 
 - OWASP Agentic Security Initiative: https://genai.owasp.org/initiatives/agentic-security-initiative/
+- OWASP Top 10 for Agentic Applications 2026: https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/
+- NIST AI 100-2e2025 adversarial ML taxonomy: https://csrc.nist.gov/pubs/ai/100/2/e2025/final
+- MITRE ATLAS: https://atlas.mitre.org/
 
 ## Compliance-as-code
 
 - OSCAL: https://pages.nist.gov/OSCAL/
+- OSCAL v1.2.3 release note: https://pages.nist.gov/OSCAL/about/blog/
 - Compliance Trestle: https://github.com/oscal-compass/compliance-trestle
+- Compliance Trestle releases: https://github.com/oscal-compass/compliance-trestle/releases
+
+## Accountability
+
+- IIA Statements of Position / Three Lines: https://www.theiia.org/en/resources/statements-of-position
 
 ---
 
-# 21. Next module
+# 22. Next module
 
 ## Module 4 — Agent Identity & Delegated Authority
 
