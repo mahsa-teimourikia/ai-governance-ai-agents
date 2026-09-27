@@ -42,7 +42,7 @@ Each course pass will:
 | 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Merged in PR #13; evidence follow-up in PR #14 |
 | 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Merged in PR #16; release-evidence follow-up in PR #17 |
 | 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Merged in PR #19 |
-| 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Planned |
+| 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Implemented; pending PR |
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Planned |
 | 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Planned |
 | 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Planned |
@@ -52,6 +52,39 @@ Each course pass will:
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Planned |
 | 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Planned |
 | 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Planned |
+
+## Course 8 claim-to-proof map
+
+### Course 8 audit decisions
+
+- **Retain:** the autonomy ladder, risk-based routing, exact-action approval,
+  separation of duties, pause/redirect/terminate concepts, reviewer-fatigue
+  discussion, framework comparison, EU AI Act and ISO context, and accessible
+  diagrams.
+- **Deepen:** hard-denial precedence, authoritative reviewer context, distinct
+  people and roles, typed durable state, optimistic concurrency, fact and policy
+  versioning, atomic task budgets, ambiguous-effect reconciliation, outcome
+  verification, metric populations, and the limitations of HITL primitives.
+- **Consolidate:** replace duplicated mutable notebook logic with one tested
+  `lab.py` imported by a guided, credential-free notebook.
+- **Repair:** remove runtime package installs, random identifiers, wall-clock
+  dependence, caller-owned reviewer dictionaries, raw approval booleans,
+  mutable post-approval actions, non-atomic budgets, fabricated result checks,
+  and outdated OpenAI documentation links.
+- **Add:** real OpenAI and Microsoft approval descriptors, restart-safe
+  checkpoints, pause/resume revalidation, concurrency and failure injection,
+  a universal-HITL baseline, ten labelled routing cases, 42 focused invariant
+  tests, Hub lab navigation, judgment checkpoints, and a production extension.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Human attention is routed without making denials approvable | Thesis and five-route policy | `route_action` evaluates trusted context, facts and envelope | Ten labelled cases; baseline overrides all four denials, candidate overrides none |
+| Approval binds the exact consequence | Exact-action approval and pre-effect revalidation | Immutable action digest, approval request, policy/fact versions | Mutation, changed route, stale facts, expiry, and policy-change tests |
+| Review authority is independent and atomic | Reviewer identity, quorum and durable-state sections | Authenticated reviewer context, distinct role slots, version transitions | Self-review, wrong tenant/role, duplicate role, rejection, and concurrent response tests |
+| Operators can intervene before effects | Pause, redirect, terminate and revoke section | Versioned pause/resume/redirect/terminate methods | Stale resume, unauthorized operator, and terminal-state tests |
+| External uncertainty is reconciled and verified | Execution and outcome sections | Idempotent adapter, reconciliation, exact effect comparison | Before/after commit and mismatched-effect injection tests |
+| Framework examples use current common SDKs | Framework boundary and references | Real `needs_approval` and `approval_mode` descriptors | Tests inspect installed OpenAI and Microsoft tool objects |
+| Oversight metrics have honest scope | Reviewer-quality section | Typed event population and exact counts | Deterministic latency, approval, disagreement and concentration assertions |
 
 ## Course 1 claim-to-proof map
 

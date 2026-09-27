@@ -538,42 +538,56 @@ export const lessons = [
     "level": "Intermediate",
     "step": 8,
     "title": "Human Oversight and Bounded Autonomy",
-    "summary": "HITL vs HOTL.",
-    "outcome": "Meaningful human control.",
+    "summary": "Design meaningful oversight with exact-action approval, durable state, hard limits, quorum, operational intervention, and verified effects.",
+    "outcome": "Build and evaluate a bounded-autonomy control plane that routes human attention without making prohibited effects approvable.",
     "material": "curriculum/intermediate/08-human-oversight-and-bounded-autonomy/README.md",
     "notebook": "curriculum/intermediate/08-human-oversight-and-bounded-autonomy/08_human_oversight_and_bounded_autonomy.ipynb",
+    "lab": "curriculum/intermediate/08-human-oversight-and-bounded-autonomy/lab.py",
+    "run": "make course-08",
     "refs": [
       {
-        "title": "https://openai.github.io/openai-agents-python/human_in_the_loop/",
-        "path": "https://openai.github.io/openai-agents-python/human_in_the_loop/"
+        "title": "OpenAI: Guardrails and human review",
+        "path": "https://developers.openai.com/api/docs/guides/agents/guardrails-approvals"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/running_agents/",
-        "path": "https://openai.github.io/openai-agents-python/running_agents/"
+        "title": "OpenAI: Results and resumable state",
+        "path": "https://developers.openai.com/api/docs/guides/agents/results"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/agent-framework/workflows/human-in-the-loop",
+        "title": "Microsoft Agent Framework: Human-in-the-loop workflows",
         "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/human-in-the-loop"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/agent-framework/integrations/ag-ui/human-in-the-loop",
-        "path": "https://learn.microsoft.com/en-us/agent-framework/integrations/ag-ui/human-in-the-loop"
+        "title": "Microsoft Agent Framework: Tool approval",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/agents/tools/tool-approval"
       },
       {
-        "title": "https://www.iso.org/standard/42001",
+        "title": "Microsoft Agent Framework: Checkpoints",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/checkpoints"
+      },
+      {
+        "title": "ISO/IEC 42001:2023 AI management systems",
         "path": "https://www.iso.org/standard/42001"
       },
       {
-        "title": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
-        "path": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+        "title": "ISO/IEC DIS 42105: Human oversight of AI systems (draft)",
+        "path": "https://www.iso.org/obp/ui/#iso:std:iso-iec:42105:dis:ed-1:v1:en"
       },
       {
-        "title": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/",
-        "path": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/"
+        "title": "EU AI Act: Article 14 human oversight",
+        "path": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng"
       },
       {
-        "title": "https://owasp.org/APTS/standard/3_Human_Oversight/",
-        "path": "https://owasp.org/APTS/standard/3_Human_Oversight/"
+        "title": "NIST AI RMF Core: Govern",
+        "path": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+      },
+      {
+        "title": "Camunda 8: User tasks",
+        "path": "https://docs.camunda.io/docs/components/modeler/bpmn/user-tasks/"
+      },
+      {
+        "title": "LangGraph: Interrupts and persistent resume",
+        "path": "https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph"
       }
     ]
   },
@@ -1206,37 +1220,37 @@ export const checks = {
   ],
   "i3": [
     {
-      "question": "What is the main drawback of 'Human-in-the-loop' for every single agent action?",
+      "question": "A manager approved a CAD 6,000 order, but the agent changes the vendor before execution. What should happen?",
       "choices": [
-        "It is too secure",
-        "Approval fatigue, where humans blindly approve actions without scrutiny",
-        "It uses too much memory",
-        "The agent gets confused"
+        "Execute because the amount is unchanged",
+        "Invalidate the decision and route the new action through current policy",
+        "Ask the model whether the new vendor is safe",
+        "Reuse the approval until its time-to-live ends"
       ],
       "answer": 1,
-      "explanation": "If humans are bombarded with approvals, they stop verifying, rendering the control ineffective."
+      "explanation": "Approval binds the exact normalized action and context. A vendor change creates a new digest and requires fresh routing and, where applicable, review."
     },
     {
-      "question": "What defines 'Meaningful human control'?",
+      "question": "A vendor becomes sanctioned after approval but before the purchase-order effect. Which rule wins?",
       "choices": [
-        "Clicking 'OK' as fast as possible",
-        "The human has the context, time, and capability to override or alter the agent's proposed action",
-        "The human writes the code",
-        "The human trains the model"
+        "The earlier approval",
+        "The agent's confidence score",
+        "The current hard prohibition, so execution fails closed",
+        "Whichever decision has the newest timestamp"
       ],
-      "answer": 1,
-      "explanation": "Meaningful control requires the human to actually understand the consequence of the action they are approving."
+      "answer": 2,
+      "explanation": "Approval is not a permanent exception. The enforcement point rechecks current policy and trusted facts immediately before the effect, and a hard denial is not human-overridable."
     },
     {
-      "question": "What is a 'Risk-based approval engine'?",
+      "question": "Two reviewers submit responses for the same workflow version at the same time. What property prevents lost updates or double transition?",
       "choices": [
-        "An engine that randomly approves tasks",
-        "A system that dynamically determines if human approval is required based on the sensitivity or blast radius of the proposed action",
-        "A fast LLM",
-        "A firewall configuration"
+        "A longer model prompt",
+        "Optimistic concurrency with an atomic expected-version transition",
+        "Sorting responses alphabetically",
+        "A higher approval threshold score"
       ],
       "answer": 1,
-      "explanation": "Instead of hardcoding HITL, a risk-based engine allows low-risk tasks to be HOTL, reserving HITL only for high-risk operations."
+      "explanation": "Only one compare-and-set from version n to n+1 succeeds. The stale response must reload current state rather than overwriting a decision."
     }
   ],
   "i4": [

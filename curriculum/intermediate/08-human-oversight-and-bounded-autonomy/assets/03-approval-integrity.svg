@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
-<title>Approval Integrity</title>
+<title>Approval Integrity</title><desc>An approval binds the exact action digest, reviewer authority, policy version, facts version, and expiry.</desc>
 <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#B9571D"/></marker></defs>
 <rect width="1600" height="900" fill="#F7F9FC"/><g font-family="Arial,Helvetica,sans-serif">
 <text x="65" y="80" font-size="30" font-weight="800" fill="#082542">one<tspan fill="#B9571D">+</tspan>i</text>
