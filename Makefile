@@ -1,4 +1,4 @@
-.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 clean
+.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 course-10 clean
 
 setup:
 	uv venv
@@ -46,6 +46,10 @@ course-08:
 course-09:
 	uv run python scripts/execute-notebooks.py curriculum/intermediate/09-data-rag-and-memory-governance/09_data_rag_and_memory_governance.ipynb
 	uv run pytest -q tests/test_module09_data_rag_memory.py tests/test_notebooks.py::test_course_09_notebook_executes_top_to_bottom
+
+course-10:
+	uv run python scripts/execute-notebooks.py curriculum/intermediate/10-multi-agent-governance-and-delegation/10_multi_agent_governance_and_delegation.ipynb
+	uv run pytest -q tests/test_module10_multi_agent_governance.py tests/test_notebooks.py::test_course_10_notebook_executes_top_to_bottom
 
 clean:
 	rm -rf .venv

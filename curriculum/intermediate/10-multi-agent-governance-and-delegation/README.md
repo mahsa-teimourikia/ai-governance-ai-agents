@@ -1,1058 +1,533 @@
 # Module 10 — Multi-Agent Governance & Delegation
 
-> **Course:** Enterprise AI Agent Governance: From Principles to Runtime Control  
-> **Audience:** Agent architects, AI engineers, platform engineers, security/IAM teams, governance and risk teams, enterprise architects  
-> **Recommended duration:** 8 hours theory + 6 hours practical lab  
-> **Scenario:** Enterprise Procurement Agent Team: Manager → Research → Procurement → Payment/Verifier
+> **Course:** Enterprise AI Agent Governance: From Principles to Runtime Control
+> **Audience:** Agent architects, AI engineers, platform and IAM engineers, security teams, and governance leaders
+> **Duration:** 7 hours of guided study plus a 5-hour practical lab
+> **Scenario:** A procurement manager delegates vendor research and purchase-order work to specialist agents
 
----
+## Course thesis
+
+Multi-agent coordination is safe only when conversational control and application authority remain separate. A manager or specialist may propose a handoff, but trusted application code must authenticate every actor, issue an attenuated grant, validate the exact recipient and task, enforce shared budgets and lifecycle state, and independently authorize every consequential tool call.
+
+![A delegation chain that narrows authority at every hop](assets/01-delegation-authority-chain.svg)
+
+## Prerequisites
+
+You should be comfortable with Python data models and tests, agent tool calling, and the identity and authorization boundaries from:
+
+- [Course 4 — Agent Identity & Delegated Authority](../../beginner/04-agent-identity-and-delegated-authority/README.md);
+- [Course 5 — Fine-Grained Authorization](../../beginner/05-fine-grained-authorization-for-agents/README.md);
+- [Course 7 — Tool & MCP Governance](../07-tool-and-mcp-governance/README.md); and
+- [Course 8 — Human Oversight & Bounded Autonomy](../08-human-oversight-and-bounded-autonomy/README.md).
+
+The lab runs locally without credentials. It uses Pydantic, the OpenAI Agents SDK, Microsoft Agent Framework metadata, locks, and deterministic fixtures. No model or external service is called.
 
 ## Learning objectives
 
-By the end of this module, you should be able to:
+By the end of the course, you can:
 
-1. Distinguish manager, handoff, sequential, concurrent, group-chat, and dynamic-manager orchestration patterns.
-2. Treat orchestration design as a **governance and authority design decision**.
-3. Model an explicit **authority chain** across humans, agents, subagents, and tools.
-4. Implement delegation as a bounded, attributable, expiring grant.
-5. Prevent privilege amplification and confused-deputy behavior.
-6. Enforce delegation depth, task scope, purpose, tool, resource, and budget constraints.
-7. Propagate identity and provenance without blindly forwarding credentials.
-8. Design context minimization at agent handoffs.
-9. Govern shared budgets and aggregate risk across parallel workers.
-10. Propagate pause/revoke/kill across a multi-agent execution graph.
-11. Reconstruct multi-agent trajectories and delegation chains for audit.
-12. Handle disagreement, duplicate execution, stale shared state, and rogue agents.
-13. Apply human approval at the correct point in a delegation chain.
-14. Use current OpenAI Agents SDK and Microsoft Agent Framework multi-agent patterns.
-15. Test multi-agent systems adversarially.
+1. decide whether one agent, a manager, a handoff, a pipeline, or parallel workers best fits a task;
+2. separate task ownership, context transfer, and conversational routing from authority transfer;
+3. represent root and child authority as application-issued, task-bound, expiring grants;
+4. prove that child tools, resources, amount, budgets, depth, purpose, tenant, task, and lifetime never exceed the parent;
+5. prevent confused-deputy and privilege-amplification attacks at the tool boundary;
+6. preserve `actor`, `on_behalf_of`, issuer, audience, lineage, and policy version;
+7. minimize and integrity-protect handoff context;
+8. enforce global spend, call, pause, kill, replay, and revocation controls across workers;
+9. compare OpenAI Agents SDK and Agents API, Microsoft Agent Framework, LangGraph, AutoGen, Google ADK, CrewAI, A2A, and MCP by control surface;
+10. evaluate a baseline and governed architecture against one labelled population.
 
-> **Core principle:** Delegation may distribute work. It must not make authority ambiguous.
+## Success criteria
 
----
+You have completed the course when you can demonstrate that:
 
-# 1. Why multi-agent governance is different
+- all seven forbidden cases in the lab are blocked while the legitimate case succeeds;
+- changing tenant, task, purpose, recipient, tool, resource, amount, expiry, budget, or depth fails closed;
+- the same operation replays safely but changed arguments under the same operation ID are rejected;
+- six concurrent CAD 4,000 attempts cannot exceed the CAD 20,000 task budget;
+- pausing, terminating, expiring, or revoking a lineage prevents the next consequence;
+- a handoff to research releases only the allowlisted vendor fields, while poisoned or excessive context fails closed;
+- real OpenAI Agents SDK manager/handoff objects and a Microsoft Agent Framework handoff workflow can be constructed without turning their configuration into authorization.
 
-A single agent has one primary decision stream.
+## Non-goals
 
-A multi-agent system introduces:
+This course does not claim that:
 
-```text
-multiple identities
-multiple contexts
-multiple model decisions
-multiple tool surfaces
-delegated authority
-parallel execution
-shared state
-agent-to-agent trust
-distributed failure
-```
+- multiple agents are inherently better than one well-scoped agent;
+- a role name, system prompt, schema-valid message, Agent Card, or framework route grants authority;
+- an immutable Pydantic model or in-memory registry is a production token issuer or authorization service;
+- a process-local lock or ledger replaces a transactional database across replicas;
+- tracing proves that an action was authorized or that its external outcome occurred;
+- consensus among agents establishes truth;
+- A2A or MCP supplies business authorization merely because transport authentication succeeds.
 
-The enterprise question changes from:
+## Claim-to-proof map
 
-> What can this agent do?
-
-to:
-
-> **Who authorized this chain of agents to produce this consequence?**
-
----
-
-# 2. The authority chain
-
-![Delegation authority chain](assets/01-delegation-authority-chain.svg)
-
-Consider:
-
-```text
-Human
- ↓
-Manager Agent
- ↓
-Research Agent
- ↓
-Procurement Agent
- ↓
-Payment API
-```
-
-At the final API call, we should still be able to reconstruct:
-
-```text
-original principal
-manager agent
-delegating agent(s)
-current agent
-task
-purpose
-scope
-permissions
-budget
-policy
-approval
-trace
-```
-
-Authority should normally become **narrower**, not broader, downstream.
+| Claim | Executable proof |
+|---|---|
+| Child authority cannot exceed parent or role policy | tool, resource, amount, budget, depth, purpose, tenant, task, lifetime tests |
+| A delegation is attributable and cannot mutate on retry | application registry, lineage, stable operation digest, and mutation tests |
+| Handoff is not authority | recipient/boundary/context-digest tests plus independent action authorization |
+| Context is minimized | positive allowlist and sensitive-key exclusion tests |
+| A privileged specialist is not a confused deputy | actor, audience, tool, resource, tool-resource pair, and amount tests |
+| Parallel workers share aggregate limits | concurrent spend and call-budget tests |
+| Lifecycle controls reach descendants | expiry, pause, termination, and revocation-cascade tests |
+| Retries do not duplicate consequences | stable operation ID, same receipt, mutation rejection |
+| Framework objects are composition artifacts | credential-free OpenAI `Agent`, `as_tool`, and `handoff` construction |
+| Governance changes measured outcomes | eight-case baseline-versus-governed evaluation |
 
 ---
 
-# 3. Delegation is not impersonation
+## 1. Why multi-agent governance is different
 
-Bad pattern:
+A second agent is not merely another prompt. It creates another identity, context, state machine, credential path, failure domain, and source of potentially untrusted messages. Parallel and recursive work also creates aggregate risk that no local agent can see.
 
-```text
-Manager gives worker its full credential.
-```
+The central question is not “which agent said this?” It is:
 
-Better:
+> Which authenticated principal authorized this exact chain to cause this exact consequence, under which policy and remaining budget?
 
-```text
-Manager requests a scoped downstream grant:
-- task = T-123
-- purpose = vendor research
-- resources = vendor catalog
-- tools = search/read
-- amount = 0
-- TTL = 15 minutes
-- delegation depth = 0
-```
-
-The subagent receives the minimum authority required.
-
----
-
-# 4. Effective authority
-
-A useful model is:
+Use the same boundary throughout the course:
 
 ```text
-Effective Authority(child)
- =
-Parent Authority
- ∩ Delegation Grant
- ∩ Child Role Policy
- ∩ Task Policy
- ∩ Runtime Policy
+model or agent      → proposes route, delegation, arguments, result
+trusted application → authenticates, attenuates, validates, authorizes,
+                      reserves budget, executes, verifies, records
 ```
 
-A child cannot gain a capability absent from the parent grant.
+An agent message is data. It can request authority; it cannot manufacture it.
 
-This prevents **privilege amplification**.
+## 2. Start with one agent
 
----
+The OpenAI orchestration guide recommends adding specialists only when the contract changes—for example, different tools, policy, instructions, or ownership. Handoffs transfer conversational ownership; “agents as tools” lets the manager keep ownership of the final response. This distinction is useful, but neither pattern defines business authority by itself ([OpenAI, Orchestration and handoffs](https://developers.openai.com/api/docs/guides/agents/orchestration)).
 
-# 5. Delegation contract
+Choose the simplest architecture that satisfies the task:
 
-![Delegation contract](assets/03-delegation-contract.svg)
+| Pattern | Best fit | Authority/control benefit | Typical failure |
+|---|---|---|---|
+| One agent | one policy and tool surface | fewest boundaries | overloaded prompt or excessive tools |
+| Manager / agents as tools | bounded specialists, central synthesis | central final owner and budget view | powerful confused deputy; bottleneck |
+| Handoff | specialist should own the next interaction | explicit ownership change | context/authority accidentally move together |
+| Sequential workflow | ordered, reviewable stages | deterministic control points | stale or poisoned intermediate state |
+| Concurrent workers | independent evidence gathering | lower wall time | duplicated work, shared-budget race |
+| Group/dynamic manager | open-ended collaboration | flexible decomposition | loops, unclear ownership, high coordination tax |
 
-Every delegation should carry a structured contract:
+![Orchestration patterns create different governance surfaces](assets/02-orchestration-patterns-and-governance.svg)
+
+Record why the extra agent is needed. Evaluate the coordination tax: more model calls, context copies, traces, handoffs, failure paths, and privileged capability exposure.
+
+## 3. Four transfers that must not be conflated
+
+A handoff may change any of these independently:
+
+1. **Conversational control** — which agent produces the next reply.
+2. **Task ownership** — which component is responsible for completion.
+3. **Context** — which facts or history the recipient receives.
+4. **Authority** — which application actions the recipient may perform.
+
+Example: the procurement specialist may take ownership of drafting a purchase order and receive vendor facts, while payment authority stays in a separate trusted service and human accountability stays with the procurement lead.
+
+Microsoft Agent Framework documents the same ownership distinction: a handoff transfers control and task ownership, while an agent-as-tool returns control to the primary agent. Its handoff runtime can synchronize conversation context and filter tool-control contents, but application designers still own data minimization and authorization ([Microsoft, Handoff orchestration](https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff/)).
+
+## 4. Authority attenuation
+
+Let a grant be a set of permitted consequences and limits. A child grant must satisfy:
+
+```text
+ChildAuthority ⊆ ParentAuthority ∩ ChildRolePolicy ∩ TaskPolicy ∩ RuntimePolicy
+```
+
+Check every dimension, not only a list of tools:
+
+```text
+tenant        child == parent
+task          child == parent
+purpose       child == parent
+tools         child ⊆ parent and child role
+resources     child ⊆ parent and child role
+tool/resource pair must be permitted by application policy
+max amount    child ≤ parent
+spend/calls   child ≤ parent; actual consumption shared at root
+depth         child depth ≤ parent maximum
+expiry        child expiry ≤ parent expiry
+```
+
+Independent set checks are insufficient. A grant containing both `po.create` and `vendor-catalog` must not imply that `po.create(vendor-catalog)` is valid. The lab therefore checks the tool-resource pair at execution.
+
+## 5. Delegation contract
+
+![Fields in an explicit delegation contract](assets/03-delegation-contract.svg)
+
+The lab’s immutable `DelegationGrant` includes:
 
 ```yaml
-delegation_id: del-123
-parent_delegation_id: del-100
-issuer: agent:manager
-subject: agent:research
-on_behalf_of: user:mahsa
-task_id: task-42
-purpose: vendor-research
-allowed_tools:
-  - vendor.search
-  - vendor.read
-allowed_resources:
-  - vendor-catalog
-max_spend: 0
-max_calls: 20
-max_delegation_depth: 0
-issued_at: ...
-expires_at: ...
-policy_version: v12
-trace_id: trace-88
+grant_id: GRANT-...
+parent_grant_id: GRANT-root
+issuer_id: agent:manager
+subject_agent_id: agent:procurement
+on_behalf_of: user:procurement-lead
+tenant_id: tenant-acme
+task_id: task:buy-laptops
+purpose: approved_procurement
+allowed_tools: [vendor.read, po.create]
+allowed_resources: [vendor-catalog, procurement]
+allowed_tool_resource_pairs: [[vendor.read, vendor-catalog], [po.create, procurement]]
+allowed_vendors: [V-42]
+maximum_action_spend_cad: 10000
+maximum_calls: 10
+remaining_delegation_depth: 1
+issued_at: 2026-09-27T12:00:00Z
+expires_at: 2026-09-27T12:20:00Z
+policy_version: policy-10.1
+trace_id: trace-procurement-0042
+version: 1
 ```
 
----
+The application registry accepts only grants it issued and rejects a repeated operation whose canonical request digest changed. In production, use workload identity plus a durable authorization service and managed token or reference-grant issuer; a frozen local object is only a teaching mechanism.
 
-# 6. Orchestration pattern is a governance choice
+### Capability versus bearer token
 
-![Orchestration patterns](assets/02-orchestration-patterns-and-governance.svg)
+A short-lived capability can encode or reference authority, but possession alone should not erase actor identity. Bind it to subject/audience, tenant, task, purpose, and policy. OAuth 2.0 Token Exchange standardizes one way to exchange a subject token and optional actor token for a downstream token; it is a protocol building block, not a substitute for the business policy in this course ([RFC 8693](https://www.rfc-editor.org/rfc/rfc8693)).
 
-Current enterprise frameworks expose multiple coordination patterns. They do not have identical governance characteristics.
+## 6. Issuance and idempotency
 
-## Manager / agents-as-tools
+Only trusted application code issues grants. The control plane derives the root grant from an authenticated context, then checks each child request against the recorded parent and role policy.
+
+Issuance has two IDs:
+
+- `operation_id` is stable across retries;
+- `grant_id` is derived from the canonical request.
+
+Repeating the same operation returns the same grant. Reusing the operation ID with different scope fails with `DELEGATION_OPERATION_MUTATION` (or the corresponding task, handoff, approval, action, or lease mutation code). This prevents a timed-out retry from minting a second authority object or silently changing the original.
+
+## 7. Identity and provenance
+
+Keep these identities distinct:
 
 ```text
-Manager
- ├─ Research Agent
- ├─ Finance Agent
- └─ Writer Agent
+principal       authenticated human or service
+issuer          agent/service delegating authority
+subject         exact agent workload receiving the grant
+on_behalf_of     original represented principal
+executor        workload calling the tool
+approver         trusted actor approving a final proposal, when required
 ```
 
-The manager retains task ownership.
+Do not infer identity from an agent name, prompt, message body, or tool argument. Bind workload identity through the runtime and verify that the tool caller equals the grant subject.
 
-Advantages:
+The delegation graph is operational state, not merely a trace. It answers who has authority now, where it came from, and which descendants revocation must reach.
 
-- centralized policy point,
-- centralized final response,
-- easier budget aggregation,
-- narrower subagent context.
+## 8. Handoff envelope and context minimization
 
-Risks:
+The lab handoff carries parties, grant reference, tenant, task, purpose, requested output, intentionally selected context, and a context digest. Validation checks the envelope against the issued grant and fails the whole handoff if a field or classification exceeds the recipient policy.
 
-- manager becomes a powerful confused deputy,
-- broad manager credentials,
-- hidden subagent behavior.
-
-## Handoff
+Use a positive allowlist:
 
 ```text
-Triage → Specialist
+full upstream context
+  → role/task allowlist
+  → remove secrets and unrelated sensitive data
+  → digest exact minimized payload
+  → recipient
 ```
 
-Control transfers to another agent.
+Do not broadcast a complete transcript merely because a framework can. Conversation history may contain credentials, unrelated customer data, instructions from a compromised agent, or authority claims. Tool-control messages are especially dangerous when forwarded as normal content.
 
-Governance questions:
+## 9. Confused deputy defense
 
-- what authority transfers?
-- what context transfers?
-- who owns the task afterward?
-- can the specialist delegate again?
-
-## Sequential
+A confused deputy has legitimate power but uses it for a caller that lacks authority:
 
 ```text
-Planner → Reviewer → Executor
+Research agent: “Pay vendor V-42.”
+Procurement agent: has a privileged tool.
 ```
 
-Useful when stages and control points are explicit.
+The procurement agent’s role and the natural-language request are not enough. Immediately before execution, the trusted adapter checks:
 
-## Concurrent
+- caller workload equals grant subject;
+- grant is recorded, current, unexpired, and not revoked;
+- all ancestors remain valid;
+- tenant, task, and purpose match;
+- tool, resource, and the tool-resource pair are allowed;
+- amount is within the grant;
+- global run state and root budgets permit the action;
+- operation ID is new or an exact replay.
+
+The check occurs again at the consequence boundary even if the orchestrator already routed or validated the message.
+
+### Proposal-bound human approval
+
+The lab requires approval above CAD 5,000. `ApprovalReceipt` binds the exact proposal digest, grant, lineage-version digest, tenant, task, approver group, policy version, issue time, and expiry. It is consumed atomically with the simulated action. Changing the amount or lineage invalidates it; an exact operation replay returns the existing receipt rather than consuming approval twice.
+
+The returned `ActionReceipt` is deliberately marked `status="simulated"` with a `SIM-PO-...` identifier. It proves the local authorization and idempotency path only. A production adapter must call the external system, capture its authoritative outcome identifier, and reconcile unknown outcomes before retrying.
+
+## 10. Aggregate budgets and concurrency
+
+![Shared controls for shared multi-agent risks](assets/04-shared-multi-agent-controls.svg)
+
+Local limits do not bound aggregate risk:
 
 ```text
-Manager
- ├─ Worker A
- ├─ Worker B
- └─ Worker C
+Workers A–F each request CAD 4,000
+Task budget is CAD 20,000
 ```
 
-Creates aggregate budgets, duplicate-action, race, and halt-propagation risks.
+All six workers can be locally compliant. The lab uses one lock-protected task ledger, so exactly five simulations can be recorded. Production systems should reserve and consume budgets with transactional rows, compare-and-swap, serializable transactions, or another linearizable service. A cache or eventually consistent counter is not adequate for hard financial limits.
 
-## Group / dynamic manager
+Track budgets for spend, tool calls, tokens, runtime, records changed, messages, handoffs, depth, and parallelism as the domain requires. Report both wall-clock latency and total work: parallelism may reduce one while increasing the other.
 
-Agents collaborate or a manager dynamically constructs/coordinates work.
+The lab also issues expiring `WorkerLease` records under one task-wide parallelism cap. Four concurrent lease attempts against a limit of three produce three leases and one denial. Production leases need durable fencing so a delayed worker cannot act after its slot was reassigned.
 
-Highest flexibility, but typically the hardest to audit and constrain.
+## 11. Pause, termination, expiry, and revocation
 
----
+Every consequential adapter reads the authoritative run state before acting:
 
-# 7. Prefer the simplest architecture
+```text
+RUNNING → PAUSED → RUNNING
+RUNNING or PAUSED → TERMINATING → TERMINATED
+```
 
-Do not use five agents because "multi-agent" sounds sophisticated.
+`TERMINATED` cannot transition back. Revoking a parent marks all current descendants revoked. A queued worker still needs to recheck immediately before execution; cancellation only stops the next work, not an external effect already committed.
 
-Current Microsoft Agent Framework documentation explicitly offers sequential, concurrent, handoff, group chat, and Magentic orchestration patterns. Its broader guidance recommends using the simplest pattern that meets the requirement.
+Real distributed systems also need:
 
-Governance complexity should be treated as architecture cost.
+- token/session revocation or very short TTLs;
+- queue cancellation and stale-message rejection;
+- fencing tokens for workers that may resume late;
+- reconciliation for unknown external outcomes;
+- evidence preservation for incident response.
 
----
+## 12. Shared state and result contracts
 
-# 8. OpenAI Agents SDK patterns
+Keep critical truth in authoritative application state:
 
-Current OpenAI Agents SDK centers on two multi-agent composition patterns.
+```text
+task lifecycle, current owner, grant lineage, budget, policy version,
+approval state, run state, operation receipts, external outcome
+```
 
-## Agents as tools
+Agent scratchpads and chat history are not authoritative stores. Use optimistic version checks or transactions for concurrent state transitions. A specialist result should be typed and attributable, but still treated as untrusted evidence until schema, provenance, and domain checks pass.
 
-A manager retains control:
+When specialists disagree, deterministic policy decides the disposition. The lab escalates conflicting low/high vendor-risk findings and preserves their evidence IDs; it does not let a majority vote or the most persuasive response authorize work.
+
+Avoid text-based terminal conditions such as “DONE” or “RESOLVED.” Completion is an application-owned state reached only after required results and external outcomes are verified.
+
+## 13. Orchestration and protocol landscape
+
+| Technology | Useful primitives | Strengths | Governance caveat | Best fit |
+|---|---|---|---|---|
+| OpenAI Agents SDK | `Agent`, `as_tool`, `handoff`, sessions, tracing | compact manager/handoff composition | route and trace do not grant business authority | in-process agent applications |
+| OpenAI Agents API | independently addressable agents, subagent tasks, shared environments, concurrency limits | hosted delegation and parallel specialist execution | task dispatch and shared state do not replace business authorization | hosted asynchronous agent workloads |
+| Microsoft Agent Framework | sequential, concurrent, handoff, group, Magentic, checkpoints | explicit/durable workflow options and approvals | synchronized context can exceed least data | enterprise .NET/Python workflows |
+| LangGraph | state graph, checkpoints, interrupts | explicit state transitions and recovery | graph state still needs IAM and tenant isolation | durable custom workflows |
+| AutoGen | conversational teams and group coordination | flexible experimentation | dynamic conversations enlarge audit/control surface | research and bounded collaboration |
+| Google ADK | LLM, sequential, parallel, and loop agents; subagents; A2A | multi-language workflow and remote-agent options | parent/child routing and session state are not delegated business authority | Google-oriented and A2A applications |
+| CrewAI | Crews, Flows, agents, tasks, tools | combines autonomous teams with structured event-driven flows | role goals and task delegation still need external identity and consequence controls | hybrid flow-and-team automation |
+| A2A | Agent Card, messages, tasks, artifacts, streaming | cross-language/runtime interoperability | discovery metadata and transport auth are not delegated authority | remote agent-to-agent tasks |
+| MCP | tools, resources, prompts | common agent-to-tool/context interface | tool description is untrusted metadata; server scope needs policy | tool and data integration |
+
+The table is a selection aid, not a maturity ranking. Current official material describes independent subagents and shared environments in the OpenAI Agents API, subagents and workflow agents in Google ADK, structured Flows plus autonomous Crews in CrewAI, and subagent/handoff/router/custom-workflow patterns in LangChain. The governance questions stay the same: who owns state, which context crosses the boundary, how authority narrows, and where the final effect is checked.
+
+The A2A 1.0 specification defines discovery, messages, tasks, artifacts, operations, and multiple protocol bindings for opaque remote agents. It aims to avoid exposing internal memory or tools, but its Agent Card describes capability and security requirements rather than proving authorization for a particular business consequence ([A2A specification](https://a2a-protocol.org/v1.0.0/specification)).
+
+MCP and A2A solve different edges: MCP commonly connects an AI application to tools and context; A2A coordinates independent agent systems. Either can carry untrusted content. Apply the same identity, scope, provenance, budget, and execution-boundary checks.
+
+## 14. OpenAI manager and handoff artifacts
+
+The lab constructs real SDK objects without a model call:
 
 ```python
-research_agent.as_tool(...)
+research = Agent(name="Vendor research specialist", instructions="...")
+
+manager = Agent(
+    name="Procurement manager",
+    tools=[research.as_tool(tool_name="research_vendor", tool_description="...")],
+)
+
+procurement_handoff = handoff(procurement)
 ```
 
-Best when:
+The manager pattern keeps reply ownership central. A handoff transfers the next interaction to the specialist. In both cases, the SDK artifact is composition metadata; `MultiAgentControlPlane` still issues the grant, and the application adapter still authorizes the tool.
 
-- one agent should own the final answer,
-- specialists perform bounded subtasks,
-- common controls should remain centralized.
+## 15. Microsoft handoff and durable workflow mapping
 
-## Handoffs
+Microsoft Agent Framework’s `HandoffBuilder` expresses routing among participants and can integrate checkpoints and approval-required tools. Use stable agent IDs when rehydrating checkpointed workflows, bind resumed state to the original principal/task, and revalidate policy, grant freshness, approvals, and budgets before the next effect. A checkpoint restores workflow state; it does not freeze authorization forever.
 
-The active agent transfers the conversation/task to a specialist.
+For deterministic business processes, a custom or sequential workflow may be easier to review than open-ended group chat. For cross-boundary remote agents, A2A may be appropriate, but isolate remote results from privileged adapters.
 
-Best when:
+## 16. Evaluation design
 
-- specialist should take over,
-- prompts/models differ by specialty,
-- routing itself is part of the workflow.
+The lab evaluates the same eight labelled cases against two architectures:
 
-Handoffs are represented as tools and can be customized with input types and input filters.
+- **baseline:** the selected role profile is trusted without a task grant or lineage check;
+- **governed:** issued grant plus tool-boundary checks.
 
-Primary references:
+Population:
 
-- https://openai.github.io/openai-agents-python/multi_agent/
-- https://openai.github.io/openai-agents-python/handoffs/
-- https://openai.github.io/openai-agents-python/tools/
+| Slice | Count | Cases |
+|---|---:|---|
+| Legitimate | 1 | bounded purchase order |
+| Forbidden | 7 | cross-tenant actor; wrong actor; unavailable executor tool; excessive amount; paused task; revoked lineage; confused-deputy requester |
 
----
-
-# 9. Manager governance
-
-A manager should not automatically inherit unrestricted access merely because it coordinates workers.
-
-Define:
+Metrics:
 
 ```text
-manager planning authority
-manager delegation authority
-manager execution authority
+forbidden outcome rate = forbidden actions executed / 7
+legitimate block rate  = legitimate actions denied / 1
 ```
 
-separately.
+Expected deterministic result:
 
-Example:
+| Architecture | Forbidden outcomes | Legitimate blocks |
+|---|---:|---:|
+| Role-profile baseline | 5/7 | 0/1 |
+| Governed control plane | 0/7 | 0/1 |
 
-```text
-Manager may:
-✓ plan
-✓ delegate research
-✓ request procurement action
+This proves only the listed invariants for the local fixture. It is not a claim about model quality, production attack coverage, latency, or cryptographic deployment strength.
 
-Manager may not:
-✗ directly issue payment
-✗ expand budget
-✗ grant a worker more authority than it has
+## 17. Failure injection and anti-patterns
+
+| Failure | Why it fails | Lab control |
+|---|---|---|
+| Forward the manager credential | worker inherits excessive authority | subject-bound child grant |
+| Trust “I am admin” in a message | content impersonates identity | authenticated workload/context |
+| Check tool but not resource pair | capabilities recombine incorrectly | tool-resource policy |
+| Give every child the full parent budget | sibling work amplifies aggregate authority | root ledger |
+| Retry with a new operation ID | duplicate external consequences | stable idempotency key and receipt |
+| Reuse an ID with changed arguments | ambiguous/mutated request | request digest mismatch |
+| Broadcast full conversation | sensitive and poisoned context propagates | positive context allowlist |
+| Revoke only the manager | descendants continue | lineage cascade plus boundary recheck |
+| Restore a checkpoint and continue | stale authority/policy survives restart | reauthorization on resume |
+| Let agents vote on authorization | correlated agents can agree on a bad action | deterministic application policy |
+
+Also test unknown external outcome, queue redelivery, lost budget reservation, stale Agent Card, compromised remote agent, partial revocation, and an unavailable policy service in production exercises.
+
+## 18. Production upgrade path
+
+| Lab mechanism | Production upgrade |
+|---|---|
+| in-memory identity registry | workload identity (SPIFFE/cloud IAM), authenticated principal, service registry |
+| immutable local grants | managed signed/reference tokens, rotation, audience validation, durable registry |
+| process-local grant registry | transactional authority service with durable lineage and revocation |
+| process lock | serializable ledger or conditional transaction with fencing |
+| deterministic adapter | typed connector with timeouts, bounded retry, outcome lookup, reconciliation |
+| local run state | durable state machine and cancellation fan-out |
+| context allowlist | classification-aware data policy and DLP at every boundary |
+| local events | OpenTelemetry spans plus immutable audit records and retention controls |
+| static policy version | versioned policy deployment, rollback, stale-version rejection |
+| eight-case evaluation | representative datasets, attack suites, concurrency/load tests, incident regressions |
+
+Audit observable facts: request, run, task, agent, grant and parent IDs; policy version; validated argument digest; allow/deny reason; budget before/after; attempt and operation IDs; latency; external outcome ID; and terminal state. Do not log secrets or hidden reasoning.
+
+## 19. State of the art: established, emerging, frontier
+
+### Established practice
+
+- central orchestration or explicit workflow state for consequential processes;
+- short-lived workload credentials, least privilege, tool-boundary authorization, idempotency, and human approval for high-impact actions;
+- OpenTelemetry-compatible tracing and durable checkpoints;
+- deterministic budgets, stop conditions, and revocation outside model control.
+
+### Emerging practice
+
+- standardized agent discovery and task exchange through A2A;
+- interoperable tool/context access through MCP;
+- framework-native handoffs, agent-as-tool composition, approvals, and durable multi-agent workflows;
+- agent identity and authorization profiles that preserve human, workload, and delegation chains.
+
+NIST launched its AI Agent Standards Initiative in February 2026 with pillars covering standards, open-source protocols, and research into agent security and identity. Its announcement describes these as an emerging program with future deliverables, so treat it as direction—not a finished conformance standard ([NIST announcement](https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure)).
+
+### Research frontier and open problems
+
+- portable delegation semantics across frameworks and organizations;
+- revocation and policy freshness in long-running asynchronous tasks;
+- capability discovery without capability laundering;
+- privacy-preserving context exchange and verifiable provenance;
+- evaluation that separates coordination benefit from added work and risk;
+- containment of correlated failures across many agents;
+- formal verification of authority attenuation and temporal policies.
+
+Framework interoperability is improving faster than interoperable authorization. Do not confuse an emerging communication protocol with a complete trust fabric.
+
+## 20. Practical lab
+
+Files:
+
+- [`lab.py`](lab.py) — reusable control plane and evaluation;
+- [`10_multi_agent_governance_and_delegation.ipynb`](10_multi_agent_governance_and_delegation.ipynb) — guided lab;
+- [`tests/test_module10_multi_agent_governance.py`](../../../tests/test_module10_multi_agent_governance.py) — focused invariant suite.
+
+Run from the repository root:
+
+```bash
+make course-10
 ```
 
----
-
-# 10. Handoff governance
-
-A handoff should explicitly decide:
-
-```text
-control transfer
-context transfer
-authority transfer
-accountability transfer
-```
-
-These are not necessarily the same.
-
-For example:
-
-```text
-conversation control → specialist
-payment authority → stays with manager/control plane
-human accountability → unchanged
-```
-
----
-
-# 11. Context minimization
-
-Do not automatically send the complete upstream transcript to every agent.
-
-At each boundary:
-
-```text
-full context
- ↓
-purpose filter
- ↓
-data authorization
- ↓
-sensitivity filter
- ↓
-minimum task context
- ↓
-child agent
-```
-
-A research agent does not need payment credentials because the manager discussed payment earlier.
-
----
-
-# 12. Identity propagation
-
-Preserve both:
-
-```text
-who is acting
-```
-
-and:
-
-```text
-on whose behalf
-```
-
-Example:
-
-```json
-{
-  "actor": "agent:procurement",
-  "on_behalf_of": "user:123",
-  "delegated_by": "agent:manager",
-  "task": "task:42"
-}
-```
-
-Do not collapse the whole chain into:
-
-```text
-user:123
-```
-
-or you lose attribution.
-
----
-
-# 13. Delegation depth
-
-Unbounded recursive delegation creates:
-
-- authority ambiguity,
-- cost explosion,
-- context propagation,
-- audit complexity,
-- attack surface.
-
-Set:
-
-```text
-max_delegation_depth
-```
-
-and decrement remaining delegation capacity at every hop.
-
----
-
-# 14. Purpose binding
-
-A capability may be allowed for one purpose and forbidden for another.
-
-Example:
-
-```text
-vendor.read
-```
-
-allowed for:
-
-```text
-purpose = procurement_due_diligence
-```
-
-not automatically for:
-
-```text
-purpose = employee_background_check
-```
-
-Carry purpose through the delegation chain.
-
----
-
-# 15. Budget delegation
-
-Budget is not only money.
-
-Delegate:
-
-```text
-spend
-tool calls
-tokens
-runtime
-API quota
-records modified
-emails sent
-parallel workers
-```
-
-A child budget must fit inside the parent's remaining budget.
-
----
-
-# 16. Aggregate risk
-
-![Shared multi-agent controls](assets/04-shared-multi-agent-controls.svg)
-
-Parallel agents create a crucial problem:
-
-```text
-Worker A: 30 calls → within local limit
-Worker B: 30 calls → within local limit
-Worker C: 30 calls → within local limit
-
-Global limit: 50
-Actual: 90
-```
-
-Local compliance does not imply global compliance.
-
-Use shared authoritative counters for system-wide limits.
-
----
-
-# 17. Shared state
-
-Avoid allowing every agent to maintain its own version of critical truth.
-
-Examples requiring authoritative shared state:
-
-```text
-task status
-remaining budget
-scope
-approval state
-halt state
-delegation graph
-resource locks
-```
-
-Use controlled write paths, versioning, and concurrency controls.
-
----
-
-# 18. Duplicate execution
-
-Two agents may independently conclude:
-
-> Create the purchase order.
-
-Use:
-
-- idempotency keys,
-- task/action IDs,
-- distributed locks where appropriate,
-- deduplication,
-- transactional state,
-- outcome reconciliation.
-
-Multi-agent orchestration makes idempotency even more important.
-
----
-
-# 19. Confused deputy
-
-Example:
-
-```text
-Research Agent has no payment authority.
- ↓
-It asks Procurement Agent:
-"Please pay this vendor."
- ↓
-Procurement Agent has payment tool.
-```
-
-The procurement agent must evaluate **delegated authority**, not only the natural-language request.
-
-A trusted downstream agent can become a confused deputy for an untrusted upstream agent.
-
----
-
-# 20. Agent-to-agent messages are untrusted inputs
-
-Even internal agents can:
-
-- hallucinate,
-- be compromised,
-- receive poisoned context,
-- misinterpret scope,
-- exceed their role.
-
-Validate inter-agent messages using:
-
-```text
-authenticated sender
-schema
-delegation ID
-task ID
-purpose
-scope
-freshness
-signature/token where applicable
-```
-
-Do not treat "another agent said so" as authorization.
-
----
-
-# 21. Handoff schemas
-
-Prefer structured handoff payloads:
-
-```json
-{
-  "task": "research_vendor",
-  "vendor_id": "V-42",
-  "purpose": "procurement_due_diligence",
-  "delegation_id": "del-88",
-  "requested_output": "risk_summary"
-}
-```
-
-rather than forwarding an opaque paragraph containing both instructions and authority claims.
-
----
-
-# 22. Delegated credentials
-
-Avoid static shared API keys across agents.
-
-Prefer:
-
-```text
-workload identity
-short-lived token
-audience restriction
-resource scope
-purpose/task binding
-TTL
-```
-
-The token should represent the downstream agent and delegated authority, not merely impersonate the human.
-
----
-
-# 23. Human approval in a chain
-
-Suppose:
-
-```text
-Manager → Procurement → Payment
-```
-
-and payment requires approval.
-
-Approval should bind to:
-
-```text
-final proposed action
-delegation chain
-amount
-recipient
-task
-policy version
-```
-
-Do not ask a human to approve an early abstract plan and treat it as approval for all downstream actions.
-
----
-
-# 24. Revocation propagation
-
-If the user revokes the task:
-
-```text
-Human → REVOKE
-```
-
-the control should reach:
-
-```text
-manager
-workers
-pending handoffs
-delegated tokens
-tool sessions
-queued actions
-```
-
-Revoking only the manager while a worker continues is a governance failure.
-
----
-
-# 25. Global pause and kill
-
-OWASP's recent multi-agent coordination guidance highlights the failure mode where one worker halts while others continue.
-
-Maintain a shared halt state:
-
-```text
-RUNNING
-PAUSED
-TERMINATING
-TERMINATED
-```
-
-Every consequential action checks the authoritative state before execution.
-
----
-
-# 26. Rogue-agent containment
-
-If one worker behaves anomalously:
-
-```text
-isolate worker
-revoke its grants
-cancel pending actions
-preserve evidence
-verify other workers did not inherit bad state
-```
-
-Do not necessarily kill the entire workflow if isolation is safe—but have the capability to do so.
-
----
-
-# 27. Disagreement
-
-Multi-agent systems may disagree.
-
-Examples:
-
-```text
-Planner: vendor is safe.
-Risk Agent: vendor is high risk.
-```
-
-Define deterministic policy:
-
-```text
-high-impact disagreement
-→ pause / escalate
-```
-
-Do not let the most persuasive model win.
-
----
-
-# 28. Consensus is not truth
-
-Three agents agreeing does not make an action safe.
-
-They may:
-
-- share the same model,
-- share poisoned context,
-- inherit the same faulty premise.
-
-Use independent evidence and external policy, not agent vote count alone.
-
----
-
-# 29. Accountability
-
-For every consequence, identify:
-
-```text
-business owner
-system owner
-original principal
-delegating agent(s)
-executing agent
-approver
-policy decision
-tool
-outcome
-```
-
-Multi-agent architecture should not create an accountability vacuum.
-
----
-
-# 30. Audit reconstruction
-
-A useful trace:
-
-```text
-trace_id
- task_id
-  human request
-   delegation del-1
-    manager decision
-     delegation del-2
-      research result
-     delegation del-3
-      procurement proposal
-       human approval
-        payment tool call
-         external result
-```
-
-OpenAI Agents SDK includes built-in tracing of generations, tool calls, handoffs, guardrails, and custom events. Enterprise governance should add authority/delegation metadata to the evidence model.
-
----
-
-# 31. Delegation graph
-
-Store delegation as a graph, not only logs.
-
-Each edge:
-
-```text
-issuer
-subject
-parent grant
-scope
-purpose
-limits
-issued_at
-expires_at
-status
-```
-
-Then answer:
-
-```text
-Who currently has authority?
-Where did it come from?
-What descendants must be revoked?
-```
-
----
-
-# 32. NIST direction
-
-NIST's 2026 AI Agent Standards Initiative explicitly includes research into agent authentication and identity infrastructure for secure **human-agent and multi-agent interactions**, alongside interoperable agent protocols and security evaluation.
-
-This makes identity, delegated authorization, and interoperable trust a core emerging standards area—not merely a framework implementation detail.
-
----
-
-# 33. OWASP direction
-
-OWASP's recent autonomous-system materials include:
-
-- authority delegation matrices,
-- delegation chain-of-custody,
-- role-based approval authority,
-- safe-default timeouts,
-- pause/redirect/kill controls,
-- multi-agent coordination,
-- shared halt state,
-- aggregate budgets,
-- authenticated messaging,
-- shared-state integrity,
-- per-agent provenance.
-
-The APTS material is scoped to autonomous penetration testing, so treat it as a valuable control-pattern source rather than a universal enterprise standard.
-
----
-
-# 34. Microsoft Agent Framework
-
-Current Agent Framework supports:
-
-```text
-Sequential
-Concurrent
-Handoff
-Group Chat
-Magentic
-```
-
-orchestration.
-
-Its handoff model explicitly distinguishes handoff from agents-as-tools:
-
-- **handoff** transfers task ownership/control,
-- **agent-as-tool** leaves the primary agent responsible.
-
-Current handoff workflows also support tool approval, checkpointing, and an autonomous mode with per-agent turn limits.
-
-Primary references:
-
-- https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/
-- https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff
-
----
-
-# 35. Governance metrics
-
-Monitor:
-
-## Delegation depth
-Average/max chain depth.
-
-## Privilege amplification
-Child grants broader than parent.
-
-## Orphaned grants
-Active grants whose parent/task is no longer valid.
-
-## Unauthorized delegation attempts
-Denied child grants.
-
-## Context exposure
-Sensitive fields passed unnecessarily.
-
-## Aggregate budget violations
-System total exceeding shared limits.
-
-## Duplicate action rate
-Same consequence proposed/executed multiple times.
-
-## Halt propagation latency
-Time until all agents stop consequential work.
-
-## Delegation trace completeness
-Percentage of actions reconstructable to original authority.
-
-## Agent disagreement rate
-High-risk decisions with conflicting specialist outputs.
-
-## Rogue-agent isolation time
-Time from anomaly to effective containment.
-
----
-
-# 36. Threat scenarios
-
-Test:
-
-### Privilege amplification
-Low-privilege parent creates high-privilege child.
-
-### Delegation laundering
-Agent repeatedly delegates to obscure original authority.
-
-### Depth exhaustion
-Recursive agents create runaway chains.
-
-### Context leakage
-Finance context reaches research worker.
-
-### Confused deputy
-Unauthorized agent asks authorized agent to act.
-
-### Budget fragmentation
-Parallel workers evade global limit.
-
-### Duplicate action
-Two workers execute same payment.
-
-### Stale grant
-Expired delegation used after long pause.
-
-### Revocation race
-Worker acts after parent is revoked.
-
-### Halt failure
-One worker continues after kill.
-
-### Poisoned handoff
-Compromised agent sends malicious instructions.
-
-### State conflict
-Two agents update task state concurrently.
-
-### Approval laundering
-Upstream generic approval reused for downstream high-risk action.
-
----
-
-# 37. Practical notebook
-
-`10_multi_agent_governance_and_delegation.ipynb`
-
-The lab implements:
-
-- agent/workload identities,
-- parent/child authority grants,
-- delegation contracts,
-- authority intersection,
-- privilege-amplification prevention,
-- delegation depth,
-- purpose binding,
-- scoped tool/resource access,
-- expiring grants,
-- shared budget accounting,
-- context minimization,
-- structured handoff envelopes,
-- confused-deputy prevention,
-- delegation graph,
-- descendant revocation,
-- global halt propagation,
-- idempotent execution,
-- multi-agent audit trails,
-- governance metrics,
-- adversarial tests,
-- OpenAI Agents SDK manager/handoff examples,
-- Microsoft Agent Framework orchestration mapping.
-
----
-
-# 38. Best practices
-
-- Give every agent a distinct workload identity.
-- Preserve `actor` and `on_behalf_of`.
-- Make delegation explicit and structured.
-- Intersect child authority with parent authority.
-- Never allow downstream privilege amplification.
-- Bind grants to task and purpose.
-- Use short-lived delegation.
-- Limit delegation depth.
-- Minimize handoff context.
-- Validate agent-to-agent messages.
-- Keep global budgets global.
-- Use authoritative shared state.
-- Make consequential operations idempotent.
-- Bind approvals to final actions and delegation lineage.
-- Propagate revocation and halt globally.
-- Preserve a delegation graph.
-- Record per-agent provenance.
-- Treat disagreement as a policy event.
-- Prefer the simplest orchestration pattern that works.
-
----
-
-# 39. Primary references
-
-1. NIST — AI Agent Standards Initiative  
-   https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative
-
-2. NIST — Announcement of AI Agent Standards Initiative  
-   https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure
-
-3. OpenAI Agents SDK — Agent Orchestration  
-   https://openai.github.io/openai-agents-python/multi_agent/
-
-4. OpenAI Agents SDK — Handoffs  
-   https://openai.github.io/openai-agents-python/handoffs/
-
-5. OpenAI Agents SDK — Tools / Agents as Tools  
-   https://openai.github.io/openai-agents-python/tools/
-
-6. OpenAI Agents SDK — Tracing  
-   https://openai.github.io/openai-agents-python/tracing/
-
-7. Microsoft Agent Framework — Orchestrations  
-   https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/
-
-8. Microsoft Agent Framework — Handoff Orchestration  
-   https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff
-
-9. OWASP APTS — Multi-Agent Coordination Appendix  
-   https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html
-
-10. OWASP APTS — Authority Delegation Matrix Template  
-    https://owasp.org/APTS/standard/appendix/Authority_Delegation_Matrix_Template.html
-
----
-
-# 40. Next module
-
-## Module 11 — Agent Security, Threat Modeling & Red Teaming
-
-The next module can combine the complete control architecture:
-
-```text
-identity
-+ delegated authority
-+ authorization
-+ policy-as-code
-+ tool/MCP governance
-+ human oversight
-+ RAG/memory governance
-+ multi-agent coordination
-↓
-adversarial threat model
-↓
-security evaluation
-↓
-red teaming
-↓
-detection + containment + incident response
-```
+The notebook follows this sequence:
+
+1. inspect authenticated root and child authority;
+2. inject a privilege-amplification request;
+3. build a minimal, provenance-bearing handoff;
+4. quarantine poisoned or excessive context;
+5. authorize a simulated consequence and prove exact replay;
+6. bind human approval to a high-value proposal;
+7. race six workers against one aggregate spend limit;
+8. race four workers against three task-wide leases;
+9. pause the task and cascade revocation to descendants;
+10. escalate conflicting, evidence-bearing specialist findings;
+11. evaluate the exact eight-case baseline and governed population;
+12. construct real OpenAI and Microsoft framework artifacts without model calls;
+13. map the local controls to durable production services; and
+14. extend the scenario through implementation and architecture exercises.
+
+## 21. Exercises
+
+### Implementation
+
+1. Add a payment agent under a distinct `approved_payment` root task. Prove that procurement cannot change its purpose to issue that grant.
+2. Replace the root ledger with SQLite transactions and rerun the concurrent budget test in separate processes.
+3. Move approval consumption to a durable store and prove that two processes cannot consume one proposal-bound receipt twice.
+
+### Diagnosis
+
+4. Inject a delayed worker after parent revocation. Add a fencing version that rejects its action.
+5. Simulate an external timeout after a purchase order may have committed. Reconcile by operation ID before retrying.
+6. Add a stale-policy checkpoint and prove that resume fails until reauthorized.
+
+### Architecture judgment
+
+7. Compare one-agent, manager, and handoff versions of the scenario. Measure calls, privileged surface, context bytes, and failure paths.
+8. Design an A2A boundary for an external vendor-risk agent. State what belongs in the Agent Card, transport credential, delegation token, task message, and local policy.
+9. Decide whether a parallel three-agent evidence search justifies its coordination tax. Define a release threshold using cost per successful compliant task.
+
+## 22. Review questions
+
+1. Why is a schema-valid handoff not an authorization decision?
+2. What must be equal, what may narrow, and what must never expand in a child grant?
+3. Why can independent tool and resource allowlists still produce an unsafe combination?
+4. How does a root ledger prevent budget fragmentation across siblings?
+5. Which state must be revalidated after checkpoint recovery?
+6. When should a specialist be a tool rather than receive a handoff?
+7. What does A2A standardize, and which business controls remain local?
+8. Why is agent consensus neither truth nor permission?
+
+## 23. Primary references
+
+1. OpenAI — [Orchestration and handoffs](https://developers.openai.com/api/docs/guides/agents/orchestration)
+2. OpenAI — [Agents API multi-agent systems](https://developers.openai.com/api/docs/guides/agents-api/multi-agent)
+3. OpenAI — [Agent results, state, and interruptions](https://developers.openai.com/api/docs/guides/agents/results)
+4. Microsoft — [Agent Framework orchestration patterns](https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/)
+5. Microsoft — [Agent Framework handoff orchestration](https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff/)
+6. LangChain — [Multi-agent patterns](https://docs.langchain.com/oss/python/langchain/multi-agent)
+7. Microsoft AutoGen — [AgentChat teams](https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/tutorial/teams.html)
+8. Google — [ADK multi-agent systems](https://adk.dev/agents/multi-agents/)
+9. CrewAI — [Crews and Flows architecture](https://docs.crewai.com/en/introduction)
+10. A2A Project — [Agent2Agent protocol specification 1.0](https://a2a-protocol.org/v1.0.0/specification)
+11. NIST — [AI Agent Standards Initiative](https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative)
+12. NIST — [Software and AI Agent Identity and Authorization concept paper](https://www.nccoe.nist.gov/sites/default/files/2026-02/accelerating-the-adoption-of-software-and-ai-agent-identity-and-authorization-concept-paper.pdf)
+13. IETF — [RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693)
+14. OWASP APTS — [Multi-Agent Coordination](https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html)
+15. OpenTelemetry — [Trace specification](https://opentelemetry.io/docs/specs/otel/trace/)
+
+## 24. Next module
+
+[Module 11 — Guardrails & Agent Security](../11-guardrails-and-agent-security/README.md) treats the agent-to-agent messages, retrieved context, tool outputs, and remote integrations introduced here as explicit attack surfaces. Course 10 establishes who may delegate and act; Course 11 adds defense-in-depth detection, containment, information-flow controls, and security testing.

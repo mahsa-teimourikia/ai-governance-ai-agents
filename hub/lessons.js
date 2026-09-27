@@ -658,50 +658,72 @@ export const lessons = [
     "level": "Intermediate",
     "step": 10,
     "title": "Multi Agent Governance and Delegation",
-    "summary": "Recursive delegation.",
-    "outcome": "Agent-to-agent boundaries.",
+    "summary": "Govern manager, handoff, and parallel-agent workflows with attenuated grants, minimized context, proposal-bound approvals, shared budgets, revocation, and independently authorized consequences.",
+    "outcome": "Build and evaluate a procurement delegation control plane that blocks privilege amplification, confused-deputy requests, context poisoning, budget races, stale authority, and lifecycle bypass.",
     "material": "curriculum/intermediate/10-multi-agent-governance-and-delegation/README.md",
     "notebook": "curriculum/intermediate/10-multi-agent-governance-and-delegation/10_multi_agent_governance_and_delegation.ipynb",
+    "lab": "curriculum/intermediate/10-multi-agent-governance-and-delegation/lab.py",
+    "run": "make course-10",
     "refs": [
       {
-        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "title": "NIST: AI Agent Standards Initiative",
         "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
       },
       {
-        "title": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure",
-        "path": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure"
+        "title": "NIST: Software and AI Agent Identity and Authorization concept paper",
+        "path": "https://www.nccoe.nist.gov/sites/default/files/2026-02/accelerating-the-adoption-of-software-and-ai-agent-identity-and-authorization-concept-paper.pdf"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/multi_agent/",
-        "path": "https://openai.github.io/openai-agents-python/multi_agent/"
+        "title": "OpenAI: Orchestration and handoffs",
+        "path": "https://developers.openai.com/api/docs/guides/agents/orchestration"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/handoffs/",
-        "path": "https://openai.github.io/openai-agents-python/handoffs/"
+        "title": "OpenAI: Agent definitions",
+        "path": "https://developers.openai.com/api/docs/guides/agents/define-agents"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/tools/",
-        "path": "https://openai.github.io/openai-agents-python/tools/"
+        "title": "OpenAI: Agents API multi-agent systems",
+        "path": "https://developers.openai.com/api/docs/guides/agents-api/multi-agent"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/tracing/",
-        "path": "https://openai.github.io/openai-agents-python/tracing/"
+        "title": "Microsoft Agent Framework: Handoff orchestration",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff/"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/",
+        "title": "Microsoft Agent Framework: Orchestration patterns",
         "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff",
-        "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/handoff"
+        "title": "LangChain: Multi-agent patterns",
+        "path": "https://docs.langchain.com/oss/python/langchain/multi-agent"
       },
       {
-        "title": "https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html",
+        "title": "AutoGen: AgentChat teams",
+        "path": "https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/tutorial/teams.html"
+      },
+      {
+        "title": "Google ADK: Multi-agent systems",
+        "path": "https://adk.dev/agents/multi-agents/"
+      },
+      {
+        "title": "CrewAI: Crews and Flows architecture",
+        "path": "https://docs.crewai.com/en/introduction"
+      },
+      {
+        "title": "A2A: Agent2Agent protocol specification 1.0",
+        "path": "https://a2a-protocol.org/v1.0.0/specification"
+      },
+      {
+        "title": "IETF: OAuth 2.0 Token Exchange (RFC 8693)",
+        "path": "https://www.rfc-editor.org/rfc/rfc8693"
+      },
+      {
+        "title": "OWASP APTS: Multi-Agent Coordination",
         "path": "https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html"
       },
       {
-        "title": "https://owasp.org/APTS/standard/appendix/Authority_Delegation_Matrix_Template.html",
-        "path": "https://owasp.org/APTS/standard/appendix/Authority_Delegation_Matrix_Template.html"
+        "title": "OpenTelemetry: Trace specification",
+        "path": "https://opentelemetry.io/docs/specs/otel/trace/"
       }
     ]
   },
@@ -1308,37 +1330,37 @@ export const checks = {
   ],
   "i5": [
     {
-      "question": "What is the 'Confused Deputy' problem in multi-agent systems?",
+      "question": "A research agent cannot create purchase orders, but it asks the privileged procurement agent to create one. What must the procurement adapter verify?",
       "choices": [
-        "When an agent doesn't know its prompt",
-        "When a malicious user tricks a privileged agent into misusing its authority on their behalf",
-        "When two agents talk in a loop",
-        "When an agent fails to respond"
+        "Only that the procurement agent has the po.create tool",
+        "That the request is persuasive and schema-valid",
+        "That the requester is in the executing grant's lineage and holds authority for the same tool, then independently authorize the consequence",
+        "That two agents agree the purchase is useful"
       ],
-      "answer": 1,
-      "explanation": "A confused deputy has high privileges but is tricked by a lower-privilege entity into executing an unauthorized action."
+      "answer": 2,
+      "explanation": "The privileged agent must not become a confused deputy. The application checks requester lineage and authority as well as the executor's grant, tool-resource pair, vendor, amount, state, approval, and budgets."
     },
     {
-      "question": "How do delegation envelopes prevent privilege amplification?",
+      "question": "Six workers each request CAD 4,000 and each child grant allows CAD 10,000, but the root task budget is CAD 20,000. What enforces the actual limit?",
       "choices": [
-        "They stop agents from talking to each other",
-        "They cryptographically bound the permissions that can be passed from a parent agent to a sub-agent",
-        "They encrypt the prompt",
-        "They increase the context window"
+        "Each worker checks only its local grant",
+        "The manager asks the model to count previous purchases",
+        "A shared atomic task ledger reserves spend across all workers",
+        "The handoff description states the total budget"
       ],
-      "answer": 1,
-      "explanation": "Delegation envelopes ensure a sub-agent cannot gain more permissions than its parent intended to delegate."
+      "answer": 2,
+      "explanation": "Sibling-local compliance can still exceed the root budget. A shared transactional or otherwise linearizable ledger must authorize and reserve aggregate spend atomically."
     },
     {
-      "question": "What is a Capability Token in multi-agent orchestration?",
+      "question": "A Microsoft or OpenAI handoff routes the next turn to a procurement specialist. Which statement is correct?",
       "choices": [
-        "A cryptocurrency",
-        "An unforgeable token granting a specific sub-agent the right to execute a narrow task",
-        "The token limit of the LLM",
-        "A badge for humans"
+        "The specialist automatically inherits every manager credential",
+        "The handoff changes conversational or task ownership, while authority still requires a separate attenuated grant and tool-boundary check",
+        "A schema-valid handoff is equivalent to human approval",
+        "Tracing the handoff proves the external action succeeded"
       ],
       "answer": 1,
-      "explanation": "Capability tokens embody the principle of least privilege, issuing strict rights only when needed for multi-agent workflows."
+      "explanation": "Framework routing and business authority are different transfers. The application must still validate identity, lineage, scope, policy, approval, budgets, and the exact action before an effect."
     }
   ],
   "i6": [
