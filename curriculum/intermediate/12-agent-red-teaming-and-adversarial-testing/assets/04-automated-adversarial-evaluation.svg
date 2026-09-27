@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
   <title>Automated adversarial evaluation pipeline</title>
-  <desc>Authorized seed cases and mutations are sent to a version-bound target, evaluated with trajectory oracles, triaged as findings, converted into regressions, and enforced by release gates.</desc>
+  <desc>An attack library combining OWASP cases, scanners, mutations and expert attacks exercises an agent's prompt, retrieval, memory, tools, handoffs and controls; full trajectories feed detectors, impact analysis, regressions and a CI gate.</desc>
   <defs>
     <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path d="M0,0 L8,4 L0,8z" fill="#B9571D"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
   <title>Enterprise agent red-team attack surface</title>
-  <desc>An enterprise agent is surrounded by adversarial surfaces including user input, retrieval, memory, tool output, MCP, delegated agents, identity, network, code execution, approval, budgets, and outcomes.</desc>
+  <desc>A left-to-right attack path moves from a direct prompt through poisoned retrieval, persistent memory, tool misuse and agent delegation to real-world impact.</desc>
   <defs>
     <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path d="M0,0 L8,4 L0,8z" fill="#B9571D"/>
