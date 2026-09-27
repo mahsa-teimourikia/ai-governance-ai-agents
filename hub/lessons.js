@@ -460,45 +460,75 @@ export const lessons = [
     "level": "Intermediate",
     "step": 7,
     "title": "Tool and MCP Governance",
-    "summary": "Tools as capability boundaries.",
-    "outcome": "MCP trust boundaries.",
+    "summary": "Govern MCP discovery and tool effects as untrusted capability requests, not model-granted authority.",
+    "outcome": "Build and evaluate a procurement gateway that attests tool manifests, enforces trusted context and semantic policy, binds approval, protects budgets and retries, reconciles uncertain effects, and records evidence.",
     "material": "curriculum/intermediate/07-tool-and-mcp-governance/README.md",
     "notebook": "curriculum/intermediate/07-tool-and-mcp-governance/07_tool_and_mcp_governance.ipynb",
+    "lab": "curriculum/intermediate/07-tool-and-mcp-governance/lab.py",
+    "run": "make course-07",
     "refs": [
       {
-        "title": "https://blog.modelcontextprotocol.io/posts/2026-07-28/",
+        "title": "MCP 2026-07-28 release",
         "path": "https://blog.modelcontextprotocol.io/posts/2026-07-28/"
       },
       {
-        "title": "https://modelcontextprotocol.io/specification/2026-07-28",
+        "title": "MCP 2026-07-28 specification",
         "path": "https://modelcontextprotocol.io/specification/2026-07-28"
       },
       {
-        "title": "https://owasp.org/www-project-mcp-top-10/",
+        "title": "MCP authorization specification",
+        "path": "https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization"
+      },
+      {
+        "title": "MCP security best practices",
+        "path": "https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices"
+      },
+      {
+        "title": "MCP tools specification",
+        "path": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools"
+      },
+      {
+        "title": "Official MCP Python SDK",
+        "path": "https://github.com/modelcontextprotocol/python-sdk"
+      },
+      {
+        "title": "MCP specification support matrix",
+        "path": "https://plan.modelcontextprotocol.io/matrix"
+      },
+      {
+        "title": "MCP roadmap",
+        "path": "https://blog.modelcontextprotocol.io/posts/mcp-roadmap/"
+      },
+      {
+        "title": "Enterprise-Managed Authorization",
+        "path": "https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/"
+      },
+      {
+        "title": "OWASP MCP Top 10",
         "path": "https://owasp.org/www-project-mcp-top-10/"
       },
       {
-        "title": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure",
+        "title": "NIST AI Agent Standards Initiative",
         "path": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure"
       },
       {
-        "title": "https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai",
+        "title": "NIST AI Agent Security RFI analysis",
         "path": "https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html",
+        "title": "Amazon Bedrock AgentCore Policy",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html",
+        "title": "AgentCore Policy core concepts",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy-core-concepts.html"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html",
+        "title": "AgentCore runtime security best practices",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html"
       },
       {
-        "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-http-passthrough.html",
+        "title": "AgentCore Gateway HTTP passthrough targets",
         "path": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-http-passthrough.html"
       }
     ]
@@ -1141,37 +1171,37 @@ export const checks = {
   ],
   "i2": [
     {
-      "question": "How does the Model Context Protocol (MCP) aid in tool governance?",
+      "question": "A cached MCP tool description still looks safe, but the server now advertises a wider input schema and a different manifest digest. What should the gateway do at invocation time?",
       "choices": [
-        "It trains the LLM faster",
-        "It provides a standardized, secure boundary between the agent and external tools",
-        "It generates code automatically",
-        "It removes the need for authorization"
+        "Allow because the model already selected the tool",
+        "Allow because the tool name is unchanged",
+        "Deny until the changed manifest is reviewed and pinned in the approved registry",
+        "Ask the tool description whether it is backwards compatible"
       ],
-      "answer": 1,
-      "explanation": "MCP standardizes tool integration, making it easier to enforce authorization boundaries between the agent and the tools."
+      "answer": 2,
+      "explanation": "Discovery metadata is not authority. Call-time manifest attestation detects description, schema, version, and output-contract drift before a changed capability creates an effect."
     },
     {
-      "question": "Why is schema validation critical for tool governance?",
+      "question": "A purchase-order call passes JSON Schema, but its vendor is absent from the current approved-vendor master. What is the correct decision?",
       "choices": [
-        "To make the code look clean",
-        "To prevent the agent from passing malformed or malicious arguments to backend systems",
-        "To increase API latency",
-        "To translate languages"
+        "Allow because schema validity proves safety",
+        "Deny because schema checks shape while authoritative policy must validate business meaning",
+        "Allow if the model claims the vendor was approved",
+        "Execute first and reconcile the vendor later"
       ],
       "answer": 1,
-      "explanation": "Agents can hallucinate arguments; schema validation acts as a strict typing boundary before execution."
+      "explanation": "A well-formed argument can still be unauthorized. The gateway must combine closed schemas with fresh tenant-, task-, vendor-, and amount-specific facts."
     },
     {
-      "question": "What is a key benefit of using allowlists for agent tools?",
+      "question": "A backend times out after receiving a request, and the gateway cannot tell whether the purchase order committed. What is the safest next step?",
       "choices": [
-        "It restricts the agent strictly to a predefined set of safe actions, rejecting any hallucinated tool names",
-        "It guarantees 100% accuracy",
-        "It makes the model run faster",
-        "It replaces the need for an LLM"
+        "Generate a new operation ID and retry immediately",
+        "Assume failure and release the call budget",
+        "Record an unknown effect, preserve the same tenant-scoped operation ID, and reconcile with the backend before retrying",
+        "Ask the model whether the call probably succeeded"
       ],
-      "answer": 0,
-      "explanation": "Allowlists are a basic but powerful guardrail to prevent the agent from calling unauthorized or hallucinated tools."
+      "answer": 2,
+      "explanation": "A timeout is not proof of no effect. Durable idempotency plus source-of-truth reconciliation prevents a blind retry from creating a duplicate consequence."
     }
   ],
   "i3": [

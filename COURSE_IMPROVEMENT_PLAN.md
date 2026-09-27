@@ -41,7 +41,7 @@ Each course pass will:
 | 4 | Agent Identity & Delegated Authority | Authenticated workload identity, OAuth token exchange, attenuation, revocation, evidence limits | Merged in PR #12 |
 | 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Merged in PR #13; evidence follow-up in PR #14 |
 | 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Merged in PR #16; release-evidence follow-up in PR #17 |
-| 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Planned |
+| 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Implemented in this branch; Course 8 next |
 | 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Planned |
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Planned |
 | 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Planned |
@@ -251,3 +251,40 @@ Each course pass will:
 | Retries and tenants remain isolated | Runtime-evidence section | tenant/operation ledger and locked adapter | Eight concurrent retries create one effect; identical operation IDs across tenants remain distinct |
 | Evidence is observable but minimized | Runtime-policy-evidence section | `DecisionAuditEvent` stores digests, versions, outcomes, and reasons | Raw vendor and subject records are absent from decision evidence |
 | Metrics name their populations | Policy-testing section | ten-case `EvaluationSummary` and `ShadowMetrics` | Exact hard-deny, legitimate-allow, escalation, incorrect, and decision-flip denominators |
+
+## Course 7 claim-to-proof map
+
+### Course 7 audit decisions
+
+- **Retain:** the consequence-boundary thesis, MCP trust-chain model, risk
+  tiers, governance contract, schema-versus-semantics distinction, poisoning,
+  confused-deputy, credentials, SSRF, gateway, lifecycle, supply-chain, and
+  enterprise checklist coverage.
+- **Deepen:** the final 2026-07-28 protocol snapshot; OAuth issuer,
+  resource/audience, metadata, scope, and transport semantics; official SDK
+  selection; tool manifest attestation; output validation; atomic budgets;
+  unknown effects; and the distinction between final specifications, stable
+  extensions, roadmaps, and proposals.
+- **Consolidate:** move contracts, registry, approval, budgets, gateway,
+  effect adapter, network validation, fixtures, and evaluation into one
+  deterministic `lab.py` imported by the notebook and tests.
+- **Repair:** remove runtime installation, random and wall-clock values,
+  caller-supplied trusted context, description-driven authorization, fabricated
+  purchase success, mutable notebook-only limits, reusable approval flags, and
+  optional network paths from the canonical lab.
+- **Add:** official MCP SDK descriptors, manifest drift and revocation tests,
+  closed input and output schemas, exact single-use approval, concurrent budget
+  proof, tenant-safe idempotency, unknown-effect reconciliation, capability-
+  protected effects, resolved-address SSRF defenses, a nine-case labelled
+  comparison, judgment checkpoints, and a Course 7 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Discovery metadata is not authority | MCP trust-chain, description, and discovery sections | `ToolContract`, `ToolRegistry`, SDK `Tool`, manifest digest | Description drift, cached-manifest, revocation, and unregistered-tool tests |
+| Model claims are not trusted facts | Thesis and parameter-governance sections | `ToolProposal` is separate from authenticated context and `TrustedFacts` | Claimed role/approval cannot override vendor, workload, tenant, freshness, or hard limits |
+| Schema and semantics both constrain calls | Schema and parameter sections | Draft 2020-12 input/output validation plus vendor/task policy | Extra-field injection, bad currency, unapproved vendor, amount, and invalid-output tests |
+| Approval grants one exact action | Approval section | digest-, context-, manifest-, policy-, role-, and time-bound receipt store | Expired, wrong-role, cross-tenant, altered, and replayed receipts fail |
+| Retries and volume do not widen authority | Rate, idempotency, and failure sections | locked budget ledger and tenant/operation ledger | Twelve-worker race, mutated retry, and cross-tenant operation tests |
+| Effects are protected and observable | Gateway, credential, error, and evidence sections | gateway capability, brokered credential simulation, effect receipt | Direct bypass, unknown-before/after-commit, and malformed output tests |
+| URL tools enforce network intent | SSRF section | allowlist plus HTTPS/credential/port and resolved-address checks | Localhost, link-local, private, IPv6-local, mixed-answer, and redirect-hop exercises |
+| Evaluation names its populations | Testing and notebook sections | nine labelled cases and `EvaluationSummary` | Exact forbidden-allowed and missed-escalation counts expose the schema-only baseline |
