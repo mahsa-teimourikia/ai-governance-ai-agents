@@ -176,8 +176,8 @@ class ContentEnvelope(FrozenModel):
     content: str
     source_kind: SourceKind
     source_id: str
-    tenant_id: str = "tenant-acme"
-    task_id: str = "task:buy-laptops"
+    tenant_id: str
+    task_id: str
     integrity: Integrity
     classification: Classification
     observed_at: datetime
@@ -245,6 +245,7 @@ class ToolProposal(FrozenModel):
     actor_agent_id: str
     tenant_id: str
     task_id: str
+    purpose: str
     tool: str
     resource: str
     arguments: dict[str, Any]
@@ -375,6 +376,8 @@ class EgressPolicy:
     def __init__(self, allowed_domains: Iterable[str], resolver: Callable[[str], Iterable[str]]):
         self.allowed_domains = frozenset(domain.lower().rstrip(".") for domain in allowed_domains)
         self.resolver = resolver
+        self._issued_ticket_digests: set[str] = set()
+        self._lock = RLock()
 
     def authorize(self, url: str) -> EgressTicket:
         try:
@@ -396,32 +399,49 @@ class EgressPolicy:
             raise ControlError("EGRESS_HOST_INVALID") from exc
         if ascii_host not in self.allowed_domains:
             raise ControlError("EGRESS_DOMAIN_DENIED")
-        resolved = tuple(sorted(set(self.resolver(ascii_host))))
-        if not resolved:
+        resolved_values = tuple(self.resolver(ascii_host))
+        if not resolved_values:
             raise ControlError("EGRESS_DNS_UNRESOLVED")
         try:
-            addresses = tuple(ipaddress.ip_address(value) for value in resolved)
+            addresses = tuple(ipaddress.ip_address(value) for value in resolved_values)
         except ValueError as exc:
             raise ControlError("EGRESS_DNS_INVALID") from exc
         if any(not _is_public_ip(address) for address in addresses):
             raise ControlError("EGRESS_NON_PUBLIC_ADDRESS")
+        resolved = tuple(sorted({str(address) for address in addresses}))
         material = {"url": url, "host": ascii_host, "ips": resolved, "policy": POLICY_VERSION}
-        return EgressTicket(
+        ticket = EgressTicket(
             url=url,
             host=ascii_host,
             resolved_ips=resolved,
             policy_version=POLICY_VERSION,
             ticket_digest=stable_digest(material),
         )
+        with self._lock:
+            self._issued_ticket_digests.add(ticket.ticket_digest)
+        return ticket
 
     def verify_connection(self, ticket: EgressTicket, connected_ip: str) -> None:
         if ticket.policy_version != POLICY_VERSION:
             raise ControlError("EGRESS_TICKET_POLICY_STALE")
+        expected_digest = stable_digest(
+            {
+                "url": ticket.url,
+                "host": ticket.host,
+                "ips": ticket.resolved_ips,
+                "policy": ticket.policy_version,
+            }
+        )
+        if ticket.ticket_digest != expected_digest:
+            raise ControlError("EGRESS_TICKET_TAMPERED")
+        with self._lock:
+            if ticket.ticket_digest not in self._issued_ticket_digests:
+                raise ControlError("EGRESS_TICKET_UNKNOWN")
         try:
             address = ipaddress.ip_address(connected_ip)
         except ValueError as exc:
             raise ControlError("EGRESS_CONNECTED_IP_INVALID") from exc
-        if connected_ip not in ticket.resolved_ips or not _is_public_ip(address):
+        if str(address) not in ticket.resolved_ips or not _is_public_ip(address):
             raise ControlError("EGRESS_DNS_REBINDING_OR_REDIRECT")
 
 
@@ -461,6 +481,8 @@ class MemoryCandidate(FrozenModel):
 
 def evaluate_memory_candidate(candidate: MemoryCandidate) -> SecurityDecision:
     digest = stable_digest(candidate)
+    if candidate.source.tenant_id != candidate.tenant_id:
+        return SecurityDecision(decision=Decision.DENY, reason_code="MEMORY_SCOPE_MISMATCH", proposal_digest=digest)
     if candidate.category in {"authority", "credential", "approval", "policy"}:
         return SecurityDecision(decision=Decision.DENY, reason_code="MEMORY_CATEGORY_DENIED", proposal_digest=digest)
     if secret_findings(candidate.value):
@@ -555,6 +577,8 @@ class SecurityControlPlane:
         now: datetime = REFERENCE_TIME,
         ttl: timedelta = timedelta(minutes=10),
     ) -> ApprovalReceipt:
+        if ttl <= timedelta(0):
+            raise ControlError("APPROVAL_TTL_INVALID")
         if (
             now < approver.authenticated_at
             or now >= approver.valid_until
@@ -562,6 +586,26 @@ class SecurityControlPlane:
         ):
             raise ControlError("APPROVER_NOT_AUTHORIZED")
         if (approver.tenant_id, approver.task_id) != (proposal.tenant_id, proposal.task_id):
+            raise ControlError("APPROVAL_SCOPE_MISMATCH")
+        if now < self.grant.issued_at:
+            raise ControlError("AUTHORITY_NOT_CURRENT")
+        if now >= self.grant.expires_at:
+            raise ControlError("AUTHORITY_EXPIRED")
+        if self.grant.policy_version != POLICY_VERSION:
+            raise ControlError("POLICY_VERSION_STALE")
+        proposal_scope = (
+            proposal.tenant_id,
+            proposal.task_id,
+            proposal.purpose,
+            proposal.actor_agent_id,
+        )
+        grant_scope = (
+            self.grant.tenant_id,
+            self.grant.task_id,
+            self.grant.purpose,
+            self.grant.agent_id,
+        )
+        if proposal_scope != grant_scope:
             raise ControlError("APPROVAL_SCOPE_MISMATCH")
         digest = stable_digest(proposal)
         receipt = ApprovalReceipt(
@@ -633,6 +677,8 @@ class SecurityControlPlane:
             return self._deny(proposal, f"RUN_{self.state.value.upper()}")
         if now < actor.authenticated_at:
             return self._deny(proposal, "AUTHENTICATION_NOT_CURRENT")
+        if now < self.grant.issued_at:
+            return self._deny(proposal, "AUTHORITY_NOT_CURRENT")
         if now >= actor.valid_until or now >= self.grant.expires_at:
             return self._deny(proposal, "AUTHORITY_EXPIRED")
         if self.grant.policy_version != POLICY_VERSION:
@@ -645,6 +691,8 @@ class SecurityControlPlane:
             return self._deny(proposal, "AUTHENTICATED_SCOPE_MISMATCH")
         if (proposal.tenant_id, proposal.task_id) != (actor.tenant_id, actor.task_id):
             return self._deny(proposal, "PROPOSAL_SCOPE_MISMATCH")
+        if proposal.purpose != self.grant.purpose:
+            return self._deny(proposal, "PURPOSE_NOT_AUTHORIZED")
         if any(
             (item.tenant_id, item.task_id) != (proposal.tenant_id, proposal.task_id)
             for item in proposal.context
@@ -700,6 +748,8 @@ class SecurityControlPlane:
                 return self._deny(proposal, exc.code)
 
         needs_approval = isinstance(arguments, PurchaseOrderArgs) and amount >= APPROVAL_THRESHOLD_CAD
+        if approval is not None and not needs_approval:
+            return self._deny(proposal, "APPROVAL_NOT_REQUIRED")
         if needs_approval:
             if approval is None:
                 return self._review(proposal, "APPROVAL_REQUIRED")
@@ -887,6 +937,7 @@ def sample_proposal(**changes: object) -> ToolProposal:
         "actor_agent_id": "agent:procurement",
         "tenant_id": "tenant-acme",
         "task_id": "task:buy-laptops",
+        "purpose": "approved_procurement",
         "tool": "vendor.read",
         "resource": "vendor-catalog",
         "arguments": {"vendor_id": "V-42"},
@@ -900,7 +951,7 @@ class SecurityCase(FrozenModel):
     case_id: str
     expected_allowed: bool
     proposal: ToolProposal
-    actor_changes: dict[str, Any] = {}
+    actor_changes: dict[str, Any] = Field(default_factory=dict)
 
 
 def security_cases() -> tuple[SecurityCase, ...]:

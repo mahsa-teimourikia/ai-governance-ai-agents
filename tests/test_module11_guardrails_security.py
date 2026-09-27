@@ -135,6 +135,24 @@ def test_egress_ticket_blocks_redirect_or_rebinding_to_new_address():
     assert_error("EGRESS_DNS_REBINDING_OR_REDIRECT", policy.verify_connection, ticket, "8.8.8.8")
 
 
+def test_egress_ticket_rejects_tampered_resolution_binding():
+    policy = EgressPolicy({"api.vendor.example"}, StaticResolver({"api.vendor.example": ("93.184.216.34",)}))
+    ticket = policy.authorize("https://api.vendor.example/orders")
+    tampered = ticket.model_copy(update={"resolved_ips": ("8.8.8.8",)})
+    assert_error("EGRESS_TICKET_TAMPERED", policy.verify_connection, tampered, "8.8.8.8")
+
+
+def test_egress_ticket_must_be_issued_by_the_policy_instance():
+    issuing_policy = EgressPolicy(
+        {"api.vendor.example"}, StaticResolver({"api.vendor.example": ("93.184.216.34",)})
+    )
+    verifying_policy = EgressPolicy(
+        {"api.vendor.example"}, StaticResolver({"api.vendor.example": ("93.184.216.34",)})
+    )
+    ticket = issuing_policy.authorize("https://api.vendor.example/orders")
+    assert_error("EGRESS_TICKET_UNKNOWN", verifying_policy.verify_connection, ticket, "93.184.216.34")
+
+
 def test_command_manifest_allows_bounded_local_validation():
     assert validate_sandbox_command("python workspace/validate.py") == ("python", "workspace/validate.py")
     assert validate_sandbox_command("pytest -q workspace/tests") == ("pytest", "-q", "workspace/tests")
@@ -190,6 +208,18 @@ def test_benign_memory_candidate_is_allowed_but_not_authority():
     assert evaluate_memory_candidate(candidate).decision == Decision.ALLOW
 
 
+def test_memory_source_cannot_cross_tenant_scope():
+    candidate = MemoryCandidate(
+        category="preference",
+        value="Prefer email summaries",
+        source=make_content("Prefer email summaries", tenant_id="tenant-beta"),
+        tenant_id="tenant-acme",
+        subject_id="user:procurement-lead",
+        purpose="approved_procurement",
+    )
+    assert evaluate_memory_candidate(candidate).reason_code == "MEMORY_SCOPE_MISMATCH"
+
+
 def test_valid_read_is_allowed():
     fixture = build_fixture()
     decision = fixture["plane"].evaluate(fixture["actor"], sample_proposal())
@@ -200,6 +230,13 @@ def test_future_dated_authentication_is_not_current():
     fixture = build_fixture()
     actor = sample_actor(authenticated_at=REFERENCE_TIME + timedelta(seconds=1))
     assert fixture["plane"].evaluate(actor, sample_proposal()).reason_code == "AUTHENTICATION_NOT_CURRENT"
+
+
+def test_future_dated_grant_is_not_current():
+    grant = sample_grant(issued_at=REFERENCE_TIME + timedelta(seconds=1))
+    policy = EgressPolicy({"api.vendor.example"}, StaticResolver({"api.vendor.example": ("93.184.216.34",)}))
+    plane = SecurityControlPlane(grant, policy)
+    assert plane.evaluate(sample_actor(), sample_proposal()).reason_code == "AUTHORITY_NOT_CURRENT"
 
 
 def test_stale_policy_grant_is_denied():
@@ -219,6 +256,12 @@ def test_proposal_tenant_must_match_authenticated_scope():
     fixture = build_fixture()
     proposal = sample_proposal(tenant_id="tenant-beta")
     assert fixture["plane"].evaluate(fixture["actor"], proposal).reason_code == "PROPOSAL_SCOPE_MISMATCH"
+
+
+def test_proposal_purpose_must_match_task_grant():
+    fixture = build_fixture()
+    proposal = sample_proposal(purpose="unapproved_marketing")
+    assert fixture["plane"].evaluate(fixture["actor"], proposal).reason_code == "PURPOSE_NOT_AUTHORIZED"
 
 
 def test_context_cannot_cross_tenant_or_task_scope():
@@ -364,6 +407,39 @@ def test_future_dated_approver_is_not_authorized():
     fixture = build_fixture()
     approver = sample_approver(authenticated_at=REFERENCE_TIME + timedelta(seconds=1))
     assert_error("APPROVER_NOT_AUTHORIZED", fixture["plane"].issue_approval, approver, _approval_proposal())
+
+
+def test_approval_issuance_rejects_nonpositive_lifetime_and_wrong_purpose():
+    fixture = build_fixture()
+    proposal = _approval_proposal()
+    assert_error(
+        "APPROVAL_TTL_INVALID",
+        fixture["plane"].issue_approval,
+        sample_approver(),
+        proposal,
+        ttl=timedelta(0),
+    )
+    assert_error(
+        "APPROVAL_SCOPE_MISMATCH",
+        fixture["plane"].issue_approval,
+        sample_approver(),
+        proposal.model_copy(update={"purpose": "unapproved_marketing"}),
+    )
+
+
+def test_unneeded_approval_is_denied_without_budget_mutation():
+    fixture = build_fixture()
+    high_value = _approval_proposal()
+    approval = fixture["plane"].issue_approval(sample_approver(), high_value)
+    assert_error(
+        "APPROVAL_NOT_REQUIRED",
+        fixture["plane"].execute,
+        fixture["actor"],
+        sample_proposal(),
+        approval=approval,
+    )
+    assert fixture["plane"].calls_used == 0
+    assert fixture["plane"].spend_used == 0
 
 
 def test_output_release_checks_secret_and_classification():

@@ -172,7 +172,7 @@ Each course pass will:
   on budget denial, unsafe URL checks, and fabricated external effects.
 - **Add:** real offline OpenAI Agents SDK input/output/function-tool guardrails
   and approval, an OpenAI Guardrails registry check, experimental Microsoft
-  FIDES labels/configuration, 58 invariant tests, 12 labelled trajectories,
+  FIDES labels/configuration, 65 invariant tests, 12 labelled trajectories,
   Hub navigation/checkpoints, and a Course 11 CI target.
 
 | Promise | Prose | Executable proof | Negative/evaluation proof |
