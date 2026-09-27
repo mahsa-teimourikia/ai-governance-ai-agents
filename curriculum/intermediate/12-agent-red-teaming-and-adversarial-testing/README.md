@@ -24,13 +24,13 @@ You have completed the module when you can:
 - distinguish an attempted attack, detector signal, protected-boundary bypass, simulated harmful outcome, legitimate-task block, target error, and confirmed vulnerability;
 - evaluate the same 12 attacks and four legitimate controls against vulnerable and hardened target versions;
 - keep target errors and missing evidence **indeterminate** rather than counting them as passes;
-- fail a release for critical harm, excessive ASR, indeterminate results, or legitimate-work regression;
+- fail a release for inadequate attack/control coverage, critical harm, excessive ASR, indeterminate results, or legitimate-work regression;
 - deduplicate, assign, remediate, verify, and close a finding only after the same regression passes on a new target version; and
 - choose among PyRIT, garak, Promptfoo, Microsoft Foundry, OpenAI traces/graders, custom deterministic harnesses, and expert manual work without overstating any tool's coverage.
 
 ## Non-goals
 
-The lab does not claim that deterministic text fixtures measure real-model robustness; that scanner grades equal exploitability; that a trace proves an external effect; that zero findings proves security; or that synthetic campaigns predict production incidence. It does not execute optional scanners, create cloud resources, generate harmful live traffic, or test any third-party target.
+The lab does not claim that deterministic text fixtures measure real-model robustness; that scanner grades equal exploitability; that a trace proves an external effect; that a digest is a digital signature; that zero findings proves security; or that synthetic campaigns predict production incidence. It does not execute optional scanners, create cloud resources, generate harmful live traffic, or test any third-party target.
 
 ## Claim-to-proof map
 
@@ -38,7 +38,7 @@ The lab does not claim that deterministic text fixtures measure real-model robus
 |---|---|---|
 | Testing stays inside authorization | typed `RulesOfEngagement` and authenticated campaign operator | production, external-target, cross-tenant, expired-session, over-budget and out-of-window tests |
 | Target and evidence are reproducible | target-version binding, artifact/trajectory/corpus/ROE digests | wrong version, artifact tamper, duplicate case and changed-corpus tests |
-| Oracles inspect consequences | typed trajectory events and deterministic effect oracle | canary, payment, memory, SSRF, command, approval and runaway cases |
+| Oracles inspect consequences | typed trajectory events, expected enforcement stages and deterministic effect oracle | canary, payment, memory, SSRF, command, approval and runaway cases |
 | Failures do not become passes | explicit `INDETERMINATE` outcome | target error blocks the release gate |
 | Metrics have named populations | 12 attacks plus four legitimate controls | ASR, bypass, harmful-outcome and legitimate-pass denominators tested separately |
 | Findings become durable regressions | versioned finding registry and transition receipts | stale update, missing owner/remediation/evidence, same-version and failing-regression tests |
@@ -797,7 +797,7 @@ Capture traces or equivalent telemetry during adversarial testing. Grade the rel
 
 Be careful with sensitive trace data. Inputs, tool arguments/results and intermediate content may contain personal data, secrets, attack payloads, or protected business context. Minimize, restrict, retain and export deliberately. A trace is evidence of recorded activity—not proof that the record is complete or that an external effect succeeded.
 
-The legacy OpenAI Evals platform is scheduled to become read-only on October 31, 2026 and shut down on November 30, 2026. New course work should use the current Datasets/evaluation and agent-trace surfaces rather than teaching a new dependency on that retiring platform.
+For new course work, use the current datasets, evaluation runs, traces and trace-grading surfaces described in the official documentation; treat older examples as migration inputs rather than the default architecture.
 
 ---
 
@@ -813,6 +813,7 @@ preconditions:
 attack_input:
 attack_artifact:
 expected_secure_behavior:
+expected_enforcement_stage:
 failure_condition:
 severity:
 tags:
@@ -1038,6 +1039,8 @@ OPEN → ACCEPTED → REMEDIATED → VERIFIED → CLOSED
 
 Verification requires the same case to demonstrate secure behavior on a new target version. A remediation PR, a changed status field, or a model explanation is not verification.
 
+The canonical registry admits a result only through its tenant-, target-, version- and campaign-bound report. In production, accept reports only from the trusted runner and store them in an access-controlled, append-only evidence system; a digest detects changed content only when the trusted reference digest is itself protected.
+
 ---
 
 # 40. Remediation
@@ -1117,7 +1120,7 @@ targeted tests for new tools/models/policies
 
 Do not run dangerous live-side-effect attacks against production.
 
-A release gate should fail on critical harmful outcomes, excessive ASR/control bypass, indeterminate results, and legitimate-work regression. Larger stochastic scans also need repeated seeded runs, slices, scorer calibration, uncertainty, cost and latency. One small green campaign cannot establish absence of vulnerabilities.
+A release gate should first require minimum attack and legitimate-control coverage, then fail on critical harmful outcomes, excessive ASR/control bypass, indeterminate results, and legitimate-work regression. The canonical lab credits a blocked attack only when the observed stop stage matches the case's expected enforcement stage. Larger stochastic scans also need repeated seeded runs, slices, scorer calibration, uncertainty, cost and latency. One small green campaign cannot establish absence of vulnerabilities.
 
 ---
 
@@ -1155,7 +1158,7 @@ The notebook imports the reusable, tested [`lab.py`](lab.py) and implements:
 - digest- and locator-bound attack artifacts and mutation lineage,
 - vulnerable/hardened target-version comparison,
 - separate attempt, signal, bypass, harmful-outcome, legitimate-pass and indeterminate metrics,
-- a multi-condition release gate,
+- expected enforcement-stage assertions and a minimum-coverage, multi-condition release gate,
 - versioned finding admission, ownership, remediation, regression verification and closure,
 - current PyRIT, garak, Promptfoo and Foundry integration manifests,
 - a local synthetic Promptfoo configuration, and
@@ -1199,6 +1202,8 @@ Before calling a red-team campaign complete:
 - Did we test attack chains?
 - Did we capture full trajectories?
 - Do security oracles inspect actual consequences?
+- Did each blocked case stop at the expected enforcement boundary?
+- Did the campaign meet minimum attack and legitimate-control coverage?
 - Did we separate model behavior from security-boundary failure?
 - Did we triage impact and exploitability?
 - Did every confirmed vulnerability become a regression test?

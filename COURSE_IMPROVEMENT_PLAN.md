@@ -46,7 +46,7 @@ Each course pass will:
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Implemented in PR #22 |
 | 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Implemented in PR #24 |
 | 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Implemented in PR #25 |
-| 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Implemented; PR pending |
+| 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Implemented in PR #26 |
 | 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Planned |
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Planned |
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Planned |
@@ -199,7 +199,7 @@ Each course pass will:
   oracles, explicit indeterminate outcomes, honest metric denominators,
   legitimate controls, release gates, and finding ownership/lifecycle.
 - **Consolidate:** replace 71 mutable notebook cells with one deterministic
-  `lab.py` imported by a guided notebook, 43 focused invariant tests, and a
+  `lab.py` imported by a guided notebook, 45 focused invariant tests, and a
   top-to-bottom notebook execution test.
 - **Repair:** remove runtime package installs, mutable globals, label-leaking
   toy evaluation, fake defense-stage mappings, attack-only ASR, direct status
