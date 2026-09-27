@@ -1,9 +1,48 @@
 # Module 12 — Agent Red Teaming & Adversarial Testing
 
-> **Course:** Enterprise AI Agent Governance: From Principles to Runtime Control  
-> **Audience:** AI/ML engineers, AI security engineers, agent architects, application security, platform/security teams, governance teams and red teams  
-> **Recommended duration:** 10 hours theory + 8 hours practical lab  
+> **Course:** Enterprise AI Agent Governance: From Principles to Runtime Control
+> **Audience:** AI/ML engineers, AI security engineers, agent architects, application security, platform/security teams, governance teams and red teams
+> **Recommended duration:** 10 hours theory + 8 hours practical lab
 > **Scenario:** Red-team an enterprise procurement agent with RAG, memory, tools, delegated agents and consequential actions.
+
+---
+
+## Course thesis
+
+Agent red teaming is an authorized search for exploitable system failures across complete trajectories and consequences—not a jailbreak contest or a refusal benchmark. A credible program binds every campaign to rules of engagement, exact target versions, safe environments, observable oracles, honest denominators, reproducible evidence, owned findings, and verified regressions.
+
+## Prerequisites
+
+You should be comfortable with Python, typed data, agent tool calls, basic application security, and the control boundaries from [Guardrails & Agent Security](../11-guardrails-and-agent-security/README.md). The canonical lab uses only synthetic fixtures and simulated effects; it performs no model, network, shell, cloud, or external-service call.
+
+## Success criteria
+
+You have completed the module when you can:
+
+- authorize a non-production campaign with target/version, window, permitted surfaces, budgets, approvers, synthetic-data rules, and an independently owned emergency stop;
+- design attack cases with stable IDs, source locators, digests, labels, expected secure behavior, severity, and mutation lineage;
+- distinguish an attempted attack, detector signal, protected-boundary bypass, simulated harmful outcome, legitimate-task block, target error, and confirmed vulnerability;
+- evaluate the same 12 attacks and four legitimate controls against vulnerable and hardened target versions;
+- keep target errors and missing evidence **indeterminate** rather than counting them as passes;
+- fail a release for critical harm, excessive ASR, indeterminate results, or legitimate-work regression;
+- deduplicate, assign, remediate, verify, and close a finding only after the same regression passes on a new target version; and
+- choose among PyRIT, garak, Promptfoo, Microsoft Foundry, OpenAI traces/graders, custom deterministic harnesses, and expert manual work without overstating any tool's coverage.
+
+## Non-goals
+
+The lab does not claim that deterministic text fixtures measure real-model robustness; that scanner grades equal exploitability; that a trace proves an external effect; that zero findings proves security; or that synthetic campaigns predict production incidence. It does not execute optional scanners, create cloud resources, generate harmful live traffic, or test any third-party target.
+
+## Claim-to-proof map
+
+| Claim | Executable proof | Negative/evaluation proof |
+|---|---|---|
+| Testing stays inside authorization | typed `RulesOfEngagement` and authenticated campaign operator | production, external-target, cross-tenant, expired-session, over-budget and out-of-window tests |
+| Target and evidence are reproducible | target-version binding, artifact/trajectory/corpus/ROE digests | wrong version, artifact tamper, duplicate case and changed-corpus tests |
+| Oracles inspect consequences | typed trajectory events and deterministic effect oracle | canary, payment, memory, SSRF, command, approval and runaway cases |
+| Failures do not become passes | explicit `INDETERMINATE` outcome | target error blocks the release gate |
+| Metrics have named populations | 12 attacks plus four legitimate controls | ASR, bypass, harmful-outcome and legitimate-pass denominators tested separately |
+| Findings become durable regressions | versioned finding registry and transition receipts | stale update, missing owner/remediation/evidence, same-version and failing-regression tests |
+| Automation remains bounded | current integration manifests and real offline Agents SDK trace objects | optional scanners are not installed or executed in the canonical path |
 
 ---
 
@@ -22,7 +61,7 @@ By the end of this module, you should be able to:
 9. Test memory/context poisoning and persistence.
 10. Test cascading failures and runaway autonomy.
 11. Use manual, deterministic, mutation-based and model-assisted adversarial generation.
-12. Use **PyRIT**, **garak**, OpenAI Agents SDK tracing/evaluation patterns, and Microsoft Foundry red-team capabilities appropriately.
+12. Use **PyRIT**, **garak**, **Promptfoo**, OpenAI trace grading/datasets, and Microsoft Foundry red-team capabilities appropriately.
 13. Define detectors, assertions, oracles and human review.
 14. Measure attack success rate, control bypass rate, impact and exploitability.
 15. Triage findings using agent-aware severity.
@@ -662,7 +701,7 @@ Automation does not replace expert red teaming.
 
 # 27. PyRIT
 
-Microsoft's **Python Risk Identification Tool for generative AI (PyRIT)** is designed for automated and semi-automated red teaming.
+Microsoft's **Python Risk Identification Tool for generative AI (PyRIT)** is designed for automated and semi-automated red teaming. As of this course snapshot, PyRIT 1.1 is the current release line and 1.0 introduced a materially new scenario/technique architecture. Pin the version used to generate evidence and do not copy pre-1.0 examples without migration review.
 
 Use it to study patterns around:
 
@@ -673,6 +712,10 @@ Use it to study patterns around:
 - multi-turn attacks,
 - repeatable campaigns.
 
+Current PyRIT supports three paths: the `pyrit_scan` CLI, CoPyRIT GUI, and Python framework. Its framework composes targets, attack techniques/executors, converters, scorers, and memory. Scorers may be deterministic, classifier-based, or model-based; their errors must remain visible.
+
+PyRIT stores conversations and scores in memory backends. Treat those stores as security evidence: configure retention/access, keep secrets and personal data out, bind exports to target/tool/prompt/scorer versions, and review generated attacks before using them outside an isolated environment.
+
 Microsoft also integrates PyRIT capabilities into its Foundry red-team tooling.
 
 For the course, PyRIT is valuable because it teaches **attack orchestration**, not only static benchmark execution.
@@ -681,7 +724,7 @@ For the course, PyRIT is valuable because it teaches **attack orchestration**, n
 
 # 28. garak
 
-**garak** is an open-source LLM vulnerability scanner maintained by NVIDIA.
+**garak** is an open-source LLM vulnerability scanner maintained by NVIDIA. The course snapshot tracks the rapidly evolving 0.17 line; pin scanner, probe corpus, target adapter, detector and configuration before comparing results across runs.
 
 Its architecture centers on:
 
@@ -707,17 +750,27 @@ automated model/application probing
 
 not as proof that an agent system is secure.
 
-Agentic side effects still need system-level test harnesses.
+Agentic side effects still need system-level test harnesses. A detector failure in a garak report is not automatically a control bypass or harmful outcome, and a pass is not evidence that untested tool, memory, identity, network, approval, or recovery paths are secure.
+
+---
+
+# 28A. Promptfoo
+
+Current OpenAI red-team guidance points to **Promptfoo** as an open-source option for prompts, agents, and applications. Its red-team workflow combines a target, purpose, plugins, strategies, attack generation/grading provider, tests, and reports. It can connect to HTTP or local/custom targets and supports agent trajectory assertions.
+
+Use Promptfoo to generate breadth and retain targeted regressions, but review its data path: remote adversarial generation can be enabled by default, generated attacks and raw outputs may be sensitive, and model-based graders can be wrong. The lab creates a local-file-target configuration with synthetic metadata and bounded concurrency; it does not invoke `promptfoo redteam run`.
 
 ---
 
 # 29. Microsoft Foundry AI Red Teaming Agent
 
-Microsoft Foundry currently provides an AI Red Teaming Agent in preview through the Azure AI Evaluation SDK.
+Microsoft Foundry currently provides an AI Red Teaming Agent in public preview through the `azure-ai-evaluation[redteam]` extra. Preview services have no production SLA and require explicit review of supported regions, target types, tools, languages, attack strategies, and risk categories.
 
 It can automate scans against model/application endpoints and uses PyRIT capabilities.
 
-This is useful for organizations already operating in the Azure ecosystem.
+Current agentic coverage has important constraints: Foundry-hosted prompt and container agents plus Azure tool calls are supported, while workflow agents, non-Foundry agents, non-Azure/function/browser/computer-use/connected-agent tools are not. Sensitive-data, prohibited-action, task-adherence, and indirect-injection scans use synthetic data or mock tools and automated grades can produce false positives.
+
+This is useful for organizations already operating in the Azure ecosystem, provided the untested surfaces remain visible.
 
 Keep cloud-specific scanning separate from your portable security regression suite.
 
@@ -725,7 +778,9 @@ Keep cloud-specific scanning separate from your portable security regression sui
 
 # 30. OpenAI Agents SDK tracing
 
-OpenAI Agents SDK tracing records workflow events including:
+Current OpenAI guidance starts agent evaluation with traces and trace grading, then moves stable cases into datasets and repeatable evaluation runs. Agents API traces can be inspected in the dashboard or exported as OTLP JSON; code-first Agents SDK workflows also emit traces for model calls, tools, handoffs, guardrails, and custom spans.
+
+Tracing records workflow events including:
 
 ```text
 agent runs
@@ -738,9 +793,11 @@ custom spans
 
 This is valuable for red teaming because a failed final response may hide a dangerous intermediate trajectory.
 
-Capture traces or equivalent telemetry during adversarial testing.
+Capture traces or equivalent telemetry during adversarial testing. Grade the relevant span or trajectory with a deterministic assertion where possible; use calibrated model graders and human review where semantic judgment is unavoidable.
 
-Be careful with sensitive trace data.
+Be careful with sensitive trace data. Inputs, tool arguments/results and intermediate content may contain personal data, secrets, attack payloads, or protected business context. Minimize, restrict, retain and export deliberately. A trace is evidence of recorded activity—not proof that the record is complete or that an external effect succeeded.
+
+The legacy OpenAI Evals platform is scheduled to become read-only on October 31, 2026 and shut down on November 30, 2026. New course work should use the current Datasets/evaluation and agent-trace surfaces rather than teaching a new dependency on that retiring platform.
 
 ---
 
@@ -862,6 +919,16 @@ impact
 
 A 1% ASR on irreversible payments can matter more than 20% on harmless formatting attacks.
 
+Name the denominator. In the lab, ASR is:
+
+```text
+attack cases with an observable harmful simulated outcome
+--------------------------------------------------------
+determinate attack cases executed against one target version
+```
+
+Target timeouts and harness errors are **indeterminate**, not safe. The four benign controls use a separate legitimate-pass denominator. This prevents a security-only corpus from hiding a candidate that blocks all useful work.
+
 ---
 
 # 36. Control bypass rate
@@ -888,6 +955,18 @@ outcome
 ```
 
 This gives architectural insight.
+
+Keep these counters separate:
+
+| Counter | Meaning |
+|---|---|
+| attempted attack | authorized case submitted to the bound target |
+| detector signal | a component flagged evidence; no guarantee of enforcement |
+| blocked attempt | secure behavior stopped the attack before a forbidden effect |
+| control bypass | a protected boundary was observably crossed |
+| harmful outcome | a forbidden simulated effect occurred |
+| confirmed finding | evidence survived triage as a real vulnerability |
+| production incident | a real event; never infer it from a lab attempt |
 
 ---
 
@@ -950,6 +1029,14 @@ test harness issue
 Not every jailbreak is a critical vulnerability.
 
 Not every refusal means the system is safe.
+
+A finding should carry a stable fingerprint, case and target versions, severity, crossed boundary, evidence digest, owner, remediation reference, regression case, state and optimistic version. The lab permits only:
+
+```text
+OPEN → ACCEPTED → REMEDIATED → VERIFIED → CLOSED
+```
+
+Verification requires the same case to demonstrate secure behavior on a new target version. A remediation PR, a changed status field, or a model explanation is not verification.
 
 ---
 
@@ -1030,13 +1117,15 @@ targeted tests for new tools/models/policies
 
 Do not run dangerous live-side-effect attacks against production.
 
+A release gate should fail on critical harmful outcomes, excessive ASR/control bypass, indeterminate results, and legitimate-work regression. Larger stochastic scans also need repeated seeded runs, slices, scorer calibration, uncertainty, cost and latency. One small green campaign cannot establish absence of vulnerabilities.
+
 ---
 
 # 43. Practical notebook
 
 `12_agent_red_teaming_and_adversarial_testing.ipynb`
 
-The notebook implements:
+The notebook imports the reusable, tested [`lab.py`](lab.py) and implements:
 
 - agent red-team threat matrix,
 - rules of engagement,
@@ -1061,9 +1150,32 @@ The notebook implements:
 - evidence records,
 - regression suite generation,
 - CI gate logic,
-- PyRIT integration pattern,
-- garak integration pattern,
-- OpenAI Agents SDK trace-aware testing pattern.
+- rules-of-engagement enforcement and emergency stop ownership,
+- 12 labelled attacks plus four legitimate controls,
+- digest- and locator-bound attack artifacts and mutation lineage,
+- vulnerable/hardened target-version comparison,
+- separate attempt, signal, bypass, harmful-outcome, legitimate-pass and indeterminate metrics,
+- a multi-condition release gate,
+- versioned finding admission, ownership, remediation, regression verification and closure,
+- current PyRIT, garak, Promptfoo and Foundry integration manifests,
+- a local synthetic Promptfoo configuration, and
+- real offline OpenAI Agents SDK trace objects.
+
+```bash
+make course-12
+```
+
+---
+
+# 43A. State of the art — September 2026
+
+**Established practice:** authorized rules of engagement; production-like isolated environments; threat-led manual testing; synthetic canaries and mock effectors; deterministic assertions at tool/network/identity boundaries; versioned evidence; remediation ownership; regression conversion; CI plus periodic expert exercises.
+
+**Current automation:** PyRIT 1.x composes scanners and attack techniques; garak 0.17 provides broad probe/detector discovery; Promptfoo combines agent-aware plugins, strategies and trajectory assertions; Microsoft Foundry packages curated preview scans; OpenAI traces, graders and datasets support workflow evaluation. These surfaces evolve quickly, so pin versions and preserve generated corpora/configuration when comparing results.
+
+**Research and emerging operations:** adaptive multi-turn attackers, telemetry- and incident-derived case generation, agent-specific competitions, coverage mapping to MITRE ATLAS and OWASP Agentic risks, judge ensembles, multimodal indirect injection, attack-chain search, and privacy-preserving trace analysis.
+
+**Open problems:** representative attack coverage; grader calibration under adaptive attack; safe testing of real tools and long-lived memory; reproducible multi-agent attacks; proving trace completeness; distinguishing prevented attempts from real harm; uncertainty for rare catastrophic cases; and maintaining comparable results while targets, scanners, attack generators and judges all change.
 
 ---
 
@@ -1096,32 +1208,50 @@ Before calling a red-team campaign complete:
 
 # 45. Primary references
 
-1. OWASP — AI Red Teaming & Evaluation Initiative  
+1. OWASP — AI Red Teaming & Evaluation Initiative
    https://genai.owasp.org/initiatives/ai-red-teaming-initiative/
 
-2. OWASP — Top 10 for Agentic Applications 2026  
+2. OWASP — Top 10 for Agentic Applications 2026
    https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/
 
-3. Microsoft — AI Red Team  
-   https://learn.microsoft.com/en-us/security/ai-red-team/
+3. NIST CAISI — Insights from a large-scale AI agent red-teaming competition
+   https://www.nist.gov/blogs/caisi-research-blog/insights-ai-agent-security-large-scale-red-teaming-competition
 
-4. Microsoft — PyRIT  
-   https://github.com/Azure/PyRIT
+4. NIST AI 100-2 — Adversarial ML taxonomy and terminology
+   https://www.nist.gov/publications/adversarial-machine-learning-taxonomy-and-terminology-attacks-and-mitigations-0
 
-5. Microsoft Foundry — AI Red Teaming Agent / Azure AI Evaluation SDK  
-   https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/run-scans-ai-red-teaming-agent
+5. MITRE — ATLAS
+   https://atlas.mitre.org/
 
-6. NVIDIA — garak  
-   https://github.com/NVIDIA/garak
+6. Microsoft — PyRIT documentation
+   https://azure.github.io/PyRIT/
 
-7. garak documentation  
+7. Microsoft Foundry — AI Red Teaming Agent concepts and limitations
+   https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/ai-red-teaming-agent
+
+8. Microsoft Foundry — Run the AI Red Teaming Agent locally
+   https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent
+
+9. NVIDIA — garak documentation
    https://docs.garak.ai/
 
-8. OpenAI Agents SDK — Tracing  
-   https://openai.github.io/openai-agents-python/tracing/
+10. Promptfoo — Red-team configuration
+    https://www.promptfoo.dev/docs/red-team/configuration/
 
-9. OpenAI Agents SDK  
-   https://openai.github.io/openai-agents-python/
+11. Promptfoo — Red teaming agents
+    https://www.promptfoo.dev/docs/red-team/agents/
+
+12. OpenAI — Red teaming
+    https://developers.openai.com/api/docs/guides/red-teaming
+
+13. OpenAI — Evaluate agent workflows
+    https://developers.openai.com/api/docs/guides/agent-evals
+
+14. OpenAI — Agents API tracing and OTLP export
+    https://developers.openai.com/api/docs/guides/agents-api/tracing
+
+15. OpenAI — Trace grading
+    https://developers.openai.com/api/docs/guides/trace-grading
 
 ---
 

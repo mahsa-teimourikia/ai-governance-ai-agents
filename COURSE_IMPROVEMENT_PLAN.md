@@ -46,7 +46,7 @@ Each course pass will:
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Implemented in PR #22 |
 | 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Implemented in PR #24 |
 | 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Implemented in PR #25 |
-| 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Planned |
+| 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Implemented; PR pending |
 | 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Planned |
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Planned |
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Planned |
@@ -185,6 +185,39 @@ Each course pass will:
 | Containment is independent of the agent | incident-response section | current, scoped `security_operator` methods | agent, cross-tenant and future-session operators cannot pause a run |
 | Framework examples are real but bounded | tools and framework sections | real SDK/Guardrails/FIDES objects construct offline | tests inspect exact hooks while application policy owns every effect |
 | Metrics name exact populations | evaluation section | 8 detector and 12 trajectory cases | baseline allows 8/9 dangerous cases; governed path allows 0/9 |
+
+## Course 12 claim-to-proof map
+
+### Course 12 audit decisions
+
+- **Retain:** system-not-model red-team framing, rules of engagement, threat
+  hypotheses, broad agentic attack surface, manual/automated distinction,
+  PyRIT and garak orientation, trajectory evidence, remediation, regression,
+  CI cadence, exercises, and four existing diagrams.
+- **Deepen:** target/version authorization, campaign budgets and emergency stop,
+  artifact provenance and mutation lineage, consequence-based deterministic
+  oracles, explicit indeterminate outcomes, honest metric denominators,
+  legitimate controls, release gates, and finding ownership/lifecycle.
+- **Consolidate:** replace 71 mutable notebook cells with one deterministic
+  `lab.py` imported by a guided notebook, 43 focused invariant tests, and a
+  top-to-bottom notebook execution test.
+- **Repair:** remove runtime package installs, mutable globals, label-leaking
+  toy evaluation, fake defense-stage mappings, attack-only ASR, direct status
+  closure, stale framework guidance, and raw attack payloads in reports.
+- **Add:** a 16-case procurement corpus, bounded Unicode mutations, vulnerable
+  and hardened version comparison, digest-bound evidence, optimistic finding
+  transitions, Promptfoo and current tool manifests, real offline OpenAI Agents
+  SDK trace objects, Hub checkpoints, and a Course 12 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Campaigns stay authorized and contained | ROE, safety and environment sections | typed ROE, current operator and security-owner stop | production/external/cross-tenant/out-of-window/over-budget cases fail |
+| Attack evidence is reproducible | dataset, mutation and evidence sections | artifact, trajectory, corpus and ROE digests plus target version | tamper, duplicate ID, changed corpus and wrong target version tests |
+| Oracles inspect effects rather than claims | oracle and trajectory sections | typed proposals, decisions, effects, memory and stop events | canary, payment, memory, SSRF, command, approval and runaway assertions |
+| Errors do not inflate safety | metrics and gate sections | explicit `INDETERMINATE` outcome and multi-condition release gate | target error and missing evidence block release/closure |
+| Metrics name exact populations | ASR/control-bypass sections | 12 attacks and four legitimate controls | baseline ASR 12/12; hardened ASR 0/12 with 4/4 controls preserved |
+| Findings close only after verified repair | triage/remediation/regression sections | deduplicated versioned registry and transition receipts | stale update, same-version, mismatched and failing regression tests |
+| Common tooling is current and bounded | PyRIT, garak, Promptfoo, Foundry and OpenAI sections | current manifests, local Promptfoo config and real trace objects | optional scanners remain unexecuted and limitations are explicit |
 
 ## Course 1 claim-to-proof map
 

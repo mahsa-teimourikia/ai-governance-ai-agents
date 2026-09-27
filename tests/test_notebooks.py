@@ -150,3 +150,14 @@ def test_course_11_notebook_executes_top_to_bottom(monkeypatch):
         / "11_guardrails_and_agent_security.ipynb"
     )
     execute_notebook(path, monkeypatch)
+
+
+def test_course_12_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the twelfth fully audited notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/intermediate/12-agent-red-teaming-and-adversarial-testing"
+        / "12_agent_red_teaming_and_adversarial_testing.ipynb"
+    )
+    execute_notebook(path, monkeypatch)

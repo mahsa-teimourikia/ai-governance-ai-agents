@@ -798,46 +798,56 @@ export const lessons = [
     "level": "Intermediate",
     "step": 12,
     "title": "Agent Red Teaming and Adversarial Testing",
-    "summary": "Attack surface discovery.",
-    "outcome": "Continuous red teaming.",
+    "summary": "Run authorized, version-bound agent red-team campaigns across prompts, retrieval, tools, memory, delegation, approvals, network, commands, runtime budgets, and complete trajectories.",
+    "outcome": "Build a reproducible procurement campaign that separates attempts, signals, bypasses and harmful outcomes; gates releases; and closes findings only after a secure regression on a new target version.",
     "material": "curriculum/intermediate/12-agent-red-teaming-and-adversarial-testing/README.md",
     "notebook": "curriculum/intermediate/12-agent-red-teaming-and-adversarial-testing/12_agent_red_teaming_and_adversarial_testing.ipynb",
+    "lab": "curriculum/intermediate/12-agent-red-teaming-and-adversarial-testing/lab.py",
+    "run": "make course-12",
     "refs": [
       {
-        "title": "https://genai.owasp.org/initiatives/ai-red-teaming-initiative/",
+        "title": "OWASP: AI Red Teaming and Evaluation Initiative",
         "path": "https://genai.owasp.org/initiatives/ai-red-teaming-initiative/"
       },
       {
-        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "title": "OWASP: Top 10 for Agentic Applications 2026",
         "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/security/ai-red-team/",
-        "path": "https://learn.microsoft.com/en-us/security/ai-red-team/"
+        "title": "NIST CAISI: Agent red-teaming competition insights",
+        "path": "https://www.nist.gov/blogs/caisi-research-blog/insights-ai-agent-security-large-scale-red-teaming-competition"
       },
       {
-        "title": "https://github.com/Azure/PyRIT",
-        "path": "https://github.com/Azure/PyRIT"
+        "title": "MITRE: ATLAS",
+        "path": "https://atlas.mitre.org/"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/run-scans-ai-red-teaming-agent",
-        "path": "https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/run-scans-ai-red-teaming-agent"
+        "title": "Microsoft: PyRIT documentation",
+        "path": "https://azure.github.io/PyRIT/"
       },
       {
-        "title": "https://github.com/NVIDIA/garak",
-        "path": "https://github.com/NVIDIA/garak"
+        "title": "Microsoft Foundry: AI Red Teaming Agent",
+        "path": "https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/ai-red-teaming-agent"
       },
       {
-        "title": "https://docs.garak.ai/",
+        "title": "NVIDIA: garak documentation",
         "path": "https://docs.garak.ai/"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/tracing/",
-        "path": "https://openai.github.io/openai-agents-python/tracing/"
+        "title": "Promptfoo: Red-team configuration",
+        "path": "https://www.promptfoo.dev/docs/red-team/configuration/"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/",
-        "path": "https://openai.github.io/openai-agents-python/"
+        "title": "OpenAI: Red teaming",
+        "path": "https://developers.openai.com/api/docs/guides/red-teaming"
+      },
+      {
+        "title": "OpenAI: Evaluate agent workflows",
+        "path": "https://developers.openai.com/api/docs/guides/agent-evals"
+      },
+      {
+        "title": "OpenAI: Agents API tracing",
+        "path": "https://developers.openai.com/api/docs/guides/agents-api/tracing"
       }
     ]
   },
@@ -1414,37 +1424,37 @@ export const checks = {
   ],
   "i7": [
     {
-      "question": "What is the objective of continuous agent red teaming?",
+      "question": "A target times out on three critical attack cases. How should a release gate classify those results?",
       "choices": [
-        "To break the production server",
-        "To proactively discover vulnerabilities as the agent's tools, models, and environments evolve",
-        "To train new developers",
-        "To test UI responsiveness"
+        "Passes, because no harmful response was observed",
+        "Blocked as indeterminate until the target and evidence path are working",
+        "Successful attacks, even without trajectory evidence",
+        "Legitimate controls"
       ],
       "answer": 1,
-      "explanation": "Agents operate in dynamic environments; continuous red teaming ensures new attack paths are found before exploitation."
+      "explanation": "A missing result is not evidence of secure behavior. Critical indeterminate cases should block the release until they can be executed and evaluated with complete evidence."
     },
     {
-      "question": "How does an adversarial trajectory differ from a standard prompt attack?",
+      "question": "A scanner reports that 20% of prompts caused undesirable text, but no protected tool or data boundary was crossed. What can you conclude?",
       "choices": [
-        "It involves multiple steps and tool uses to incrementally bypass defenses and achieve a malicious goal",
-        "It uses only one prompt",
-        "It targets the database directly",
-        "It is done manually"
-      ],
-      "answer": 0,
-      "explanation": "Agent attacks are often multi-turn trajectories where the attacker uses the agent's own tools against it over time."
-    },
-    {
-      "question": "What is the role of an automated attack harness in red teaming?",
-      "choices": [
-        "To format logs",
-        "To systematically generate and execute adversarial payloads against the agent without manual human effort",
-        "To encrypt passwords",
-        "To scale the cloud servers"
+        "Twenty percent of production actions were compromised",
+        "The scanner found model/application behavior worth triage, but control bypass and harmful-outcome rates require separate trajectory evidence",
+        "The system is definitely exploitable",
+        "The result proves authorization works"
       ],
       "answer": 1,
-      "explanation": "Tools like PyRIT automate the generation of adversarial prompts, enabling continuous security testing at scale."
+      "explanation": "Scanner or detector results are not consequence metrics. Triage must distinguish content behavior, protected-boundary bypass, simulated harm, confirmed vulnerability, and real incident."
+    },
+    {
+      "question": "When may a confirmed red-team finding be closed?",
+      "choices": [
+        "When an engineer links a remediation pull request",
+        "When the vulnerable target explains that it is fixed",
+        "After the same regression demonstrates secure behavior on the remediated target version and the evidence is recorded",
+        "As soon as the original campaign ends"
+      ],
+      "answer": 2,
+      "explanation": "A proposed fix is not verification. Closure requires bound regression evidence from a new target version, plus owned and auditable state transitions."
     }
   ],
   "a1": [
