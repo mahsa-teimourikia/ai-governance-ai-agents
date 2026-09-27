@@ -44,7 +44,7 @@ Each course pass will:
 | 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Merged in PR #19 |
 | 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Implemented in PR #21 |
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Implemented in PR #22 |
-| 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Planned |
+| 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Implemented in PR #24 |
 | 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Planned |
 | 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Planned |
 | 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Planned |
@@ -119,6 +119,40 @@ Each course pass will:
 | Memory scope and lifecycle are enforceable | Namespace, TTL, correction, and deletion sections | tenant/subject/purpose/task filters, expiry, supersession, source refs | Cross-scope reads fail; source/subject deletion scrubs values and invalidates results |
 | Framework coverage is genuine and scoped | OpenAI and LangGraph sections | real in-memory SDK session/store with governed namespace | Tests show routing artifacts while prose rejects namespace strings as sufficient authorization |
 | Evaluation names its populations | Evaluation section | eight labelled cases and exact exposure counts | Global baseline is 3/8 with cross-tenant/instruction/stale exposures; governed path is 8/8 with zero |
+
+## Course 10 claim-to-proof map
+
+### Course 10 audit decisions
+
+- **Retain:** authority-chain and orchestration-pattern diagrams, delegation
+  attenuation, manager/handoff distinctions, context minimization, confused-
+  deputy framing, aggregate budgets, global halt, revocation, disagreement,
+  audit reconstruction, and the procurement scenario.
+- **Deepen:** authenticated human/agent identities, task and role intersection,
+  tool-resource pairs, vendor scope, lineage versions, proposal-bound approval,
+  operation mutation, worker leases, atomic task budgets, application-owned
+  terminal state, evidence-bound disagreement, and coordination tax.
+- **Consolidate:** replace mutable notebook globals with one typed deterministic
+  `lab.py` imported by the guided notebook and 43 focused tests.
+- **Repair:** remove runtime package installation, UUID/wall-clock dependence,
+  independent non-atomic counters, unchecked tool/resource recombination,
+  role-name authorization, fabricated successful effects, and outdated OpenAI
+  SDK documentation links. Effect receipts are now explicitly simulated.
+- **Add:** real credential-free OpenAI manager/handoff objects and a Microsoft
+  `HandoffBuilder` workflow, A2A 1.0 coverage, context quarantine, single-use
+  approvals, budget and parallelism races, eight labelled evaluation cases,
+  Hub lab navigation, judgment checkpoints, and a Course 10 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Child authority never exceeds parent, task, or role | Attenuation and delegation-contract sections | task authority, profiles, immutable grant lineage and pair scopes | tool/resource/pair/vendor/spend/call/purpose/expiry/depth tests |
+| Handoff routing is not authority | Four-transfer and handoff sections | sender/recipient/grant-bound envelope with typed context digest | tamper, excessive field, clearance and instruction-quarantine tests |
+| A privileged specialist cannot become a confused deputy | Consequence-boundary section | requester grant must appear in executor lineage with tool authority | sibling research request is denied; eight-case evaluation |
+| Human approval binds the final high-impact proposal | Proposal-bound approval section | digest-, lineage-, policy-, task- and grant-bound receipt | missing, mutated, unauthorized, consumed and replay cases |
+| Shared risks have shared atomic controls | Budget/parallelism section | task ledger, per-grant calls and expiring worker leases under one lock | six-way spend race and four-way lease race stay within limits |
+| Pause, termination and revocation stop the next effect | Lifecycle section | application state machine plus descendant revocation | paused/revoked/terminal late-worker tests |
+| Framework examples are real but not policy | Technology and framework sections | OpenAI `Agent`/`as_tool`/`handoff`; Microsoft `HandoffBuilder` workflow | objects construct offline while all effects remain in the control plane |
+| Evaluation names the exact population | Evaluation section | one allowed and seven forbidden cases | baseline 3/8 correct with five forbidden allows; governed 8/8 with zero |
 
 ## Course 1 claim-to-proof map
 

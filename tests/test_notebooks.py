@@ -124,3 +124,14 @@ def test_course_09_notebook_executes_top_to_bottom(monkeypatch):
         / "09_data_rag_and_memory_governance.ipynb"
     )
     execute_notebook(path, monkeypatch)
+
+
+def test_course_10_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the tenth fully audited notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/intermediate/10-multi-agent-governance-and-delegation"
+        / "10_multi_agent_governance_and_delegation.ipynb"
+    )
+    execute_notebook(path, monkeypatch)
