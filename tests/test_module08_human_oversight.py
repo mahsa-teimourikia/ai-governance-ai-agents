@@ -19,6 +19,7 @@ from lab import (  # noqa: E402
 
 # Import separately to keep the invariant list readable.
 from lab import (  # noqa: E402
+    EffectReceipt,
     OperatorContext,
     OversightSystem,
     REFERENCE_TIME,
@@ -38,6 +39,7 @@ from lab import (  # noqa: E402
     sample_facts,
     sample_reviewer,
     stable_digest,
+    verify_effect,
 )
 
 
@@ -112,8 +114,6 @@ def test_auto_allow_executes_and_verifies_one_effect():
 
 
 def test_outcome_verification_binds_the_vendor_as_well_as_value():
-    from lab import EffectReceipt, verify_effect
-
     action = sample_action()
     wrong_vendor = EffectReceipt(
         effect_id="effect-foreign-vendor",
