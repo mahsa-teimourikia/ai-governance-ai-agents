@@ -1,4 +1,4 @@
-.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 clean
+.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 clean
 
 setup:
 	uv venv
@@ -34,6 +34,10 @@ course-05:
 course-06:
 	uv run python scripts/execute-notebooks.py curriculum/intermediate/06-policy-as-code-and-runtime-governance/06_policy_as_code_and_runtime_governance.ipynb
 	uv run pytest -q tests/test_module06_runtime_policy.py tests/test_notebooks.py::test_course_06_notebook_executes_top_to_bottom
+
+course-07:
+	uv run python scripts/execute-notebooks.py curriculum/intermediate/07-tool-and-mcp-governance/07_tool_and_mcp_governance.ipynb
+	uv run pytest -q tests/test_module07_tool_mcp_governance.py tests/test_notebooks.py::test_course_07_notebook_executes_top_to_bottom
 
 clean:
 	rm -rf .venv
