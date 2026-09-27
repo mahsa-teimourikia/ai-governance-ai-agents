@@ -246,7 +246,23 @@ Effect verification: what actually happened?
 
 A privileged MCP server is a confused deputy if it accepts a less-privileged caller's request and applies its own broad backend authority. Preserve subject, workload, tenant, task, resource, and delegation through the chain. The backend should enforce the narrowest practical authorization too.
 
-For OAuth deployments, validate the authorization-server issuer and bind tokens to the intended resource/audience. Tenant-specific resource indicators can reduce cross-tenant replay. Sender-constrained tokens such as DPoP reduce bearer-token theft risk where supported. Enterprise Managed Authorization is now a stable MCP extension for centrally managed identity patterns.
+For HTTP OAuth deployments, publish and consume Protected Resource Metadata,
+discover authorization-server metadata, validate the authorization-response
+issuer, and include the MCP server as the RFC 8707 `resource` in authorization
+and token requests. Validate token issuer, resource/audience, expiry, and scope
+at the MCP resource server; never transit a token issued for another resource.
+Send bearer tokens only in the `Authorization` header. Use `401` for an invalid
+token and `403` for insufficient scope, and bound step-up retries. Prefer Client
+ID Metadata Documents for new deployments; Dynamic Client Registration remains
+for compatibility. The HTTP flow does not apply to `stdio`, where credentials
+should come from the environment.
+
+Tenant-specific resource indicators can reduce cross-tenant replay.
+Sender-constrained tokens such as DPoP reduce bearer-token theft risk where
+supported. Enterprise Managed Authorization is now a stable MCP extension for
+centrally managed identity patterns. The lab operates on claims only after
+normal signature verification, then proves issuer, resource, and scope
+failures plus the required `WWW-Authenticate` status distinction.
 
 Sources: [MCP authorization](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization), [Enterprise Managed Authorization](https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/), [RFC 8707](https://datatracker.ietf.org/doc/html/rfc8707), and [RFC 9449](https://datatracker.ietf.org/doc/rfc9449/).
 
@@ -430,6 +446,7 @@ Replace the in-memory registry, receipts, budgets, idempotency ledger, and evide
 | malformed or extra field | deny before execution |
 | valid schema, unapproved vendor | semantic deny |
 | wrong workload or tenant facts | binding deny |
+| wrong token issuer, resource, or scope | OAuth-boundary deny |
 | changed manifest or revoked tool | call-time deny despite cached discovery |
 | amount above autonomous threshold | escalate |
 | expired/wrong/altered/replayed approval | deny |
@@ -468,18 +485,20 @@ Replace the in-memory registry, receipts, budgets, idempotency ledger, and evide
 
 1. [MCP 2026-07-28 release](https://blog.modelcontextprotocol.io/posts/2026-07-28/)
 2. [MCP 2026-07-28 specification](https://modelcontextprotocol.io/specification/2026-07-28)
-3. [Official MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) and [releases](https://github.com/modelcontextprotocol/python-sdk/releases)
-4. [MCP SDK support tiers](https://modelcontextprotocol.io/docs/sdk)
-5. [Enterprise Managed Authorization](https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/)
-6. [MCP SEP index](https://plan.modelcontextprotocol.io/seps)
-7. [OWASP MCP Top 10](https://owasp.org/www-project-mcp-top-10/)
-8. [OWASP SSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)
-9. [RFC 8707 — Resource Indicators for OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8707)
-10. [RFC 9449 — DPoP](https://datatracker.ietf.org/doc/rfc9449/)
-11. [NIST AI Agent Standards Initiative](https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure)
-12. [NIST AI Agent Security RFI analysis](https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai)
-13. [Amazon Bedrock AgentCore Policy](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html)
-14. [AgentCore runtime security practices](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html)
+3. [MCP authorization](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization) and [security best practices](https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices)
+4. [MCP tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)
+5. [Official MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) and [releases](https://github.com/modelcontextprotocol/python-sdk/releases)
+6. [MCP SDK support tiers](https://modelcontextprotocol.io/docs/sdk) and [specification matrix](https://plan.modelcontextprotocol.io/matrix)
+7. [MCP roadmap](https://blog.modelcontextprotocol.io/posts/mcp-roadmap/) and [SEP index](https://plan.modelcontextprotocol.io/seps)
+8. [Enterprise Managed Authorization](https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/)
+9. [OWASP MCP Top 10](https://owasp.org/www-project-mcp-top-10/)
+10. [OWASP SSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)
+11. [RFC 8707 — Resource Indicators for OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8707)
+12. [RFC 9449 — DPoP](https://datatracker.ietf.org/doc/rfc9449/)
+13. [NIST AI Agent Standards Initiative](https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure)
+14. [NIST AI Agent Security RFI analysis](https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai)
+15. [Amazon Bedrock AgentCore Policy](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html)
+16. [AgentCore runtime security practices](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-security-best-practices.html)
 
 ---
 
