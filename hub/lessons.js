@@ -732,50 +732,64 @@ export const lessons = [
     "level": "Intermediate",
     "step": 11,
     "title": "Guardrails and Agent Security",
-    "summary": "Prompt injection and indirect injection.",
-    "outcome": "Goal hijacking.",
+    "summary": "Build defense in depth across injection signals, identity, information flow, tool policy, DLP, egress, sandbox boundaries, budgets, and containment.",
+    "outcome": "Implement and evaluate a procurement security control plane that allows legitimate work while blocking nine realistic injection, scope, exfiltration, SSRF, command, and confidentiality failures.",
     "material": "curriculum/intermediate/11-guardrails-and-agent-security/README.md",
     "notebook": "curriculum/intermediate/11-guardrails-and-agent-security/11_guardrails_and_agent_security.ipynb",
+    "lab": "curriculum/intermediate/11-guardrails-and-agent-security/lab.py",
+    "run": "make course-11",
     "refs": [
       {
-        "title": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+        "title": "OWASP: Top 10 for Agentic Applications 2026",
         "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
       },
       {
-        "title": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/",
-        "path": "https://genai.owasp.org/resource/state-of-agentic-ai-security-and-governance/"
+        "title": "OWASP: Agent Control Standard",
+        "path": "https://genai.owasp.org/resource/agent-control-standard-acs/"
       },
       {
-        "title": "https://genai.owasp.org/initiatives/agentic-security-initiative/",
-        "path": "https://genai.owasp.org/initiatives/agentic-security-initiative/"
+        "title": "NIST: Agent hijacking evaluations",
+        "path": "https://www.nist.gov/news-events/news/2025/01/technical-blog-strengthening-ai-agent-hijacking-evaluations"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/guardrails/",
-        "path": "https://openai.github.io/openai-agents-python/guardrails/"
+        "title": "OpenAI: Guardrails and human review",
+        "path": "https://developers.openai.com/api/docs/guides/agents/guardrails-approvals"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/ref/tool_guardrails/",
-        "path": "https://openai.github.io/openai-agents-python/ref/tool_guardrails/"
+        "title": "OpenAI: Agents SDK",
+        "path": "https://developers.openai.com/api/docs/guides/agents/sdk"
       },
       {
-        "title": "https://openai.github.io/openai-guardrails-python/",
-        "path": "https://openai.github.io/openai-guardrails-python/"
+        "title": "OpenAI: Guardrails Python",
+        "path": "https://github.com/openai/openai-guardrails-python"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/agent-framework/agents/safety",
+        "title": "Microsoft Agent Framework: Agent safety",
         "path": "https://learn.microsoft.com/en-us/agent-framework/agents/safety"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/agent-framework/agents/security",
+        "title": "Microsoft Agent Framework: FIDES",
         "path": "https://learn.microsoft.com/en-us/agent-framework/agents/security"
       },
       {
-        "title": "https://learn.microsoft.com/en-us/agent-framework/agents/middleware/termination",
-        "path": "https://learn.microsoft.com/en-us/agent-framework/agents/middleware/termination"
+        "title": "NVIDIA: NeMo Guardrails",
+        "path": "https://docs.nvidia.com/nemo-guardrails/index.html"
       },
       {
-        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
-        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+        "title": "Meta: LlamaFirewall",
+        "path": "https://ai.meta.com/research/publications/llamafirewall-an-open-source-guardrail-system-for-building-secure-ai-agents/"
+      },
+      {
+        "title": "Research: FIDES information-flow control",
+        "path": "https://arxiv.org/abs/2505.23643"
+      },
+      {
+        "title": "Research: CaMeL",
+        "path": "https://arxiv.org/abs/2503.18813"
+      },
+      {
+        "title": "Research: AgentDojo",
+        "path": "https://proceedings.nips.cc/paper_files/paper/2024/hash/97091a5177d8dc64b1da8bf3e1f6fb54-Abstract-Datasets_and_Benchmarks_Track.html"
       }
     ]
   },
@@ -1365,37 +1379,37 @@ export const checks = {
   ],
   "i6": [
     {
-      "question": "What is the difference between direct prompt injection and indirect prompt injection?",
+      "question": "A vendor webpage contains no known injection phrase but asks the agent to create a purchase order. Which control must still prevent the effect?",
       "choices": [
-        "Indirect injection uses SQL",
-        "Indirect injection comes from external data sources like websites or documents, not the user",
-        "Direct injection is harder to detect",
-        "They are the same"
+        "A larger system prompt",
+        "A deterministic tool-boundary policy that rejects low-integrity data driving the high-integrity action",
+        "An output formatter",
+        "A second agent that agrees with the first"
       ],
       "answer": 1,
-      "explanation": "Agents are highly vulnerable to indirect injection because they autonomously fetch external, untrusted content."
+      "explanation": "Detectors can miss attacks. Integrity and authorization policy must constrain the consequence independently of whether malicious wording is recognized."
     },
     {
-      "question": "What is the primary purpose of an input 'Guardrail' in agent security?",
+      "question": "An allowlisted hostname resolves to a public IP during review but the connection reaches 127.0.0.1. What should happen?",
       "choices": [
-        "To format the text nicely",
-        "To intercept and block unsafe inputs or outputs before they reach the model or the user",
-        "To route the request to the fastest model",
-        "To track API usage"
+        "Allow because the hostname was allowlisted",
+        "Allow if the model says the redirect is expected",
+        "Deny because the connected address is not in the approved public resolution set, then revalidate any redirect",
+        "Filter the response after the request completes"
       ],
-      "answer": 1,
-      "explanation": "Guardrails act as a semantic firewall, independent of the main model, to detect anomalies."
+      "answer": 2,
+      "explanation": "A hostname allowlist alone does not stop DNS rebinding or redirect abuse. Bind approved DNS results to the actual connection and reject non-public or changed addresses."
     },
     {
-      "question": "How do layered defenses protect against prompt injection?",
+      "question": "The injection detector is unavailable while the agent proposes a high-value purchase. Which design preserves the security promise?",
       "choices": [
-        "By banning all prompts",
-        "By using multiple independent mechanisms, like input scanners, output monitors, and strict schema enforcement, to catch attacks",
-        "By relying solely on the LLM's safety tuning",
-        "By limiting the context window to 10 tokens"
+        "Treat missing detector output as a clean result",
+        "Ask the main model whether it is safe",
+        "Execute and inspect the audit log later",
+        "Fail secure to review or denial while independent identity, authorization, approval, and budget controls remain mandatory"
       ],
-      "answer": 1,
-      "explanation": "No single defense is foolproof. Layered defenses (defense in depth) assume one layer will fail and rely on the next layer."
+      "answer": 3,
+      "explanation": "Failure behavior follows consequence. A missing probabilistic signal cannot grant authority for a sensitive effect; deterministic controls and explicit review still apply."
     }
   ],
   "i7": [
