@@ -218,7 +218,7 @@ The delegation graph is operational state, not merely a trace. It answers who ha
 
 ## 8. Handoff envelope and context minimization
 
-The lab handoff carries parties, grant reference, tenant, task, purpose, requested output, intentionally selected context, and a context digest. Validation checks the envelope against the issued grant and fails the whole handoff if a field or classification exceeds the recipient policy.
+The lab handoff carries parties, grant reference, tenant, task, purpose, requested output, intentionally selected context, and a payload digest. Validation checks the authenticated sender's tenant and task, matches the complete envelope to the application-issued registry record, and fails the whole handoff if a field or classification exceeds the recipient policy. The local registry is the integrity authority; the digest alone is not a signature and cannot resist an attacker who can replace both data and digest.
 
 Use a positive allowlist:
 

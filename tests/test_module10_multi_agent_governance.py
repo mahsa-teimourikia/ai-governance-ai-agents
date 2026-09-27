@@ -270,6 +270,33 @@ def test_handoff_tamper_wrong_field_and_injection_fail_closed():
     tampered = envelope.model_copy(update={"context": (allowed[0].model_copy(update={"value": "V-99"}),)})
     assert plane.validate_handoff(fixture["manager"], tampered).reason_code == "HANDOFF_PAYLOAD_TAMPERED"
 
+    changed_output = envelope.model_copy(update={
+        "requested_output": "purchase_order",
+        "payload_digest": stable_digest({
+            "requested_output": "purchase_order",
+            "context": envelope.context,
+        }),
+    })
+    assert (
+        plane.validate_handoff(fixture["manager"], changed_output).reason_code
+        == "HANDOFF_ENVELOPE_TAMPERED"
+    )
+
+    wrong_task_sender = fixture["manager"].model_copy(update={"task_id": "task:other"})
+    assert_error(
+        "HANDOFF_ISSUER_MISMATCH",
+        plane.create_handoff,
+        wrong_task_sender,
+        fixture["research_grant"].grant_id,
+        "HANDOP-WRONG-TASK",
+        "vendor_risk_report",
+        allowed,
+    )
+    assert (
+        plane.validate_handoff(wrong_task_sender, envelope).reason_code
+        == "HANDOFF_SENDER_NOT_AUTHENTICATED"
+    )
+
     bad_field = (ContextItem(name="payment_api_secret", value="secret", classification=Classification.INTERNAL, source_id="vault"),)
     field_envelope = plane.create_handoff(
         fixture["manager"], fixture["research_grant"].grant_id,

@@ -661,7 +661,11 @@ class MultiAgentControlPlane:
             grant = self._grants.get(grant_id)
             if grant is None:
                 raise ControlError("HANDOFF_GRANT_NOT_FOUND")
-            if issuer.subject_id != grant.issuer_id or issuer.tenant_id != grant.tenant_id:
+            if (
+                issuer.subject_id != grant.issuer_id
+                or issuer.tenant_id != grant.tenant_id
+                or issuer.task_id != grant.task_id
+            ):
                 raise ControlError("HANDOFF_ISSUER_MISMATCH")
             self._validate_chain_unlocked(grant_id, now)
             operation_key = (grant.tenant_id, grant.task_id, operation_id)
@@ -693,7 +697,10 @@ class MultiAgentControlPlane:
                 context=context,
                 issued_at=now,
                 expires_at=min(grant.expires_at, now + ttl),
-                payload_digest=stable_digest(context),
+                payload_digest=stable_digest({
+                    "requested_output": requested_output,
+                    "context": context,
+                }),
             )
             self._handoff_operations[operation_key] = (request_digest, handoff_id)
             self._handoffs[handoff_id] = envelope
@@ -713,7 +720,12 @@ class MultiAgentControlPlane:
                 grant = self._grants.get(envelope.delegation_grant_id)
                 if grant is None:
                     raise ControlError("HANDOFF_GRANT_NOT_FOUND")
-                if issuer.subject_id != envelope.from_agent_id or issuer.kind is not ActorKind.AGENT:
+                if (
+                    issuer.subject_id != envelope.from_agent_id
+                    or issuer.kind is not ActorKind.AGENT
+                    or issuer.tenant_id != grant.tenant_id
+                    or issuer.task_id != grant.task_id
+                ):
                     raise ControlError("HANDOFF_SENDER_NOT_AUTHENTICATED")
                 if (
                     envelope.from_agent_id != grant.issuer_id
@@ -725,8 +737,13 @@ class MultiAgentControlPlane:
                     raise ControlError("HANDOFF_GRANT_BINDING_MISMATCH")
                 if envelope.issued_at > now or envelope.expires_at <= now:
                     raise ControlError("HANDOFF_EXPIRED")
-                if envelope.payload_digest != stable_digest(envelope.context):
+                if envelope.payload_digest != stable_digest({
+                    "requested_output": envelope.requested_output,
+                    "context": envelope.context,
+                }):
                     raise ControlError("HANDOFF_PAYLOAD_TAMPERED")
+                if self._handoffs.get(envelope.handoff_id) != envelope:
+                    raise ControlError("HANDOFF_ENVELOPE_TAMPERED")
                 self._validate_chain_unlocked(grant.grant_id, now)
                 profile = self._profile(grant.tenant_id, grant.subject_agent_id)
                 indicators = tuple(sorted({
