@@ -628,6 +628,10 @@ export const lessons = [
         "path": "https://docs.langchain.com/oss/python/langgraph/add-memory"
       },
       {
+        "title": "OpenFGA: RAG authorization",
+        "path": "https://openfga.dev/docs/modeling/agents/rag-authorization"
+      },
+      {
         "title": "PostgreSQL: Row security policies",
         "path": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html"
       },
@@ -642,6 +646,10 @@ export const lessons = [
       {
         "title": "OWASP Top 10 for LLM Applications",
         "path": "https://genai.owasp.org/llm-top-10/"
+      },
+      {
+        "title": "Arize Phoenix: Evaluation",
+        "path": "https://arize.com/docs/phoenix/evaluation/evals"
       }
     ]
   },

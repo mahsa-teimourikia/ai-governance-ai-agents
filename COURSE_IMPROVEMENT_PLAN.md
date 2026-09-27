@@ -107,7 +107,7 @@ Each course pass will:
   framework prose that did not create or test artifacts.
 - **Add:** real OpenAI `SQLiteSession` and LangGraph `InMemoryStore` artifacts,
   source-version tombstones, cache eviction, content scrubbing, correction
-  lineage, eight labelled retrieval cases, 46 focused tests, Hub navigation,
+  lineage, eight labelled retrieval cases, 48 focused tests, Hub navigation,
   judgment checkpoints, and a Course 9 CI target.
 
 | Promise | Prose | Executable proof | Negative/evaluation proof |

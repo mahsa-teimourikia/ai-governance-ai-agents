@@ -514,6 +514,38 @@ def test_source_cache_eviction_is_tenant_bound():
     assert system.retriever.search(beta, query).results
 
 
+def test_parallel_retrieval_and_cache_eviction_remain_consistent():
+    system = build_fixture()
+    principal = sample_principal()
+    source = sample_documents()[1].ref
+    query = RetrievalQuery(text="Northstar invoice currency", purpose="vendor_due_diligence")
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        searches = [pool.submit(system.retriever.search, principal, query) for _ in range(20)]
+        evictions = [pool.submit(system.retriever.evict_source, source) for _ in range(20)]
+    assert all(future.result().tenant_id == principal.tenant_id for future in searches)
+    assert all(future.result() >= 0 for future in evictions)
+
+
+def test_parallel_source_delete_and_memory_write_leave_no_visible_derivative():
+    system = build_fixture()
+    principal = sample_principal()
+    steward = principal.model_copy(update={"groups": principal.groups | {"data-steward"}})
+    source = sample_documents()[1].ref
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        write_future = pool.submit(system.memory.write, principal, semantic_candidate())
+        delete_future = pool.submit(system.delete_source, steward, source)
+    delete_future.result()
+    try:
+        _, record = write_future.result()
+    except ControlError as error:
+        assert error.code == "MEMORY_SOURCE_NOT_CURRENT"
+    else:
+        assert record is not None
+        assert system.memory.get_record(record.memory_id).invalidated
+        assert system.memory.get_record(record.memory_id).value == "[deleted]"
+    assert system.memory.read(principal, "vendor_due_diligence") == ()
+
+
 def test_openai_session_is_real_and_namespaced_by_tenant_subject_and_thread():
     session = openai_session_for(sample_principal(), "thread-42")
     try:
