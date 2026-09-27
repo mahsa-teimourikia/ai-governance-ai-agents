@@ -312,7 +312,7 @@ class GovernedRepository:
         self._chunks: dict[str, dict[str, Chunk]] = defaultdict(dict)
         self._active_versions: dict[tuple[str, str], str] = {}
         self._tombstones: set[tuple[str, str, str]] = set()
-        self._lock = Lock()
+        self._lock = RLock()
 
     def ingest(self, document: SourceDocument) -> tuple[Chunk, ...]:
         if not document.allowed_groups or not document.allowed_purposes:
@@ -335,16 +335,18 @@ class GovernedRepository:
 
     def is_current(self, source: SourceRef, now: datetime = REFERENCE_TIME) -> bool:
         key = (source.tenant_id, source.source_id, source.source_version)
-        document = self._documents.get(key)
-        return (
-            document is not None
-            and key not in self._tombstones
-            and self._active_versions.get((source.tenant_id, source.source_id)) == source.source_version
-            and document.valid_until >= now
-        )
+        with self._lock:
+            document = self._documents.get(key)
+            return (
+                document is not None
+                and key not in self._tombstones
+                and self._active_versions.get((source.tenant_id, source.source_id)) == source.source_version
+                and document.valid_until >= now
+            )
 
     def document_for(self, source: SourceRef) -> SourceDocument | None:
-        return self._documents.get((source.tenant_id, source.source_id, source.source_version))
+        with self._lock:
+            return self._documents.get((source.tenant_id, source.source_id, source.source_version))
 
     def authorized_candidates(
         self,
@@ -355,21 +357,23 @@ class GovernedRepository:
         _authenticate(principal, now)
         if query.purpose not in principal.allowed_purposes:
             raise ControlError("PURPOSE_NOT_AUTHORIZED")
-        # Tenant partition selection occurs before any content is scored.
-        partition = tuple(self._chunks.get(principal.tenant_id, {}).values())
-        return tuple(
-            chunk
-            for chunk in partition
-            if chunk.classification <= principal.clearance
-            and bool(chunk.allowed_groups & principal.groups)
-            and query.purpose in chunk.allowed_purposes
-            and chunk.trust >= query.minimum_trust
-            and chunk.valid_until >= now
-            and self.is_current(chunk.source, now)
-        )
+        # Tenant selection and policy filtering form one consistent snapshot.
+        with self._lock:
+            partition = tuple(self._chunks.get(principal.tenant_id, {}).values())
+            return tuple(
+                chunk
+                for chunk in partition
+                if chunk.classification <= principal.clearance
+                and bool(chunk.allowed_groups & principal.groups)
+                and query.purpose in chunk.allowed_purposes
+                and chunk.trust >= query.minimum_trust
+                and chunk.valid_until >= now
+                and self.is_current(chunk.source, now)
+            )
 
     def unsafe_all_chunks(self) -> tuple[Chunk, ...]:
-        return tuple(chunk for partition in self._chunks.values() for chunk in partition.values())
+        with self._lock:
+            return tuple(chunk for partition in self._chunks.values() for chunk in partition.values())
 
     def delete_source(self, source: SourceRef) -> int:
         key = (source.tenant_id, source.source_id, source.source_version)
@@ -422,6 +426,7 @@ class GovernedRetriever:
     def __init__(self, repository: GovernedRepository):
         self.repository = repository
         self._cache: dict[str, RetrievalEvidence] = {}
+        self._lock = Lock()
 
     def search(
         self,
@@ -443,7 +448,8 @@ class GovernedRetriever:
             excluded_instruction_count=len(candidates) - len(clean),
             results=results,
         )
-        self._cache[digest] = evidence
+        with self._lock:
+            self._cache[digest] = evidence
         return evidence
 
     def unsafe_search(self, text: str, top_k: int = 3) -> tuple[RetrievalResult, ...]:
@@ -465,19 +471,20 @@ class GovernedRetriever:
         )
 
     def evict_source(self, source: SourceRef) -> int:
-        affected = [
-            key
-            for key, evidence in self._cache.items()
-            if any(
-                result.citation.tenant_id == source.tenant_id
-                and result.citation.source_id == source.source_id
-                and result.citation.source_version == source.source_version
-                for result in evidence.results
-            )
-        ]
-        for key in affected:
-            del self._cache[key]
-        return len(affected)
+        with self._lock:
+            affected = [
+                key
+                for key, evidence in self._cache.items()
+                if any(
+                    result.citation.tenant_id == source.tenant_id
+                    and result.citation.source_id == source.source_id
+                    and result.citation.source_version == source.source_version
+                    for result in evidence.results
+                )
+            ]
+            for key in affected:
+                del self._cache[key]
+            return len(affected)
 
 
 def decide_memory(candidate: MemoryCandidate) -> MemoryDecision:
@@ -520,50 +527,53 @@ class GovernedMemoryStore:
             raise ControlError("MEMORY_PURPOSE_NOT_AUTHORIZED")
         if candidate.classification > principal.clearance:
             raise ControlError("MEMORY_CLEARANCE_EXCEEDED")
-        if candidate.source is not None:
-            if candidate.source.tenant_id != candidate.tenant_id:
-                raise ControlError("MEMORY_SOURCE_TENANT_MISMATCH")
-            if not self.repository.is_current(candidate.source, now):
-                raise ControlError("MEMORY_SOURCE_NOT_CURRENT")
-            source_document = self.repository.document_for(candidate.source)
-            assert source_document is not None
-            if candidate.source_trust is not source_document.trust:
-                raise ControlError("MEMORY_SOURCE_TRUST_MISMATCH")
-            if candidate.classification < source_document.classification:
-                raise ControlError("MEMORY_CLASSIFICATION_DOWNGRADE")
-        elif candidate.category is MemoryCategory.SEMANTIC:
-            raise ControlError("SEMANTIC_MEMORY_REQUIRES_SOURCE")
-        decision = decide_memory(candidate)
-        if decision.disposition is not MemoryDisposition.STORE:
-            return decision, None
-        operation_key = (candidate.tenant_id, candidate.operation_id)
-        request_digest = stable_digest({"candidate": candidate, "supersedes": supersedes})
-        memory_id = "MEM-" + stable_digest(
-            {"operation_id": candidate.operation_id, "candidate": candidate, "supersedes": supersedes}
-        )[:16]
-        record = MemoryRecord(
-            memory_id=memory_id,
-            subject_id=candidate.subject_id,
-            tenant_id=candidate.tenant_id,
-            purpose=candidate.purpose,
-            task_id=candidate.task_id,
-            value=candidate.value,
-            category=candidate.category,
-            classification=candidate.classification,
-            source=candidate.source,
-            created_at=now,
-            expires_at=now + timedelta(days=decision.ttl_days or 1),
-            version=1,
-            supersedes=supersedes,
-        )
         with self._lock:
+            # Source deletion removes the repository row before it acquires this
+            # lock to invalidate derived memory. That ordering closes the window
+            # in which a validated write could otherwise arrive after invalidation.
+            if candidate.source is not None:
+                if candidate.source.tenant_id != candidate.tenant_id:
+                    raise ControlError("MEMORY_SOURCE_TENANT_MISMATCH")
+                if not self.repository.is_current(candidate.source, now):
+                    raise ControlError("MEMORY_SOURCE_NOT_CURRENT")
+                source_document = self.repository.document_for(candidate.source)
+                assert source_document is not None
+                if candidate.source_trust is not source_document.trust:
+                    raise ControlError("MEMORY_SOURCE_TRUST_MISMATCH")
+                if candidate.classification < source_document.classification:
+                    raise ControlError("MEMORY_CLASSIFICATION_DOWNGRADE")
+            elif candidate.category is MemoryCategory.SEMANTIC:
+                raise ControlError("SEMANTIC_MEMORY_REQUIRES_SOURCE")
+            decision = decide_memory(candidate)
+            if decision.disposition is not MemoryDisposition.STORE:
+                return decision, None
+            operation_key = (candidate.tenant_id, candidate.operation_id)
+            request_digest = stable_digest({"candidate": candidate, "supersedes": supersedes})
+            memory_id = "MEM-" + stable_digest(
+                {"operation_id": candidate.operation_id, "candidate": candidate, "supersedes": supersedes}
+            )[:16]
             prior_digest = self._operations.get(operation_key)
             if prior_digest is not None and prior_digest != request_digest:
                 raise ControlError("MEMORY_OPERATION_MUTATION")
-            self._operations[operation_key] = request_digest
             prior = self._records.get(memory_id)
             if prior is not None:
                 return decision, prior
+            record = MemoryRecord(
+                memory_id=memory_id,
+                subject_id=candidate.subject_id,
+                tenant_id=candidate.tenant_id,
+                purpose=candidate.purpose,
+                task_id=candidate.task_id,
+                value=candidate.value,
+                category=candidate.category,
+                classification=candidate.classification,
+                source=candidate.source,
+                created_at=now,
+                expires_at=now + timedelta(days=decision.ttl_days or 1),
+                version=1,
+                supersedes=supersedes,
+            )
+            self._operations[operation_key] = request_digest
             self._records[memory_id] = record
         return decision, record
 
@@ -576,23 +586,25 @@ class GovernedMemoryStore:
         _authenticate(principal, now)
         if purpose not in principal.allowed_purposes:
             raise ControlError("MEMORY_PURPOSE_NOT_AUTHORIZED")
-        return tuple(
-            record
-            for record in self._records.values()
-            if record.tenant_id == principal.tenant_id
-            and record.subject_id == principal.subject_id
-            and record.purpose == purpose
-            and (record.task_id is None or record.task_id == principal.task_id)
-            and record.classification <= principal.clearance
-            and not record.invalidated
-            and record.expires_at >= now
-            and (record.source is None or self.repository.is_current(record.source, now))
-        )
+        with self._lock:
+            return tuple(
+                record
+                for record in self._records.values()
+                if record.tenant_id == principal.tenant_id
+                and record.subject_id == principal.subject_id
+                and record.purpose == purpose
+                and (record.task_id is None or record.task_id == principal.task_id)
+                and record.classification <= principal.clearance
+                and not record.invalidated
+                and record.expires_at >= now
+                and (record.source is None or self.repository.is_current(record.source, now))
+            )
 
     def get_record(self, memory_id: str) -> MemoryRecord:
         """Administrative teaching view; normal reads never return invalidated rows."""
 
-        return self._records[memory_id]
+        with self._lock:
+            return self._records[memory_id]
 
     def correct(
         self,

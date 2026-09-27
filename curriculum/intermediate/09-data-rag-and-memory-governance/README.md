@@ -136,6 +136,12 @@ The unsafe sequence is “search everything, then hide unauthorized results.” 
 
 The lab’s `GovernedRepository.authorized_candidates` selects one tenant partition and evaluates policy before TF-IDF sees content. In production, use row-level security, separate stores/partitions, security-trimmed indexes, or a trusted retrieval service. Ensure administrative, owner, service, replication, and backup roles do not bypass the intended boundary.
 
+### OpenFGA pre-filtering and post-filtering
+
+OpenFGA documents two framework-independent RAG patterns. A pre-filter calls `ListObjects` for the authenticated principal and passes the authorized document IDs into the vector query. It is a strong fit when the authorized set is reasonably small and exact authorized top-k matters. A post-filter retrieves an over-sampled candidate set, calls `BatchCheck`, and passes only allowed documents onward. It can be practical when most candidates are authorized, but may return fewer than k results and requires the unfiltered candidates, logs, cache, and authorization step to stay inside a trusted retrieval boundary.
+
+In either pattern, filter before any candidate reaches the LLM. Recheck at consequential use when permissions can change during a long-running task. OpenFGA decides relationships; it does not replace purpose, classification, freshness, source-trust, or injection controls.
+
 ### PostgreSQL and pgvector nuance
 
 PostgreSQL row-level security defaults to deny when enabled without an applicable policy, but superusers, `BYPASSRLS` roles, and normally table owners bypass it. Use narrowly privileged application roles and consider `FORCE ROW LEVEL SECURITY` where appropriate.
@@ -283,7 +289,7 @@ source or subject request
   → replicas, logs, backups under retention policy
 ```
 
-The lab immediately removes source chunks, scrubs derived memory values, evicts result caches, and creates a deterministic tombstone receipt. It does not pretend to model provider backups or legal holds. Production deletion receipts should name every store, completion state, exception, and verification time.
+The lab immediately removes source chunks, scrubs derived memory values, evicts result caches, and creates a deterministic tombstone receipt. A lock closes the local race between a source deletion and a simultaneous derived-memory write. This is not a distributed transaction: production systems need an idempotent deletion coordinator, durable outbox or work queue, retry/reconciliation jobs, and a deny tombstone that takes effect before eventually consistent replicas converge. The lab does not pretend to model provider backups or legal holds. Production deletion receipts should name every store, completion state, exception, and verification time.
 
 ## 11. Evaluation with honest populations
 
@@ -298,6 +304,8 @@ Retrieval quality metrics such as recall@k or nDCG are necessary but incomplete.
 - memory precision, usefulness, provenance completeness, expiry, correction, and sensitive-memory rates.
 
 The lab uses exactly eight labelled retrieval cases. The unsafe global-search baseline gets 3/8 top-result expectations correct and exposes one cross-tenant result, one instruction-bearing result, and two stale results. The governed path gets 8/8 and exposes zero in each category. These numbers describe only the teaching fixture; they are not production performance claims.
+
+Common evaluation stacks include Ragas and DeepEval for code-first RAG metrics, LangSmith for offline datasets and online evaluators, and Phoenix for OpenTelemetry/OpenInference traces, versioned datasets, experiments, and evaluators. They can accelerate relevance, groundedness, and regression work; none should be treated as evidence that authorization or deletion controls ran. Keep deterministic policy and isolation assertions in ordinary tests, calibrate model judges against human review, version the evaluation set, and report every denominator and slice.
 
 ## 12. State of the art: established, emerging, and unsettled
 
@@ -409,8 +417,16 @@ Design an implementation for your organization. Include:
 ### Storage and orchestration
 
 - [LangGraph memory: short-term checkpointers and long-term stores](https://docs.langchain.com/oss/python/langgraph/add-memory)
+- [OpenFGA RAG authorization](https://openfga.dev/docs/modeling/agents/rag-authorization)
 - [PostgreSQL row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
 - [pgvector filtering, partitioning, and iterative scans](https://github.com/pgvector/pgvector#filtering)
+
+### Evaluation and observability
+
+- [Ragas documentation](https://docs.ragas.io/)
+- [DeepEval end-to-end evaluation](https://deepeval.com/docs/evaluation-end-to-end-llm-evals)
+- [LangSmith evaluation types](https://docs.langchain.com/langsmith/evaluation-types)
+- [Arize Phoenix evaluation](https://arize.com/docs/phoenix/evaluation/evals)
 
 ### Governance and security
 
