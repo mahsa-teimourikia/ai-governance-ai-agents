@@ -18,10 +18,12 @@ from lab import (  # noqa: E402
     BudgetLedger,
     EffectStatus,
     Outcome,
+    OAuthTokenClaims,
     POLICY_VERSION,
     REFERENCE_TIME,
     ToolGateway,
     ToolRegistry,
+    authorize_oauth_claims,
     authorization_challenge,
     run_evaluation,
     sample_cancel_contract,
@@ -70,6 +72,71 @@ def test_official_mcp_descriptor_contains_governance_attestation():
     assert descriptor.outputSchema["required"] == ["effect_id", "status", "tenant_id"]
     assert descriptor.meta["governance/manifestDigest"] == contract.manifest_digest
     assert descriptor.meta["governance/riskTier"] == "T2"
+
+
+def test_oauth_boundary_binds_verified_token_to_issuer_resource_and_scope():
+    claims = OAuthTokenClaims(
+        issuer="https://identity.example.test",
+        audiences=frozenset({"https://mcp.procurement.example.test"}),
+        scopes=frozenset({"tools:call:procurement.create_po"}),
+        expires_at=REFERENCE_TIME + timedelta(minutes=5),
+    )
+    allowed = authorize_oauth_claims(
+        claims,
+        signature_verified=True,
+        expected_issuer="https://identity.example.test",
+        expected_resource="https://mcp.procurement.example.test",
+        required_scope="tools:call:procurement.create_po",
+    )
+    assert allowed.allowed is True
+    assert allowed.status_code == 200
+
+
+@pytest.mark.parametrize(
+    ("signature_verified", "changes", "reason"),
+    [
+        (False, {}, "TOKEN_SIGNATURE_INVALID"),
+        (True, {"issuer": "https://evil.example.test"}, "TOKEN_ISSUER_UNTRUSTED"),
+        (True, {"audiences": frozenset({"https://mcp.other.example.test"})}, "TOKEN_RESOURCE_MISMATCH"),
+        (True, {"expires_at": REFERENCE_TIME}, "TOKEN_EXPIRED"),
+    ],
+)
+def test_invalid_oauth_token_properties_return_401(signature_verified, changes, reason):
+    claims = OAuthTokenClaims(
+        issuer="https://identity.example.test",
+        audiences=frozenset({"https://mcp.procurement.example.test"}),
+        scopes=frozenset({"tools:call:procurement.create_po"}),
+        expires_at=REFERENCE_TIME + timedelta(minutes=5),
+    ).model_copy(update=changes)
+    decision = authorize_oauth_claims(
+        claims,
+        signature_verified=signature_verified,
+        expected_issuer="https://identity.example.test",
+        expected_resource="https://mcp.procurement.example.test",
+        required_scope="tools:call:procurement.create_po",
+    )
+    assert decision.status_code == 401
+    assert decision.reason_code == reason
+    assert 'error="invalid_token"' in decision.www_authenticate
+
+
+def test_valid_oauth_token_with_missing_scope_returns_403_challenge():
+    claims = OAuthTokenClaims(
+        issuer="https://identity.example.test",
+        audiences=frozenset({"https://mcp.procurement.example.test"}),
+        scopes=frozenset({"tools:list"}),
+        expires_at=REFERENCE_TIME + timedelta(minutes=5),
+    )
+    decision = authorize_oauth_claims(
+        claims,
+        signature_verified=True,
+        expected_issuer="https://identity.example.test",
+        expected_resource="https://mcp.procurement.example.test",
+        required_scope="tools:call:procurement.create_po",
+    )
+    assert decision.status_code == 403
+    assert decision.reason_code == "TOKEN_SCOPE_INSUFFICIENT"
+    assert 'error="insufficient_scope"' in decision.www_authenticate
 
 
 def test_baseline_allows_schema_valid_but_unauthorized_vendor():
@@ -154,8 +221,10 @@ def test_workload_tenant_and_freshness_are_trusted_boundaries():
 @pytest.mark.parametrize(
     ("context_change", "reason"),
     [
+        ({"token_signature_verified": False}, "TOKEN_SIGNATURE_INVALID"),
         ({"token_issuer": "https://attacker.example"}, "TOKEN_ISSUER_UNTRUSTED"),
         ({"token_resource": "mcp://other-server"}, "TOKEN_RESOURCE_MISMATCH"),
+        ({"token_expires_at": REFERENCE_TIME}, "TOKEN_EXPIRED"),
         ({"scopes": frozenset()}, "TOKEN_SCOPE_INSUFFICIENT"),
     ],
 )
@@ -239,6 +308,16 @@ def test_idempotent_replay_is_one_effect_but_mutated_replay_is_denied():
     mutated = proposal.model_copy(update={"arguments": {"vendor_id": "VEN-101", "amount_cents": 125_001, "currency": "CAD"}})
     denied = gateway.invoke(context, mutated, facts)
     assert denied.decision.reason_codes == ("IDEMPOTENCY_MUTATION",)
+
+
+def test_idempotent_receipt_is_not_returned_to_an_expired_token():
+    contract, gateway = setup_gateway()
+    context, proposal, facts = sample_context(), sample_proposal(contract), sample_facts()
+    assert gateway.invoke(context, proposal, facts).effect.status is EffectStatus.APPLIED
+    expired = context.model_copy(update={"token_expires_at": REFERENCE_TIME})
+    replay = gateway.invoke(expired, proposal, facts)
+    assert replay.decision.reason_codes == ("TOKEN_EXPIRED",)
+    assert replay.effect.status is EffectStatus.NOT_ATTEMPTED
 
 
 def test_idempotency_namespace_is_tenant_scoped():

@@ -77,8 +77,10 @@ class AuthenticatedContext(FrozenModel):
     authenticated_at: datetime
     valid_until: datetime
     # Claims below are trusted only after normal signature and issuer validation.
+    token_signature_verified: bool = True
     token_issuer: str = MCP_ISSUER
     token_resource: str = "mcp://procurement-prod"
+    token_expires_at: datetime = REFERENCE_TIME + timedelta(minutes=8)
     scopes: frozenset[str] = frozenset(
         {"tools:procurement.create_po", "tools:procurement.cancel_po"}
     )
@@ -227,6 +229,79 @@ class EvaluationSummary(FrozenModel):
     escalation_case_count: int
     baseline_missed_escalation_count: int
     candidate_missed_escalation_count: int
+
+
+class OAuthTokenClaims(FrozenModel):
+    """Claims exposed only after normal JWT signature verification."""
+
+    issuer: str
+    audiences: frozenset[str]
+    scopes: frozenset[str]
+    expires_at: datetime
+
+
+class OAuthBoundaryDecision(FrozenModel):
+    allowed: bool
+    status_code: int
+    reason_code: str
+    www_authenticate: str | None = None
+
+
+def authorize_oauth_claims(
+    claims: OAuthTokenClaims,
+    *,
+    signature_verified: bool,
+    expected_issuer: str,
+    expected_resource: str,
+    required_scope: str,
+    now: datetime = REFERENCE_TIME,
+) -> OAuthBoundaryDecision:
+    """Enforce the MCP resource-server checks after cryptographic verification.
+
+    Invalid/missing token properties produce 401; a valid token that lacks the
+    action's scope produces 403 with an insufficient-scope challenge.
+    """
+
+    if not signature_verified:
+        return OAuthBoundaryDecision(
+            allowed=False,
+            status_code=401,
+            reason_code="TOKEN_SIGNATURE_INVALID",
+            www_authenticate='Bearer error="invalid_token"',
+        )
+    if claims.issuer != expected_issuer:
+        return OAuthBoundaryDecision(
+            allowed=False,
+            status_code=401,
+            reason_code="TOKEN_ISSUER_UNTRUSTED",
+            www_authenticate='Bearer error="invalid_token"',
+        )
+    if expected_resource not in claims.audiences:
+        return OAuthBoundaryDecision(
+            allowed=False,
+            status_code=401,
+            reason_code="TOKEN_RESOURCE_MISMATCH",
+            www_authenticate='Bearer error="invalid_token"',
+        )
+    if claims.expires_at <= now:
+        return OAuthBoundaryDecision(
+            allowed=False,
+            status_code=401,
+            reason_code="TOKEN_EXPIRED",
+            www_authenticate='Bearer error="invalid_token"',
+        )
+    if required_scope not in claims.scopes:
+        return OAuthBoundaryDecision(
+            allowed=False,
+            status_code=403,
+            reason_code="TOKEN_SCOPE_INSUFFICIENT",
+            www_authenticate=f'Bearer error="insufficient_scope", scope="{required_scope}"',
+        )
+    return OAuthBoundaryDecision(
+        allowed=True,
+        status_code=200,
+        reason_code="TOKEN_BOUNDARY_SATISFIED",
+    )
 
 
 class AuthorizationChallenge(FrozenModel):
@@ -489,6 +564,26 @@ class ToolGateway:
             decided_at=now,
         )
 
+    @staticmethod
+    def _oauth_boundary(
+        context: AuthenticatedContext,
+        contract: ToolContract,
+        now: datetime,
+    ) -> OAuthBoundaryDecision:
+        return authorize_oauth_claims(
+            OAuthTokenClaims(
+                issuer=context.token_issuer,
+                audiences=frozenset({context.token_resource}),
+                scopes=context.scopes,
+                expires_at=context.token_expires_at,
+            ),
+            signature_verified=context.token_signature_verified,
+            expected_issuer=MCP_ISSUER,
+            expected_resource=contract.server_id,
+            required_scope=contract.required_scope,
+            now=now,
+        )
+
     def evaluate(
         self,
         context: AuthenticatedContext,
@@ -509,12 +604,9 @@ class ToolGateway:
             return self._decision(Outcome.DENY, ("MANIFEST_ATTESTATION_FAILED",), digest, now, contract)
         if context.valid_until < now or context.authenticated_at > now:
             return self._decision(Outcome.DENY, ("AUTHENTICATION_STALE",), digest, now, contract)
-        if context.token_issuer != MCP_ISSUER:
-            return self._decision(Outcome.DENY, ("TOKEN_ISSUER_UNTRUSTED",), digest, now, contract)
-        if context.token_resource != contract.server_id:
-            return self._decision(Outcome.DENY, ("TOKEN_RESOURCE_MISMATCH",), digest, now, contract)
-        if contract.required_scope not in context.scopes:
-            return self._decision(Outcome.DENY, ("TOKEN_SCOPE_INSUFFICIENT",), digest, now, contract)
+        oauth = self._oauth_boundary(context, contract, now)
+        if not oauth.allowed:
+            return self._decision(Outcome.DENY, (oauth.reason_code,), digest, now, contract)
         if context.workload_id not in contract.allowed_workloads:
             return self._decision(Outcome.DENY, ("WORKLOAD_NOT_AUTHORIZED",), digest, now, contract)
         errors = sorted(Draft202012Validator(contract.input_schema).iter_errors(proposal.arguments), key=lambda e: list(e.path))
@@ -563,6 +655,16 @@ class ToolGateway:
     ) -> GatewayResult:
         digest = self.request_digest(context, proposal)
         key = (context.tenant_id, proposal.operation_id)
+        # Re-authenticate before returning even a known idempotent receipt.
+        contract = self.registry.get(proposal.server_id, proposal.tool_name)
+        if contract is not None:
+            if context.valid_until < now or context.authenticated_at > now:
+                decision = self._decision(Outcome.DENY, ("AUTHENTICATION_STALE",), digest, now, contract)
+                return self._finish(context, proposal, decision, None, now)
+            oauth = self._oauth_boundary(context, contract, now)
+            if not oauth.allowed:
+                decision = self._decision(Outcome.DENY, (oauth.reason_code,), digest, now, contract)
+                return self._finish(context, proposal, decision, None, now)
         with self._lock:
             replay = self._idempotency.get(key)
             if replay:
