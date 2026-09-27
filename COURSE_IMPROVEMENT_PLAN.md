@@ -45,7 +45,7 @@ Each course pass will:
 | 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Implemented in PR #21 |
 | 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Implemented in PR #22 |
 | 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Implemented in PR #24 |
-| 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Planned |
+| 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Implemented; PR pending |
 | 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Planned |
 | 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Planned |
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Planned |
@@ -153,6 +153,38 @@ Each course pass will:
 | Pause, termination and revocation stop the next effect | Lifecycle section | application state machine plus descendant revocation | paused/revoked/terminal late-worker tests |
 | Framework examples are real but not policy | Technology and framework sections | OpenAI `Agent`/`as_tool`/`handoff`; Microsoft `HandoffBuilder` workflow | objects construct offline while all effects remain in the control plane |
 | Evaluation names the exact population | Evaluation section | one allowed and seven forbidden cases | baseline 3/8 correct with five forbidden allows; governed 8/8 with zero |
+
+## Course 11 claim-to-proof map
+
+### Course 11 audit decisions
+
+- **Retain:** defense-in-depth, OWASP agentic risks, trust and information-flow
+  boundaries, injection, tool/identity security, SSRF, code isolation, memory,
+  multi-agent security, anomaly response, incident response, and four diagrams.
+- **Deepen:** authenticated current-policy authority, tenant/task-bound content,
+  exact tool-resource pairs, integrity/confidentiality flows, resolve-to-connect
+  egress tickets, proposal-bound single-use approval, atomic aggregate budgets,
+  operator-owned containment, honest detector metrics, and trajectory outcomes.
+- **Consolidate:** replace mutable notebook-only demonstrations with one typed,
+  deterministic `lab.py` imported by the notebook and focused tests.
+- **Repair:** remove runtime installs, mutable globals, regex-only enforcement,
+  unscoped context, agent-callable kill switches, misleading allow audit events
+  on budget denial, unsafe URL checks, and fabricated external effects.
+- **Add:** real offline OpenAI Agents SDK input/output/function-tool guardrails
+  and approval, an OpenAI Guardrails registry check, experimental Microsoft
+  FIDES labels/configuration, 58 invariant tests, 12 labelled trajectories,
+  Hub navigation/checkpoints, and a Course 11 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Detection cannot manufacture authority | Signal/decision/enforcement model | authenticated context, current `TaskGrant`, typed proposal | spoofed actor, stale policy, wrong tenant/task/tool/resource/vendor tests |
+| Provenance and labels constrain flows | threat-model and IFC sections | tenant/task-bound `ContentEnvelope`, integrity/confidentiality checks | cross-tenant context, low-integrity purchase and confidential egress denied |
+| Outbound paths are constrained | egress, DLP and sandbox sections | resolution-bound `EgressTicket`, output release gate, command manifest | alternate IP, private DNS, rebinding, secret, path and shell-composition tests |
+| Approval and retries do not widen authority | approval/idempotency sections | exact expiring receipt and operation ledger | mutation, expiry, consumption, replay and changed-operation tests |
+| Shared autonomy has atomic limits | budget section | locked call/spend reservation before simulated effect | six-worker race commits four CAD 1,200 orders and records two denials |
+| Containment is independent of the agent | incident-response section | current, scoped `security_operator` methods | agent, cross-tenant and future-session operators cannot pause a run |
+| Framework examples are real but bounded | tools and framework sections | real SDK/Guardrails/FIDES objects construct offline | tests inspect exact hooks while application policy owns every effect |
+| Metrics name exact populations | evaluation section | 8 detector and 12 trajectory cases | baseline allows 8/9 dangerous cases; governed path allows 0/9 |
 
 ## Course 1 claim-to-proof map
 

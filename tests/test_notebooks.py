@@ -10,6 +10,10 @@ def execute_notebook(path: Path, monkeypatch):
     namespace = {"__name__": "__main__"}
     monkeypatch.chdir(ROOT)
     sys.modules.pop("lab", None)
+    module_path = str(path.parent)
+    if module_path in sys.path:
+        sys.path.remove(module_path)
+    sys.path.insert(0, module_path)
     for index, cell in enumerate(document["cells"]):
         if cell["cell_type"] != "code":
             continue
@@ -133,5 +137,16 @@ def test_course_10_notebook_executes_top_to_bottom(monkeypatch):
         ROOT
         / "curriculum/intermediate/10-multi-agent-governance-and-delegation"
         / "10_multi_agent_governance_and_delegation.ipynb"
+    )
+    execute_notebook(path, monkeypatch)
+
+
+def test_course_11_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the eleventh fully audited notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/intermediate/11-guardrails-and-agent-security"
+        / "11_guardrails_and_agent_security.ipynb"
     )
     execute_notebook(path, monkeypatch)
