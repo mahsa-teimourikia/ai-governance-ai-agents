@@ -43,7 +43,7 @@ Each course pass will:
 | 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Merged in PR #16; release-evidence follow-up in PR #17 |
 | 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Merged in PR #19 |
 | 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Implemented in PR #21 |
-| 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Planned |
+| 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Implemented in PR #22 |
 | 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Planned |
 | 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Planned |
 | 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Planned |
@@ -85,6 +85,40 @@ Each course pass will:
 | External uncertainty is reconciled and verified | Execution and outcome sections | Idempotent adapter, reconciliation, exact effect comparison | Before/after commit and mismatched-effect injection tests |
 | Framework examples use current common SDKs | Framework boundary and references | Real `needs_approval` and `approval_mode` descriptors | Tests inspect installed OpenAI and Microsoft tool objects |
 | Oversight metrics have honest scope | Reviewer-quality section | Typed event population and exact counts | Deterministic latency, approval, disagreement and concentration assertions |
+
+## Course 9 claim-to-proof map
+
+### Course 9 audit decisions
+
+- **Retain:** the data/RAG/session/memory distinctions, metadata propagation,
+  identity-aware retrieval, relevance-versus-trust framing, poisoning defense,
+  memory write gate, TTL/correction/deletion lifecycle, multi-agent boundary,
+  governance metrics, procurement scenario, and existing diagrams.
+- **Deepen:** tenant partitioning before ranking, group/purpose/clearance/trust
+  filters, administrative bypasses, citations with exact digests, honest limits
+  of injection detection, storage-enforced memory scope, source/subject deletion
+  receipts, hosted-vector eventual consistency, and filtered ANN recall.
+- **Consolidate:** move ingestion, chunking, retrieval, evidence, context,
+  memory policy, lifecycle, fixtures, and evaluation into one deterministic
+  `lab.py` imported by the notebook and tests.
+- **Repair:** remove runtime package installation, UUIDs, wall-clock behavior,
+  mutable global stores, post-retrieval access filtering, implicit durable
+  writes, retained deleted values, synthetic dataframe metrics, and optional
+  framework prose that did not create or test artifacts.
+- **Add:** real OpenAI `SQLiteSession` and LangGraph `InMemoryStore` artifacts,
+  source-version tombstones, cache eviction, content scrubbing, correction
+  lineage, eight labelled retrieval cases, 46 focused tests, Hub navigation,
+  judgment checkpoints, and a Course 9 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Security metadata survives derivation | Metadata and provenance sections | typed source/chunk contracts and deterministic digests | Missing access metadata and same-version mutation fail ingestion |
+| Authorization precedes relevance | Authorized-retrieval and storage sections | tenant partition plus group/purpose/clearance/trust/freshness candidates feed TF-IDF | Cross-tenant, wrong-purpose, wrong-group, low-clearance, and stale tests return no scored result |
+| Retrieved instructions remain untrusted data | Poisoning and context sections | indicator evidence, quarantine, delimiters, non-instruction contract | Highly relevant poisoned passage wins the baseline but never enters governed context |
+| Memory cannot create authority | Memory-gate section | typed candidate categories and three-way decision | Authority, secret, restricted, procedural, and untrusted candidates cannot become durable memory |
+| Memory scope and lifecycle are enforceable | Namespace, TTL, correction, and deletion sections | tenant/subject/purpose/task filters, expiry, supersession, source refs | Cross-scope reads fail; source/subject deletion scrubs values and invalidates results |
+| Framework coverage is genuine and scoped | OpenAI and LangGraph sections | real in-memory SDK session/store with governed namespace | Tests show routing artifacts while prose rejects namespace strings as sufficient authorization |
+| Evaluation names its populations | Evaluation section | eight labelled cases and exact exposure counts | Global baseline is 3/8 with cross-tenant/instruction/stale exposures; governed path is 8/8 with zero |
 
 ## Course 1 claim-to-proof map
 

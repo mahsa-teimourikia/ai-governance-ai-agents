@@ -1,4 +1,4 @@
-.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 clean
+.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 clean
 
 setup:
 	uv venv
@@ -42,6 +42,10 @@ course-07:
 course-08:
 	uv run python scripts/execute-notebooks.py curriculum/intermediate/08-human-oversight-and-bounded-autonomy/08_human_oversight_and_bounded_autonomy.ipynb
 	uv run pytest -q tests/test_module08_human_oversight.py tests/test_notebooks.py::test_course_08_notebook_executes_top_to_bottom
+
+course-09:
+	uv run python scripts/execute-notebooks.py curriculum/intermediate/09-data-rag-and-memory-governance/09_data_rag_and_memory_governance.ipynb
+	uv run pytest -q tests/test_module09_data_rag_memory.py tests/test_notebooks.py::test_course_09_notebook_executes_top_to_bottom
 
 clean:
 	rm -rf .venv
