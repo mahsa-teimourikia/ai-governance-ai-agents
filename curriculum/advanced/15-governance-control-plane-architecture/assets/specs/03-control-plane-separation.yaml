@@ -1,0 +1,27 @@
+version: 1
+id: course15-control-plane-separation
+title: "Separate Management, Decision, Enforcement and Evidence"
+purpose: "Show four independently scalable control-plane responsibilities."
+output:
+  svg: ../03-control-plane-separation.svg
+  medium: documentation
+  alt_text: "Four horizontal layers separate management, decision, enforcement and evidence responsibilities."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 65, grid: 5 }
+layout: { primary_flow: top-to-bottom, min_node_gap: 33, min_layer_gap: 33, node_padding: { x: 65, y: 18 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    management: { fill: "#FFFFFF", stroke: "#1769C2" }
+    decision: { fill: "#FFFFFF", stroke: "#B9571D" }
+    enforcement: { fill: "#FFFFFF", stroke: "#C53030" }
+    evidence: { fill: "#FFFFFF", stroke: "#129B96" }
+groups: []
+nodes:
+  - { id: management, label: "MANAGEMENT", subtitle: "registry • lifecycle • versions", type: management, bounds: { x: 250, y: 310, width: 1100, height: 92 }, padding: { x: 65, y: 18 }, ports: {} }
+  - { id: decision, label: "DECISION", subtitle: "policy • risk • authorization", type: decision, bounds: { x: 250, y: 435, width: 1100, height: 92 }, padding: { x: 65, y: 18 }, ports: {} }
+  - { id: enforcement, label: "ENFORCEMENT", subtitle: "gateway • tool proxy • data boundary", type: enforcement, bounds: { x: 250, y: 560, width: 1100, height: 92 }, padding: { x: 65, y: 18 }, ports: {} }
+  - { id: evidence, label: "EVIDENCE", subtitle: "trace • audit • evaluation", type: evidence, bounds: { x: 250, y: 685, width: 1100, height: 92 }, padding: { x: 65, y: 18 }, ports: {} }
+edges: []
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 16, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }
+source: { renderer: "deterministic hand-authored SVG", note: "Separation is expressed by aligned independent layers; no edge implies synchronous coupling." }

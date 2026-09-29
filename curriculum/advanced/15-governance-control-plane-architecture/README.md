@@ -5,6 +5,47 @@
 > **Recommended duration:** 10 hours theory + 8 hours practical lab  
 > **Scenario:** Design and prototype a vendor-neutral governance control plane for an enterprise procurement-agent ecosystem.
 
+## Course thesis
+
+A governance control plane is not a dashboard and not a policy engine renamed.
+It is the trusted architecture that turns authenticated identity, delegated
+authority, versioned policy, human decisions, and system state into enforced
+actions and verified outcomes. The agent may propose an action; it must not
+assert its own principal, approve itself, mint its own authority, or bypass the
+enforcement point.
+
+> **Core principle:** Reasoning can be probabilistic. Authority should be
+> explicit, bounded, short-lived, attributable, and enforceable.
+
+## Prerequisites
+
+- Courses 4–8: identity, delegated authority, policy, tools/MCP, and approval;
+- Courses 10–14: multi-agent delegation, security, red teaming, evidence, and evaluation;
+- working knowledge of Python, typed data models, API gateways, and distributed-systems failure modes.
+
+The canonical lab is deterministic and credential-free. It makes no model,
+network, cloud, shell, or business-system call.
+
+## Success criteria
+
+You have completed this module when you can:
+
+- draw the trust boundaries among the agent runtime, management, decision, enforcement, evidence, identity, and business systems;
+- explain which facts come from trusted ingress and which are untrusted model proposals;
+- prevent tenant crossing, authority widening, approval replay, stale policy use, and duplicate effects;
+- choose strong consistency, bounded stale reads, or fail-closed behavior for each state transition;
+- compose policy, relationship authorization, workload identity, gateway, OAuth/MCP, and telemetry products without transferring architectural accountability to them; and
+- demonstrate a linked proposal → decision → approval → effect → verified-outcome evidence chain.
+
+## Non-goals
+
+The course does not claim its in-memory HMACs, registry, or evidence chain are a
+production security boundary. It does not benchmark vendor latency, certify a
+product, make a synthetic scenario suite proof of production safety, or imply
+that OpenTelemetry records are automatically audit evidence. Production
+systems need managed keys, durable stores, access control, retention,
+replication, recovery, monitoring, and independent assurance.
+
 ## Learning objectives
 
 Learners will be able to:
@@ -27,8 +68,6 @@ Learners will be able to:
 - design for latency, availability, caching and degraded operation;
 - avoid turning the control plane into a single point of failure;
 - evaluate build-vs-buy and vendor-neutral integration patterns.
-
-> **Core principle:** Reasoning can be probabilistic. Authority should be explicit, bounded and enforceable.
 
 ![Control plane](assets/01-governance-control-plane.svg)
 
@@ -656,10 +695,15 @@ Each decision should emit:
   "agent": "procurement:v14",
   "policy": "procurement-v7",
   "reason_codes": ["HIGH_VALUE", "NEW_VENDOR"],
-  "risk_score": 0.84,
+  "risk_tier": "HIGH",
   "authority": "delegation-882"
 }
 ```
+
+Do not invent a precise risk score when the underlying evidence only supports a
+category or rule match. Keep blocked attempts distinct from completed harmful
+effects, and attach the verified business outcome rather than accepting the
+agent's claim that a call succeeded.
 
 This connects the architecture to Module 13.
 
@@ -816,13 +860,85 @@ Changing consequential parameters invalidates approval.
 ### Every decision is reconstructable
 Decision, policy, authority and outcome are linked.
 
+### Every side effect is idempotent or reconciled
+A timeout is an unknown outcome, not proof of failure. Reconcile the operation
+key before retrying a consequential action.
+
+### Control state is tenant- and environment-scoped
+An identifier match across tenants or development and production never implies
+shared authority.
+
+---
+
+## 35A. Consistency boundaries and failure semantics
+
+Not all control-plane data needs the same consistency model.
+
+| State | Required behavior | Why |
+|---|---|---|
+| Approval consumption | atomic, strongly consistent, one time | two gateways must not spend one approval |
+| Execution grant | atomic, exact-action, short lived | prevents replay and argument mutation |
+| Lifecycle suspension / kill switch | rapidly convergent with fail-closed enforcement for consequential actions | a stopped agent must not continue from stale state |
+| Delegation parent and attenuation | validate the signed chain and expiry at use | a child must not widen inherited authority |
+| Policy bundle | signed, versioned, integrity checked | a decision must identify the exact evaluated policy |
+| Low-risk read bundle | bounded last-known-good may be acceptable | availability can be preserved inside an explicit stale-time budget |
+| High-risk mutation during policy outage | fail closed | stale permission must not create a new external effect |
+| Business effect | idempotency key plus outcome reconciliation | network ambiguity must not duplicate an order or payment |
+| Evidence | append-only ordering plus durable protected persistence | reconstruction depends on linkage and integrity |
+
+Cache keys need every fact capable of changing the answer: tenant,
+environment, principal, workload, agent and tool versions, action and resource,
+delegation, policy digest, risk tier, and relevant context. Do not cache
+approvals as general decisions.
+
+## 35B. Threat model
+
+The design assumes the model, prompt, retrieved content, tool descriptions, and
+agent-supplied arguments can be hostile. It also considers:
+
+- a caller forging its tenant, principal, role, workload identity, or delegation;
+- a child agent widening tool, resource, amount, purpose, environment, or lifetime;
+- a compromised registry or policy distribution path serving stale or modified state;
+- approval mutation, replay, cross-tenant use, and concurrent double consumption;
+- schema drift between discovery and execution;
+- a policy or identity dependency outage;
+- an external system committing an action before a timeout reaches the gateway;
+- evidence containing secrets or being modified after the event; and
+- a model remembering a hidden tool and attempting to call it after suspension.
+
+The lab demonstrates controls for these paths. Managed signing keys, replicated
+datastores, production network identity, external policy engines, and actual
+business APIs remain explicit integration work.
+
+## 35C. Common technologies and the responsibility they do not remove
+
+| Concern | Common technology or method | Useful boundary | What the control-plane owner still decides |
+|---|---|---|---|
+| General policy | OPA/Rego | bundle distribution and PDP API/sidecar | schemas, lifecycle, bundle trust, obligations, fail mode, and decision evidence |
+| Analyzable authorization | Cedar | PARC request, entities, schema-validated policy | authentication, entity provenance, request construction, enforcement, and version rollout |
+| Relationship authorization | OpenFGA / Zanzibar-style ReBAC | model, tuples, contextual facts, consistency choice | tenant model, tuple writers, freshness requirements, and effect mediation |
+| Workload identity | SPIFFE/SPIRE | attested SPIFFE ID and SVID | trust domains, workload registration, identity-to-agent binding, and authorization |
+| Network enforcement | Envoy `ext_authz` | `CheckRequest`/`CheckResponse` before the upstream | request attributes, failure mode, mutation policy, and outcome linkage |
+| Delegation | OAuth token exchange (RFC 8693), rich authorization requests (RFC 9396), resource indicators (RFC 8707) | audience-, resource-, and purpose-scoped tokens | attenuation policy, token lifetime, downstream exchange, and revocation strategy |
+| Tool protocol | MCP Authorization | OAuth protected-resource discovery and audience-bound access token | tool discovery policy, per-call business authorization, and prohibition on token passthrough |
+| Evidence and operations | OpenTelemetry | trace and span context across components | data minimization, access, retention, integrity, sampling, and audit qualification |
+
+These technologies overlap but are not interchangeable. A policy engine is not
+an identity provider, an identity is not permission, a protocol token is not a
+business approval, a trace is not automatically evidence, and an ALLOW is not a
+verified external outcome.
+
 ---
 
 ## 36. NIST direction in 2026
 
 NIST launched the **AI Agent Standards Initiative** in February 2026, explicitly focusing on interoperable and secure agents, open protocol ecosystems, and research into agent security and identity.
 
-NIST's NCCoE also published an initial concept paper on applying identity and authorization standards to software and AI agents. It calls out identification, authorization, auditing, non-repudiation and prompt-injection mitigation as important areas.
+NIST's NCCoE also published an **initial public draft** concept paper on applying
+identity and authorization standards to software and AI agents. It calls out
+identification, authorization, auditing, non-repudiation and prompt-injection
+mitigation as areas for a proposed practice guide. Treat it as active standards
+work, not as a completed normative architecture.
 
 This reinforces a central architectural direction:
 
@@ -929,28 +1045,49 @@ Enforcement controls authority.
 
 `15_governance_control_plane_architecture.ipynb`
 
-The notebook builds:
+The notebook imports the reusable [`lab.py`](lab.py) implementation and walks
+through a realistic multi-tenant procurement control plane. It builds and tests:
 
-- agent/tool registries;
-- governance context envelopes;
-- delegated authority;
-- authority attenuation;
-- risk scoring;
-- policy decisions;
-- ALLOW/DENY/ESCALATE/CONSTRAIN;
-- action-bound approvals;
-- tool gateway enforcement;
-- MCP-like tool registration;
-- multi-agent delegation;
-- decision evidence;
-- policy versioning;
-- caching;
-- fail-closed behavior;
-- shadow policy comparison;
-- OPA/Rego examples;
-- OpenTelemetry metadata patterns;
-- correctness invariants;
-- governance CI tests.
+- tenant-scoped, versioned agent and tool registries with authenticated administrative lifecycle transitions and optimistic concurrency;
+- a trusted `AuthenticatedContext` whose principal and SPIFFE-style workload identity never come from model output;
+- signed root and child delegation with strict attenuation of tools, operations, resources, amount, environment, purpose, lifetime, and depth;
+- signed, versioned, tenant- and environment-scoped policy bundles;
+- typed untrusted action proposals and trusted action requests;
+- ALLOW, DENY, ESCALATE, and CONSTRAIN decisions with exact reason codes and obligations;
+- action-bound, role-checked, expiring approvals bound to the exact decision, policy digest, and agent/tool registry revisions, with atomic single-use consumption under concurrency;
+- a gateway that owns final authorization, constraint application, execution, and outcome recording;
+- idempotent effects, unknown-outcome reconciliation, and single-use execution grants;
+- normal, read-only, stopped, fail-closed, and bounded last-known-good modes;
+- corpus-bound shadow policy evaluation, an authenticated activation gate, and scope-checked local policy replicas that cannot change the enforced decision before activation;
+- append-only hash-linked evidence containing digests rather than raw prompt or secret content;
+- in-memory OpenTelemetry spans with minimized governance metadata;
+- an interoperability map across OPA, Cedar, OpenFGA, SPIFFE, Envoy, OAuth, MCP, and OpenTelemetry, plus real offline OPA/OpenFGA SDK configuration artifacts and Rego/Cedar/OpenFGA policy-model examples; and
+- 12 labelled scenarios comparing a prompt-only baseline with the governed path.
+
+Run the complete lab and its focused invariant suite:
+
+```bash
+make course-15
+```
+
+The tests are the executable claims. They include negative and concurrency
+paths, not only a happy-path demonstration.
+
+### Claim-to-proof map
+
+| Claim | Executable proof |
+|---|---|
+| Delegation cannot amplify authority | forged signature and tool/operation/resource/amount widening tests |
+| Suspended agents lose capability | lifecycle transition, discovery filtering, and decision-time denial tests |
+| Administrative state changes are authorized | current tenant-bound operator, role, lifecycle, and optimistic-concurrency tests |
+| Approval binds to one exact decision state | mutation, policy/registry version, wrong role, expiry, replay, and concurrent double-consumption tests |
+| Denial prevents an external effect | gateway denial tests assert adapter call count remains zero |
+| Unknown outcomes do not cause blind retry | timeout receipt and reconciliation binding tests |
+| Outage behavior is risk-aware | bounded last-known-good read and fail-closed mutation tests |
+| Candidate policy cannot silently become authority | exact shadow population, regression gate, activation receipt, and cross-tenant replica tests |
+| Evidence is linked and tamper evident | sequence, previous-hash, content-minimization, and mutation tests |
+| Common SDK boundaries are real but offline | installed OPA/OpenFGA configurations, policy artifacts, package versions, and in-memory OpenTelemetry tests |
+| Governance improves the fixture without hiding friction | exact decision, forbidden-outcome, and valid-work-blocked counts |
 
 ---
 
@@ -984,29 +1121,45 @@ The notebook builds:
 
 ## 43. Primary references
 
-1. NIST — AI Agent Standards Initiative  
-   https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative
+### Standards and public-sector direction
 
-2. NIST NCCoE — Accelerating the Adoption of Software and AI Agent Identity and Authorization  
-   https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd
+1. [NIST — AI Agent Standards Initiative (February 2026)](https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure)
+2. [NIST NCCoE — Accelerating the Adoption of Software and AI Agent Identity and Authorization, initial public draft](https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd)
+3. [RFC 8693 — OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html)
+4. [RFC 8707 — Resource Indicators for OAuth 2.0](https://www.rfc-editor.org/info/rfc8707/)
+5. [RFC 9396 — OAuth 2.0 Rich Authorization Requests](https://www.rfc-editor.org/rfc/rfc9396.html)
 
-3. Open Policy Agent — Policy Language  
-   https://www.openpolicyagent.org/docs/policy-language
+### Authorization and policy systems
 
-4. Open Policy Agent — HTTP API Authorization  
-   https://www.openpolicyagent.org/docs/http-api-authorization
+6. [Open Policy Agent — Policy Language](https://www.openpolicyagent.org/docs/policy-language)
+7. [Open Policy Agent — Bundles](https://www.openpolicyagent.org/docs/management-bundles)
+8. [Open Policy Agent — Decision Logs](https://www.openpolicyagent.org/docs/management-decision-logs)
+9. [Cedar — Authorization model and PARC requests](https://docs.cedarpolicy.com/auth/authorization.html)
+10. [Cedar — Schema-based policy validation](https://docs.cedarpolicy.com/policies/validation.html)
+11. [OpenFGA — Core concepts](https://openfga.dev/docs/concepts)
+12. [OpenFGA — Contextual tuples](https://openfga.dev/docs/interacting/contextual-tuples)
+13. [OpenFGA — Organization-context authorization](https://openfga.dev/docs/modeling/organization-context-authorization)
+14. [Google Research — Zanzibar: Google's Consistent, Global Authorization System](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/)
 
-5. Open Policy Agent — Security  
-   https://www.openpolicyagent.org/docs/security
+### Identity, gateways, tools, and evidence
 
-6. OpenTelemetry — GenAI Observability  
-   https://opentelemetry.io/blog/2026/genai-observability/
+15. [SPIFFE — Core identity concepts](https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/)
+16. [SPIFFE — Workload API specification](https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/)
+17. [Envoy — External authorization architecture](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/security/ext_authz_filter.html)
+18. [Model Context Protocol — Authorization specification (2026-07-28)](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/basic/authorization/index.mdx)
+19. [Model Context Protocol — Enterprise-managed authorization extension](https://github.com/modelcontextprotocol/ext-auth/blob/main/specification/stable/enterprise-managed-authorization.mdx)
+20. [OpenTelemetry — Semantic conventions](https://opentelemetry.io/docs/specs/semconv/)
+21. [OpenTelemetry — GenAI agent and framework spans (development status)](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-agent-spans.md)
 
-7. OpenTelemetry — Semantic Conventions  
-   https://opentelemetry.io/docs/specs/semconv/
+### Source interpretation notes
 
-8. Tallam, K. — A Five-Plane Reference Architecture for Runtime Governance of Production AI Agents (2026)  
-   https://arxiv.org/abs/2606.12320
+- OPA bundles are distributed state; decide which revision and freshness are acceptable for each action class.
+- Cedar schemas validate policies and request structure separately from evaluation; the application still owns trusted request construction.
+- OpenFGA contextual tuples are ephemeral request context, not a durable replacement for authoritative relationship state.
+- SPIFFE authenticates workloads; it does not decide business authorization.
+- Envoy `failure_mode_allow` is an architectural risk choice, and its default is fail closed.
+- MCP authorization protects the transport and token audience; a server still needs per-tool and per-resource business authorization.
+- The dedicated OpenTelemetry GenAI conventions are still marked development. Pin the version you emit and treat content attributes as sensitive opt-in data.
 
 ---
 

@@ -1,0 +1,58 @@
+version: 1
+id: course15-governance-control-plane
+title: "Governance Control Plane Architecture"
+purpose: "Separate probabilistic agent reasoning from trusted authorization and enforcement."
+output:
+  svg: ../01-governance-control-plane.svg
+  medium: documentation
+  alt_text: "An agent runtime proposes actions to a governance control plane, which evaluates identity, authority, policy and risk before a gateway can reach business systems."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 65, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 85, min_layer_gap: 80, node_padding: { x: 24, y: 16 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    runtime: { fill: "#FFFFFF", stroke: "#1769C2" }
+    governance: { fill: "#082542", stroke: "#082542" }
+    action: { fill: "#FFFFFF", stroke: "#2F855A" }
+    flow: { fill: "#B9571D", stroke: "#B9571D" }
+groups: []
+nodes:
+  - id: agent_runtime
+    label: "AGENT RUNTIME"
+    subtitle: "plan • retrieve • delegate • propose"
+    type: runtime
+    bounds: { x: 70, y: 330, width: 300, height: 220 }
+    padding: { x: 24, y: 16 }
+    ports: { out: { side: right, offset: 0.5 } }
+  - id: governance_control_plane
+    label: "GOVERNANCE CONTROL PLANE"
+    subtitle: "identity • authority • policy • risk • approval • evidence"
+    type: governance
+    bounds: { x: 470, y: 290, width: 650, height: 310 }
+    padding: { x: 24, y: 16 }
+    ports: { in: { side: left, offset: 0.484 }, out: { side: right, offset: 0.484 } }
+  - id: action_surface
+    label: "ACTION SURFACE"
+    subtitle: "tool • API • MCP • agent • data • system"
+    type: action
+    bounds: { x: 1220, y: 330, width: 310, height: 220 }
+    padding: { x: 24, y: 16 }
+    ports: { in: { side: left, offset: 0.5 } }
+edges:
+  - id: proposed_action
+    from: { node: agent_runtime, port: out }
+    to: { node: governance_control_plane, port: in }
+    label: "proposed action"
+    kind: primary
+    route: [[370, 440], [470, 440]]
+  - id: governed_execution
+    from: { node: governance_control_plane, port: out }
+    to: { node: action_surface, port: in }
+    label: "authorized action"
+    kind: primary
+    route: [[1120, 440], [1220, 440]]
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 16, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }
+source:
+  renderer: "deterministic hand-authored SVG"
+  note: "Coordinates, labels, colors and routes in this specification are authoritative."
