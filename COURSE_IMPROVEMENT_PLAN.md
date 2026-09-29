@@ -47,7 +47,7 @@ Each course pass will:
 | 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Implemented in PR #24 |
 | 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Implemented in PR #25 |
 | 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Implemented in PR #26 |
-| 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Planned |
+| 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Implemented in PR #27 |
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Planned |
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Planned |
 | 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Planned |
@@ -185,6 +185,41 @@ Each course pass will:
 | Containment is independent of the agent | incident-response section | current, scoped `security_operator` methods | agent, cross-tenant and future-session operators cannot pause a run |
 | Framework examples are real but bounded | tools and framework sections | real SDK/Guardrails/FIDES objects construct offline | tests inspect exact hooks while application policy owns every effect |
 | Metrics name exact populations | evaluation section | 8 detector and 12 trajectory cases | baseline allows 8/9 dangerous cases; governed path allows 0/9 |
+
+## Course 13 claim-to-proof map
+
+### Course 13 audit decisions
+
+- **Retain:** trajectory-not-answer framing; identity, intent, context,
+  authority, decision and outcome evidence; traces/metrics/logs; policy,
+  approval, delegation, retrieval, memory, tool and effect coverage; privacy,
+  sampling, integrity, access, incident/audit packages, and four diagrams.
+- **Deepen:** authenticated producers, trusted application context, tenant and
+  schema binding, minimization before export, keyed pseudonyms, causal
+  completeness, exact-action approval/outcome links, access receipts, legal
+  hold, tail retention, integrity assumptions and evidence release gates.
+- **Consolidate:** replace 22 mutable notebook code cells with one deterministic
+  `lab.py`, a guided eight-code-cell notebook, 64 focused invariant tests, and
+  a top-to-bottom notebook execution test.
+- **Repair:** remove runtime installs, global mutable event lists, raw direct
+  identifiers/content, regex-only safety, unauthenticated reads, optimistic
+  sampling, unsigned evidence packages and claims that traces/hashes alone
+  prove authorization, completeness, outcome or non-repudiation.
+- **Add:** real in-memory OpenTelemetry spans, real unstarted OpenAI Agents SDK
+  objects, current OpenTelemetry/OpenInference/Phoenix/LangSmith/OpenAI tool
+  boundaries, a Collector design artifact, accessible diagrams, Hub judgment
+  checkpoints, corrected course paths and a Course 13 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Evidence originates at a trusted boundary | trust-model and metadata sections | authenticated tenant/service producer and application-owned context | expired, wrong-role, wrong-service and cross-tenant producers fail |
+| Data is minimized before export | privacy and telemetry section | per-event allowlists, references, keyed pseudonyms and residual redaction | prompts/nested values fail; emails/secrets are removed |
+| Trajectories are causally complete | trace/completeness sections | one root, continuous sequence, parent/time links and risk-tier event sets | missing parent/outcome, gap, duplicate, second-root and reversal tests |
+| Decisions bind to consequences | approval/tool/outcome sections | canonical action digests and explicit approval/tool/outcome links | changed action and unverified/mislinked outcome block the gate |
+| Integrity claims are bounded | integrity section | per-trace event chain, HMAC verification, chained custody receipts and authenticated minimized package | event, chain, package and key tampering fail verification |
+| Evidence use is governed | access/retention sections | role/purpose/tenant reads, receipts, break-glass and legal hold | invalid role/purpose/tenant/reason/hold manager fail |
+| Metrics and retention name populations | metrics/sampling sections | exact completeness denominators and deterministic tail decisions | empty/misaligned populations and invalid sample rate fail |
+| Real tools remain bounded | current tools and practical sections | in-memory OTel spans, unstarted SDK traces and Collector artifact | no credentials, raw content, network or default exporter used |
 
 ## Course 12 claim-to-proof map
 
