@@ -1,0 +1,35 @@
+version: 1
+id: course14-continuous-evaluation-loop
+title: "Continuous Evaluation and Governance Loop"
+purpose: "Explain how governed learning connects design, evaluation, deployment, and production evidence."
+output:
+  svg: ../02-continuous-evaluation-loop.svg
+  medium: course-documentation
+  alt_text: "A left-to-right loop from design through offline evaluation, release gate, deploy, online monitor, and learn and update."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 65, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 79, min_layer_gap: 79, node_padding: { x: 18, y: 18 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    design: { fill: "#FFFFFF", stroke: "#1769C2" }
+    evaluation: { fill: "#FFFFFF", stroke: "#805AD5" }
+    gate: { fill: "#FFFFFF", stroke: "#B9571D" }
+    deploy: { fill: "#FFFFFF", stroke: "#2F855A" }
+    monitor: { fill: "#FFFFFF", stroke: "#129B96" }
+    learn: { fill: "#FFFFFF", stroke: "#C53030" }
+nodes:
+  - { id: design, label: "DESIGN", type: design, bounds: { x: 62, y: 362, width: 176, height: 176 } }
+  - { id: offline, label: "OFFLINE EVAL", type: evaluation, bounds: { x: 317, y: 362, width: 176, height: 176 } }
+  - { id: gate, label: "RELEASE GATE", type: gate, bounds: { x: 572, y: 362, width: 176, height: 176 } }
+  - { id: deploy, label: "DEPLOY", type: deploy, bounds: { x: 827, y: 362, width: 176, height: 176 } }
+  - { id: monitor, label: "ONLINE MONITOR", type: monitor, bounds: { x: 1082, y: 362, width: 176, height: 176 } }
+  - { id: learn, label: "LEARN + UPDATE", type: learn, bounds: { x: 1337, y: 362, width: 176, height: 176 } }
+edges:
+  - { id: design-offline, from: { node: design }, to: { node: offline }, route: [[238, 450], [287, 450]] }
+  - { id: offline-gate, from: { node: offline }, to: { node: gate }, route: [[493, 450], [542, 450]] }
+  - { id: gate-deploy, from: { node: gate }, to: { node: deploy }, route: [[748, 450], [797, 450]] }
+  - { id: deploy-monitor, from: { node: deploy }, to: { node: monitor }, route: [[1003, 450], [1052, 450]] }
+  - { id: monitor-learn, from: { node: monitor }, to: { node: learn }, route: [[1258, 450], [1307, 450]] }
+  - { id: feedback, from: { node: learn }, to: { node: design }, route: [[1425, 565], [1425, 715], [165, 715], [165, 565]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 16, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }

@@ -172,3 +172,14 @@ def test_course_13_notebook_executes_top_to_bottom(monkeypatch):
         / "13_observability_as_governance_evidence.ipynb"
     )
     execute_notebook(path, monkeypatch)
+
+
+def test_course_14_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the fourteenth fully audited notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/advanced/14-agent-evaluation-and-continuous-governance"
+        / "14_agent_evaluation_and_continuous_governance.ipynb"
+    )
+    execute_notebook(path, monkeypatch)

@@ -32,7 +32,7 @@ Simply open `hub/index.html` in your web browser. No local development server is
 make test
 ```
 
-To run a fully audited Course 1–13 lab and its focused invariant tests:
+To run a fully audited Course 1–14 lab and its focused invariant tests:
 
 ```bash
 make course-01
@@ -48,6 +48,7 @@ make course-10
 make course-11
 make course-12
 make course-13
+make course-14
 ```
 
 ## Curriculum Structure

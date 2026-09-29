@@ -48,7 +48,7 @@ Each course pass will:
 | 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Implemented in PR #25 |
 | 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Implemented in PR #26 |
 | 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Implemented in PR #27 |
-| 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Planned |
+| 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Implemented in PR #28 |
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Planned |
 | 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Planned |
 | 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Planned |
@@ -185,6 +185,49 @@ Each course pass will:
 | Containment is independent of the agent | incident-response section | current, scoped `security_operator` methods | agent, cross-tenant and future-session operators cannot pause a run |
 | Framework examples are real but bounded | tools and framework sections | real SDK/Guardrails/FIDES objects construct offline | tests inspect exact hooks while application policy owns every effect |
 | Metrics name exact populations | evaluation section | 8 detector and 12 trajectory cases | baseline allows 8/9 dangerous cases; governed path allows 0/9 |
+
+## Course 14 claim-to-proof map
+
+### Course 14 audit decisions
+
+- **Retain:** the outcome-and-trajectory framing, evaluation layers, oracle
+  pyramid, golden/boundary/adversarial/regression datasets, offline-shadow-
+  canary-production lifecycle, change triggers, risk-tier gates, slicing,
+  judge calibration, production feedback loop, NIST lifecycle alignment and
+  four diagrams.
+- **Deepen:** case provenance and digests, evaluator ownership/versioning,
+  deterministic consequence oracles, approval/effect/recovery evidence, exact
+  metric populations, attempted-versus-blocked-versus-unsafe distinctions,
+  valid-work blocks, Wilson uncertainty, same-case McNemar comparison, blind
+  judge calibration and position swaps, evidence-bound gates, reviewed incident
+  curation and canary rules.
+- **Consolidate:** replace 28 disconnected mutable notebook demonstrations with
+  one typed deterministic `lab.py`, an eight-code-cell guided notebook, 66
+  focused invariant tests, and a top-to-bottom notebook execution test.
+- **Repair:** remove runtime installs, random state, fabricated dataframe
+  metrics, an unsafe normal-approximation interval, aggregate scores that mask
+  critical failures, scalar-only release inputs, unauthenticated production
+  case creation, drift-as-defect claims, and obsolete OpenAI Evals guidance.
+- **Add:** a 16-case procurement suite, baseline/candidate target vectors, exact
+  outcome/tool/policy/approval/effect/tenant evaluation, paired exact comparison,
+  evidence-time and freshness checks, calibrated-judge review routing,
+  change-suite selection, reviewed production-derived cases, drift/canary
+  decisions, real in-memory OpenTelemetry and unstarted OpenAI trace artifacts,
+  current Inspect AI/Promptfoo/LangSmith/Phoenix/Langfuse/DeepEval boundaries,
+  versioned diagram specifications, accessible diagrams, Hub checkpoints and a
+  Course 14 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Comparisons bind the same evidence | dataset/evaluator governance sections | dataset digest, complete target vector, evaluator version and report digest | split leakage, duplicate IDs, mismatched datasets/case populations and tampered reports fail |
+| Outcomes and trajectories remain separate | five-layer and deterministic-evaluator sections | typed trace events and independent tool/policy/terminal/approval/effect/tenant checks | unknown outcome, approval mismatch and cross-tenant paths fail |
+| Safety cannot hide in an average | metric and release-gate sections | forbidden-outcome and critical-violation hard gates | baseline fails despite five successful cases |
+| Metrics name exact populations | metric-contract and uncertainty sections | exact numerators/denominators, risk slices, Wilson interval and cost per successful task | empty/invalid populations fail and small perfect samples retain uncertainty |
+| Judges are governed controls | judge-calibration section | blind human labels, macro F1, kappa, false accepts and order consistency | missing, weak, non-blind, mixed-version or false-accept calibration blocks |
+| Production feedback is authorized and minimized | production-derived case section | provenance-linked sanitized candidate plus current tenant-bound owner review | email/API-key content and expired, cross-tenant or unauthorized promotion fail |
+| Drift is not a defect verdict | drift section | minimum-window rate assessment marked signal-only | small windows cannot alert |
+| Evaluation constrains deployment | release and canary sections | requested/authorized stage on approve/constrain/block plus separate canary decision | 16 clean cases approve shadow, premature production is constrained to canary, and critical canary events roll back |
+| Common tooling remains bounded | current-tool and interoperability sections | manifests plus real offline OTel and unstarted OpenAI trace artifacts | no credentials, network, raw prompts or framework-owned release authority |
 
 ## Course 13 claim-to-proof map
 
