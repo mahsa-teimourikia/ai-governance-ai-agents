@@ -1,4 +1,4 @@
-.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 course-10 course-11 course-12 clean
+.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 course-10 course-11 course-12 course-13 clean
 
 setup:
 	uv venv
@@ -58,6 +58,10 @@ course-11:
 course-12:
 	uv run python scripts/execute-notebooks.py curriculum/intermediate/12-agent-red-teaming-and-adversarial-testing/12_agent_red_teaming_and_adversarial_testing.ipynb
 	uv run pytest -q tests/test_module12_agent_red_teaming.py tests/test_notebooks.py::test_course_12_notebook_executes_top_to_bottom
+
+course-13:
+	uv run python scripts/execute-notebooks.py curriculum/advanced/13-observability-as-governance-evidence/13_observability_as_governance_evidence.ipynb
+	uv run pytest -q tests/test_module13_observability_evidence.py tests/test_notebooks.py::test_course_13_notebook_executes_top_to_bottom
 
 clean:
 	rm -rf .venv

@@ -856,34 +856,60 @@ export const lessons = [
     "level": "Advanced",
     "step": 13,
     "title": "Observability as Governance Evidence",
-    "summary": "Why standard logs are insufficient.",
-    "outcome": "Evidence retention.",
-    "material": "curriculum/advanced/13-observability-as-goveernance-evidence/README.md",
-    "notebook": "curriculum/advanced/13-observability-as-goveernance-evidence/13_observability_as_goveernance_evidence.ipynb",
+    "summary": "Turn agent telemetry into minimized, tenant-bound, causally complete and integrity-protected evidence across retrieval, policy, approval, tools and verified outcomes.",
+    "outcome": "Build a portable procurement evidence pipeline with completeness gates, exact-action binding, governed access, risk-aware retention, incident/audit packages and real offline tracing artifacts.",
+    "material": "curriculum/advanced/13-observability-as-governance-evidence/README.md",
+    "notebook": "curriculum/advanced/13-observability-as-governance-evidence/13_observability_as_governance_evidence.ipynb",
+    "lab": "curriculum/advanced/13-observability-as-governance-evidence/lab.py",
+    "run": "make course-13",
     "refs": [
       {
-        "title": "https://opentelemetry.io/blog/2026/genai-observability/",
+        "title": "W3C: Trace Context",
+        "path": "https://www.w3.org/TR/trace-context/"
+      },
+      {
+        "title": "OpenTelemetry: GenAI observability",
         "path": "https://opentelemetry.io/blog/2026/genai-observability/"
       },
       {
-        "title": "https://opentelemetry.io/docs/specs/semconv/",
+        "title": "OpenTelemetry: Semantic conventions 1.44",
         "path": "https://opentelemetry.io/docs/specs/semconv/"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/tracing/",
+        "title": "OpenTelemetry: GenAI semantic conventions",
+        "path": "https://github.com/open-telemetry/semantic-conventions-genai"
+      },
+      {
+        "title": "OpenTelemetry: Handling sensitive data",
+        "path": "https://opentelemetry.io/docs/security/handling-sensitive-data/"
+      },
+      {
+        "title": "OpenInference: Semantic conventions",
+        "path": "https://arize-ai.github.io/openinference/spec/semantic_conventions.html"
+      },
+      {
+        "title": "OpenAI Agents SDK: Tracing",
         "path": "https://openai.github.io/openai-agents-python/tracing/"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/ref/tracing/",
-        "path": "https://openai.github.io/openai-agents-python/ref/tracing/"
+        "title": "OpenAI Agents API: Tracing and OTLP export",
+        "path": "https://developers.openai.com/api/docs/guides/agents-api/tracing"
       },
       {
-        "title": "https://docs.langchain.com/langsmith/observability",
+        "title": "LangSmith: Observability",
         "path": "https://docs.langchain.com/langsmith/observability"
       },
       {
-        "title": "https://arize.com/docs/phoenix",
+        "title": "Langfuse: OpenTelemetry-based observability SDKs",
+        "path": "https://langfuse.com/docs/observability/sdk/overview"
+      },
+      {
+        "title": "Arize Phoenix",
         "path": "https://arize.com/docs/phoenix"
+      },
+      {
+        "title": "NIST: Digital Evidence Preservation",
+        "path": "https://www.nist.gov/publications/digital-evidence-preservation-considerations-evidence-handlers"
       }
     ]
   },
@@ -1459,37 +1485,37 @@ export const checks = {
   ],
   "a1": [
     {
-      "question": "Why are standard text logs insufficient for agent observability?",
+      "question": "A high-risk tool trace has valid spans and signatures, but its outcome-verification span is missing. What may governance conclude?",
       "choices": [
-        "They take up too much disk space",
-        "They lack the hierarchical context of trajectories, tool calls, and reasoning steps",
-        "They are too hard to read",
-        "They are not encrypted"
+        "The action was safe because no failure was recorded",
+        "The evidence is incomplete; tool acceptance does not prove the business effect and the gate should fail",
+        "The signature proves the outcome occurred",
+        "The missing span can be counted as a successful outcome"
       ],
       "answer": 1,
-      "explanation": "Agents execute complex, nested workflows. Traces (like OpenTelemetry) are required to reconstruct the exact chain of events."
+      "explanation": "Integrity protects what was recorded; it cannot manufacture a missing observation. Consequential workflows require separately linked outcome verification."
     },
     {
-      "question": "What role does OpenTelemetry play in governance evidence?",
+      "question": "Why should a producer minimize telemetry before it reaches the Collector?",
       "choices": [
-        "It encrypts data",
-        "It provides a standardized way to trace execution paths across distributed agent components",
-        "It acts as the PEP",
-        "It stores passwords"
+        "Collector processors cannot redact attributes",
+        "Later redaction cannot undo exposure to an earlier queue, debug sink, exporter or failed processor path",
+        "OpenTelemetry requires every prompt to be stored",
+        "Early minimization makes access control unnecessary"
       ],
       "answer": 1,
-      "explanation": "OpenTelemetry allows enterprises to capture structured spans for LLM calls, tool executions, and policy decisions."
+      "explanation": "Data minimization should happen at the earliest trusted boundary. Collector redaction remains useful defense in depth, not the only privacy control."
     },
     {
-      "question": "Why must governance evidence be retained immutably?",
+      "question": "What does an HMAC-protected hash chain prove about a trace?",
       "choices": [
-        "To prevent attackers or compromised agents from deleting logs to cover up unauthorized actions",
-        "To save on database costs",
-        "To speed up queries",
-        "To comply with CSS standards"
+        "Every relevant event was observed and each claim is true",
+        "Within the shared-key and checkpoint trust assumptions, stored records have not been silently changed or reordered",
+        "The trace is legally admissible in every jurisdiction",
+        "The external transaction definitely succeeded"
       ],
-      "answer": 0,
-      "explanation": "If an agent is compromised, the attacker could attempt to delete its tracks. Immutable evidence ensures non-repudiation."
+      "answer": 1,
+      "explanation": "Integrity is not completeness or truth. HMACs also do not provide public non-repudiation because verifier and signer share the key."
     }
   ],
   "a2": [
