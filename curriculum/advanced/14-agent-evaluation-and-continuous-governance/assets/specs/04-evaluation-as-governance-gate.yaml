@@ -1,0 +1,25 @@
+version: 1
+id: course14-evaluation-governance-gate
+title: "Evaluation as an Executable Governance Gate"
+purpose: "Show how versioned changes and evidence produce explicit release and runtime decisions."
+output:
+  svg: ../04-evaluation-as-governance-gate.svg
+  medium: course-documentation
+  alt_text: "A versioned change flows into an evaluation gate and then to a governance decision to deploy, constrain, review, or block."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 65, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 105, min_layer_gap: 105, node_padding: { x: 24, y: 16 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    change: { fill: "#FFFFFF", stroke: "#1769C2" }
+    gate: { fill: "#082542", stroke: "#082542" }
+    decision: { fill: "#FFFFFF", stroke: "#2F855A" }
+nodes:
+  - { id: change, label: "CHANGE — model, prompt, tool, policy, knowledge", type: change, bounds: { x: 70, y: 350, width: 270, height: 190 } }
+  - { id: gate, label: "EVALUATION GATE — quality, task, trajectory, tools, security, policy, risk", type: gate, bounds: { x: 460, y: 300, width: 430, height: 290 } }
+  - { id: decision, label: "GOVERNANCE DECISION — approve, constrain, or block", type: decision, bounds: { x: 1005, y: 315, width: 525, height: 260 } }
+edges:
+  - { id: change-gate, from: { node: change }, to: { node: gate }, route: [[340, 445], [445, 445]] }
+  - { id: gate-decision, from: { node: gate }, to: { node: decision }, route: [[890, 445], [990, 445]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 16, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }

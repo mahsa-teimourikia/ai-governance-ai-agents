@@ -918,53 +918,71 @@ export const lessons = [
     "level": "Advanced",
     "step": 14,
     "title": "Agent Evaluation and Continuous Governance",
-    "summary": "Task success and trajectory quality.",
-    "outcome": "Evaluation metrics.",
+    "summary": "Evaluate versioned outcomes, trajectories, policy, recovery and safety with exact populations, paired tests, calibrated judges and production feedback.",
+    "outcome": "Build a safety-dominant procurement evaluation system that approves an exact shadow request, constrains premature production to canary, and blocks stale, incomplete or unsafe evidence.",
     "material": "curriculum/advanced/14-agent-evaluation-and-continuous-governance/README.md",
     "notebook": "curriculum/advanced/14-agent-evaluation-and-continuous-governance/14_agent_evaluation_and_continuous_governance.ipynb",
+    "lab": "curriculum/advanced/14-agent-evaluation-and-continuous-governance/lab.py",
+    "run": "make course-14",
     "refs": [
       {
-        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "title": "NIST: AI Risk Management Framework",
         "path": "https://www.nist.gov/itl/ai-risk-management-framework"
       },
       {
-        "title": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence",
-        "path": "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"
+        "title": "NIST: AI RMF Generative AI Profile",
+        "path": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf"
       },
       {
-        "title": "https://airc.nist.gov/",
+        "title": "NIST: AI Resource Center",
         "path": "https://airc.nist.gov/"
       },
       {
-        "title": "https://www.nist.gov/programs-projects/generative-artificial-intelligence-evaluation-program-genai",
-        "path": "https://www.nist.gov/programs-projects/generative-artificial-intelligence-evaluation-program-genai"
-      },
-      {
-        "title": "https://www.nist.gov/publications/challenges-monitoring-deployed-ai-systems-center-ai-standards-and-innovation",
+        "title": "NIST AI 800-4: Monitoring Deployed AI Systems",
         "path": "https://www.nist.gov/publications/challenges-monitoring-deployed-ai-systems-center-ai-standards-and-innovation"
       },
       {
-        "title": "https://openai.com/index/introducing-agentkit/",
-        "path": "https://openai.com/index/introducing-agentkit/"
+        "title": "OpenAI: Evaluation best practices",
+        "path": "https://developers.openai.com/api/docs/guides/evaluation-best-practices"
       },
       {
-        "title": "https://openai.github.io/openai-agents-python/",
-        "path": "https://openai.github.io/openai-agents-python/"
+        "title": "OpenAI: Deprecations and Evals migration",
+        "path": "https://developers.openai.com/api/docs/deprecations"
       },
       {
-        "title": "https://docs.langchain.com/langsmith/evaluation",
-        "path": "https://docs.langchain.com/langsmith/evaluation"
+        "title": "Promptfoo: Assertions and metrics",
+        "path": "https://www.promptfoo.dev/docs/configuration/expected-outputs/"
       },
       {
-        "title": "https://arize.com/docs/phoenix/evaluation",
-        "path": "https://arize.com/docs/phoenix/evaluation"
+        "title": "Promptfoo: Agent trajectory evidence",
+        "path": "https://www.promptfoo.dev/docs/red-team/agents/"
       },
       {
-        "title": "https://opentelemetry.io/blog/2026/genai-observability/",
-        "path": "https://opentelemetry.io/blog/2026/genai-observability/"
+        "title": "Inspect AI: Evaluation framework",
+        "path": "https://inspect.aisi.org.uk/"
       },
       {
-        "title": "https://opentelemetry.io/docs/specs/semconv/",
+        "title": "LangSmith: Evaluation types",
+        "path": "https://docs.langchain.com/langsmith/evaluation-types"
+      },
+      {
+        "title": "Arize Phoenix: Client-side evaluators",
+        "path": "https://arize.com/docs/phoenix/evaluation/concepts-evals/evaluators"
+      },
+      {
+        "title": "Langfuse: Evaluation concepts",
+        "path": "https://langfuse.com/docs/evaluation/core-concepts"
+      },
+      {
+        "title": "DeepEval: Agent evaluation metrics",
+        "path": "https://deepeval.com/guides/guides-ai-agent-evaluation-metrics"
+      },
+      {
+        "title": "Ragas: Metrics overview",
+        "path": "https://docs.ragas.io/en/stable/concepts/metrics/overview/"
+      },
+      {
+        "title": "OpenTelemetry: Semantic conventions 1.44",
         "path": "https://opentelemetry.io/docs/specs/semconv/"
       }
     ]
@@ -1520,37 +1538,37 @@ export const checks = {
   ],
   "a2": [
     {
-      "question": "What is the purpose of an 'LLM-as-judge' in continuous evaluation?",
+      "question": "A candidate passes all 16 offline regression cases, including every critical case, and the request asks for shadow execution with no external effects. What may the gate authorize?",
       "choices": [
-        "To arrest hackers",
-        "To automatically score the quality, safety, or compliance of an agent's outputs against a rubric",
-        "To decide which model to use",
-        "To generate code"
+        "Unrestricted production, because the pass rate is 100%",
+        "The requested shadow stage; the same report cannot directly authorize production",
+        "No testing is useful until millions of cases exist",
+        "Full production if an LLM judge agrees"
       ],
       "answer": 1,
-      "explanation": "LLM-as-judge allows scalable, automated evaluation of subjective agent behaviors during CI/CD."
+      "explanation": "A clean small suite can approve the exact bounded stage it supports without representing production. A production request is constrained to canary, which has separate population and rollback rules."
     },
     {
-      "question": "Why is 'cost per successful task' a key governance metric?",
+      "question": "An agent proposes a forbidden payment tool, but the policy enforcement point blocks it before any effect. Which metrics should change?",
       "choices": [
-        "To maximize API usage",
-        "It measures the efficiency of the agent's autonomy and whether the token usage justifies the business value",
-        "To punish developers",
-        "To lower server costs"
+        "Unsafe-effect count only",
+        "Blocked-attempt and tool-selection failure counts; unsafe-effect count remains unchanged",
+        "Task-success count only",
+        "No metric, because the effect was blocked"
       ],
       "answer": 1,
-      "explanation": "Agents can get stuck in loops or use excessive tokens. This metric ties autonomous behavior directly to ROI."
+      "explanation": "Attempt, prevention, and consequence are different populations. The control worked, but the proposal still reveals behavior that belongs in evaluation and regression data."
     },
     {
-      "question": "What is a deterministic evaluator in continuous agent testing?",
+      "question": "A model judge gives a safety pass, while a deterministic effect receipt shows that a denied action executed. What should the release gate do?",
       "choices": [
-        "An LLM judging another LLM",
-        "An evaluation script that checks exact code execution outcomes, like database state changes, rather than relying on an LLM judge",
-        "A human reviewer",
-        "A random number generator"
+        "Average the two results",
+        "Prefer the effect evidence, block release, and route the judge disagreement for calibration review",
+        "Trust the judge because it understands context",
+        "Ignore both because evaluators disagree"
       ],
       "answer": 1,
-      "explanation": "Deterministic evaluators verify the actual effects of the agent's actions on the environment using traditional software assertions."
+      "explanation": "A verified forbidden effect is a hard fact. Subjective judges cannot override deterministic safety evidence; the disagreement is evidence that the judge needs review."
     }
   ],
   "a3": [
