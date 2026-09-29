@@ -49,7 +49,7 @@ Each course pass will:
 | 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Implemented in PR #26 |
 | 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Implemented in PR #27 |
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Implemented in PR #28 |
-| 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Planned |
+| 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Implemented; PR pending |
 | 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Planned |
 | 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Planned |
 
@@ -185,6 +185,45 @@ Each course pass will:
 | Containment is independent of the agent | incident-response section | current, scoped `security_operator` methods | agent, cross-tenant and future-session operators cannot pause a run |
 | Framework examples are real but bounded | tools and framework sections | real SDK/Guardrails/FIDES objects construct offline | tests inspect exact hooks while application policy owns every effect |
 | Metrics name exact populations | evaluation section | 8 detector and 12 trajectory cases | baseline allows 8/9 dangerous cases; governed path allows 0/9 |
+
+## Course 15 claim-to-proof map
+
+### Course 15 audit decisions
+
+- **Retain:** the management/decision/enforcement/evidence separation, registry,
+  delegated-authority, policy-as-code, tool/MCP gateway, approval, outage,
+  shadow-policy, governance-loop, build-vs-buy, and four-diagram foundations.
+- **Deepen:** authenticated administrative operations, tenant/environment policy
+  scope, signed delegation and policy integrity, optimistic lifecycle updates,
+  exact decision and registry-version binding, atomic approval and execution
+  consumption, verified outcomes, bounded last-known-good reads, shadow release
+  evidence, replica activation, and threat/consistency models.
+- **Consolidate:** replace 24 mutable notebook demonstrations with one tested
+  deterministic `lab.py`, an eight-code-cell guided notebook, 70 focused
+  invariant tests, and a top-to-bottom notebook execution test.
+- **Repair:** remove runtime installs, random identifiers, mutable global
+  execution lists, caller-owned identity fields, approval flags, unbound policy
+  hashes, blind retries, prompt-only enforcement claims, and unqualified risk
+  scores.
+- **Add:** a 12-case prompt-only versus governed evaluation, authenticated
+  registry facade, tool lifecycle transitions, exact policy activation receipts,
+  tenant-bound local replicas, real offline OPA/OpenFGA SDK objects, Rego/Cedar/
+  OpenFGA artifacts, real in-memory OpenTelemetry spans, versioned diagram
+  specifications, current MCP/OAuth/SPIFFE/Envoy guidance, Hub checkpoints, and a
+  Course 15 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Models propose but never grant authority | trust-boundary and principal sections | trusted context plus signed delegation produces the request | forged identity/grant, tenant, workload, purpose and environment bindings fail |
+| Lifecycle changes are governed | management and registry sections | authenticated operator facade plus optimistic versions | wrong role/tenant, expired session, stale version and retired reactivation fail |
+| Delegation attenuates | delegated-authority section | signed root/child grants narrow tool, operation, resource, amount and lifetime | every widening dimension and tampered signature fail |
+| Decisions bind exact control state | decision and evidence sections | action, policy digest, registry versions, reasons and obligations travel together | schema/tool/policy mutation and inactive state deny |
+| Approval cannot become reusable authority | approval/action-binding sections | exact decision/policy/registry receipt and atomic consumption | mutation, expiry, role, tampering, replay and concurrent use fail |
+| Effects remain single and knowable | enforcement and consistency sections | idempotency, single-use gateway and reconciliation | denied actions make zero calls; changed-action reconciliation and duplicate execution fail |
+| Outage behavior is risk-aware | availability and caching sections | fresh last-known-good read with explicit evidence | mutation, stale bundle, read-only and stopped modes fail closed |
+| Policy rollout is governed | versioning and shadow sections | 12-case report, activation receipt and scoped replica | regression, stale/small/mismatched evidence and cross-tenant replica fail |
+| Common technologies remain bounded | technology-selection section | real OPA/OpenFGA configs, policy artifacts and OTel span | no network, credentials, framework-owned authorization or raw sensitive telemetry |
+| Evaluation names exact populations | practical/evaluation sections | 12 labelled allow/deny/escalate/constrain/outage cases | prompt-only baseline permits 8 forbidden outcomes; governed path permits 0 |
 
 ## Course 14 claim-to-proof map
 

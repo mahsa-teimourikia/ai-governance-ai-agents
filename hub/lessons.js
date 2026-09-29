@@ -992,42 +992,52 @@ export const lessons = [
     "level": "Advanced",
     "step": 15,
     "title": "Governance Control Plane Architecture",
-    "summary": "Governance system of record.",
-    "outcome": "Control plane vs data plane.",
+    "summary": "Turn trusted identity, delegated authority, policy, approval, enforcement, and evidence into one resilient control architecture.",
+    "outcome": "Build and test a multi-tenant control plane that prevents authority amplification, replay, stale high-risk decisions, and duplicate effects while preserving bounded low-risk availability.",
     "material": "curriculum/advanced/15-governance-control-plane-architecture/README.md",
     "notebook": "curriculum/advanced/15-governance-control-plane-architecture/15_governance_control_plane_architecture.ipynb",
+    "lab": "curriculum/advanced/15-governance-control-plane-architecture/lab.py",
+    "run": "make course-15",
     "refs": [
       {
-        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
-        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+        "title": "NIST AI Agent Standards Initiative",
+        "path": "https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure"
       },
       {
-        "title": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd",
+        "title": "NIST NCCoE software and AI agent identity concept paper",
         "path": "https://csrc.nist.gov/pubs/other/2026/02/05/accelerating-the-adoption-of-software-and-ai-agent/ipd"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs/policy-language",
-        "path": "https://www.openpolicyagent.org/docs/policy-language"
+        "title": "Open Policy Agent bundles",
+        "path": "https://www.openpolicyagent.org/docs/management-bundles"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs/http-api-authorization",
-        "path": "https://www.openpolicyagent.org/docs/http-api-authorization"
+        "title": "Cedar authorization model",
+        "path": "https://docs.cedarpolicy.com/auth/authorization.html"
       },
       {
-        "title": "https://www.openpolicyagent.org/docs/security",
-        "path": "https://www.openpolicyagent.org/docs/security"
+        "title": "OpenFGA core concepts",
+        "path": "https://openfga.dev/docs/concepts"
       },
       {
-        "title": "https://opentelemetry.io/blog/2026/genai-observability/",
-        "path": "https://opentelemetry.io/blog/2026/genai-observability/"
+        "title": "SPIFFE workload identity concepts",
+        "path": "https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/"
       },
       {
-        "title": "https://opentelemetry.io/docs/specs/semconv/",
-        "path": "https://opentelemetry.io/docs/specs/semconv/"
+        "title": "Envoy external authorization",
+        "path": "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/security/ext_authz_filter.html"
       },
       {
-        "title": "https://arxiv.org/abs/2606.12320",
-        "path": "https://arxiv.org/abs/2606.12320"
+        "title": "MCP Authorization specification (2026-07-28)",
+        "path": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/basic/authorization/index.mdx"
+      },
+      {
+        "title": "RFC 8693: OAuth 2.0 Token Exchange",
+        "path": "https://www.rfc-editor.org/rfc/rfc8693.html"
+      },
+      {
+        "title": "OpenTelemetry GenAI agent spans",
+        "path": "https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-agent-spans.md"
       }
     ]
   },
@@ -1573,37 +1583,37 @@ export const checks = {
   ],
   "a3": [
     {
-      "question": "In a Governance Control Plane, what is the difference between the control plane and the data plane?",
+      "question": "A purchase-order call times out after the upstream system may have committed it. What should the control plane do before retrying?",
       "choices": [
-        "They are identical",
-        "The control plane manages policies and configurations, while the data plane executes the agent's actions",
-        "The control plane is for testing only",
-        "The data plane stores policies"
+        "Retry immediately with a new identifier",
+        "Ask the model whether the first call succeeded",
+        "Reconcile the original idempotency key and action digest with the system of record",
+        "Assume a timeout means failure"
       ],
-      "answer": 1,
-      "explanation": "Separating the planes ensures that governance administrators can change policies without altering the agent's code."
+      "answer": 2,
+      "explanation": "A timeout creates an unknown outcome. Reconciliation preserves at-most-one business effect; a blind retry can duplicate the purchase order."
     },
     {
-      "question": "What is an 'evidence store' used for?",
+      "question": "During a policy-service outage, which degraded behavior is defensible?",
       "choices": [
-        "To store training data",
-        "To immutably record policy decisions, approvals, and trajectories for audit purposes",
-        "To cache API responses",
-        "To store user profiles"
+        "Permit all calls using the agent's last response",
+        "Reuse an earlier human approval for any similar action",
+        "Allow a low-risk read under a signed, fresh last-known-good bundle while high-risk mutation fails closed",
+        "Disable tenant checks until the service recovers"
       ],
-      "answer": 1,
-      "explanation": "An evidence store provides undeniable proof of the agent's behavior and the governance controls that were applied."
+      "answer": 2,
+      "explanation": "Availability policy should be explicit by risk. A bounded stale read can be acceptable, while stale authority must not create a new consequential effect."
     },
     {
-      "question": "What happens when an agent enters 'Read-only mode' via the control plane?",
+      "question": "Which statement correctly describes MCP or OAuth authorization in a governed tool gateway?",
       "choices": [
-        "The agent is deleted",
-        "The agent can still process inputs and query data, but the PEP blocks all state-changing tool executions",
-        "The agent refuses to answer",
-        "The database becomes read-only for all humans"
+        "A valid transport token is sufficient approval for every business action",
+        "The server may pass the caller's token unchanged to any downstream API",
+        "Audience-bound transport authorization is one layer; the gateway must still enforce per-tool, resource, purpose, and action policy",
+        "Tool descriptions can safely carry the user's role and tenant"
       ],
-      "answer": 1,
-      "explanation": "Read-only mode allows investigation of anomalous behavior while preventing the agent from causing further harm."
+      "answer": 2,
+      "explanation": "Protocol authorization establishes a secure transport boundary, not blanket business authority. Trusted infrastructure still constructs and enforces the exact action decision."
     }
   ],
   "a4": [
