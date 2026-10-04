@@ -1046,11 +1046,53 @@ export const lessons = [
     "level": "Advanced",
     "step": 16,
     "title": "Enterprise Agent Governance Operating Model",
-    "summary": "Ownership and onboarding.",
-    "outcome": "Recertification and incident response.",
+    "summary": "Operate a federated, evidence-bound lifecycle for enterprise agent portfolios.",
+    "outcome": "Gate exact releases, govern AI supply chains and change, contain incidents, and recertify accountable authority.",
     "material": "curriculum/advanced/16-enterprise-agent-governance-operating-model/README.md",
     "notebook": "curriculum/advanced/16-enterprise-agent-governance-operating-model/16_enterprise_agent_governance_operating_model.ipynb",
-    "refs": []
+    "run": "make course-16",
+    "refs": [
+      {
+        "title": "NIST AI Risk Management Framework",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework"
+      },
+      {
+        "title": "NIST AI RMF Playbook",
+        "path": "https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook"
+      },
+      {
+        "title": "NIST AI Agent Standards Initiative",
+        "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
+      },
+      {
+        "title": "ISO/IEC 42005:2025 AI system impact assessment",
+        "path": "https://www.iso.org/standard/42005"
+      },
+      {
+        "title": "European Commission AI Act overview",
+        "path": "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
+      },
+      {
+        "title": "OWASP Top 10 for Agentic Applications 2026",
+        "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+      },
+      {
+        "title": "CycloneDX ML-BOM",
+        "path": "https://cyclonedx.org/capabilities/mlbom/"
+      },
+      {
+        "title": "SPDX 3.0.1 AI Profile",
+        "path": "https://spdx.github.io/spdx-spec/latest/model/AI/AI/"
+      },
+      {
+        "title": "SLSA v1.2 provenance",
+        "path": "https://slsa.dev/spec/v1.2/provenance"
+      },
+      {
+        "title": "IIA Statements of Position",
+        "path": "https://www.theiia.org/en/resources/statements-of-position"
+      }
+    ]
   },
   {
     "id": "a5",
@@ -1618,37 +1660,59 @@ export const checks = {
   ],
   "a4": [
     {
-      "question": "What is the purpose of an 'Agent System Card'?",
+      "question": "A release has a valid control artifact, but the artifact is bound to agent v3.1 while the deployment contains v3.2. What should the gate do?",
       "choices": [
-        "To give the agent a badge",
-        "To document the agent's intended use, capabilities, risk tier, and known limitations for stakeholders",
-        "To track GPU usage",
-        "To format outputs"
+        "Pass because the control ID is present",
+        "Pass if the artifact is less than 90 days old",
+        "Block because evidence must bind to the exact agent version and manifest",
+        "Ask the agent whether the versions are compatible"
       ],
-      "answer": 1,
-      "explanation": "System cards create transparency, ensuring users and risk teams understand the boundaries of the agent."
+      "answer": 2,
+      "explanation": "Presence and freshness are insufficient. Version and manifest binding prevent an earlier system's evidence from authorizing a changed release."
     },
     {
-      "question": "Why is a recertification process necessary for enterprise agents?",
+      "question": "A team needs a temporary exception to the red-team control. Which sequence preserves approval integrity?",
       "choices": [
-        "To generate more paperwork",
-        "To ensure the agent still complies with policies after model updates or environment changes",
-        "To change the agent's name",
-        "To delete old logs"
+        "Approve the release, then add the exception to the ticket",
+        "Put a signed, scoped, expiring exception with compensating controls into the release package before approvers sign",
+        "Let the product owner waive any control indefinitely",
+        "Rename the missing control so the gate ignores it"
       ],
       "answer": 1,
-      "explanation": "Agents degrade or drift as backend APIs or underlying LLMs change. Periodic recertification ensures continued safety."
+      "explanation": "Approvers must review the exact package they authorize. Appending an exception afterward changes the decision subject and invalidates prior approval."
     },
     {
-      "question": "What role does 'Governance-as-code' play in agent onboarding?",
+      "question": "An MCP server keeps its name but advertises a new vendor.create capability. How should the operating model treat it?",
       "choices": [
-        "It prevents onboarding",
-        "It automates the validation of required security controls and documentation before the agent is allowed to deploy",
-        "It allows developers to skip testing",
-        "It generates marketing material"
+        "As non-material because the server name is unchanged",
+        "As a capability/permission expansion requiring supply-chain review and reassessment",
+        "As approved because the model selected the server",
+        "As an observability-only change"
       ],
       "answer": 1,
-      "explanation": "Governance-as-code replaces manual spreadsheets with automated CI/CD checks for risk tiers, policy attachments, and required tests."
+      "explanation": "Capability expansion changes the consequence boundary. Identity by name alone does not preserve the prior threat, authorization, and evaluation assumptions."
+    },
+    {
+      "question": "During a model-provider outage, the agent process cannot respond. Which containment design remains credible?",
+      "choices": [
+        "Ask the model to disable itself when it returns",
+        "Use an independent identity/gateway/registry kill path that can revoke authority and verify isolation",
+        "Write DISABLE_AGENT in the incident ticket",
+        "Wait for the next periodic recertification"
+      ],
+      "answer": 1,
+      "explanation": "Containment must be outside the failed or compromised agent path. A plan is not proof until trusted runtime state and authority actually change."
+    },
+    {
+      "question": "Why is '27 completed reviews' a weak governance-effectiveness metric by itself?",
+      "choices": [
+        "Counts can never be used in governance",
+        "It omits the eligible population, coverage, decision quality, outcomes, aging, and valid work blocked",
+        "Only financial metrics are meaningful",
+        "The number should always be converted to tokens"
+      ],
+      "answer": 1,
+      "explanation": "Activity counts help plan workload but do not show coverage or effectiveness. Rates need defined populations, numerators, denominators, windows, and direction."
     }
   ],
   "a5": [

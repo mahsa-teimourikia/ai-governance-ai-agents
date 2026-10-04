@@ -1,0 +1,33 @@
+version: 1
+id: course16-agent-system-card
+title: "Agent Cards as Governance Records"
+purpose: "Define the minimum linked fields of an enterprise agent system-of-record entry."
+output:
+  svg: ../02-agent-system-card.svg
+  medium: documentation
+  alt_text: "An agent system card links identity, ownership, purpose, autonomy, dependencies, risk, controls, evidence and lifecycle state in one living governance record."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 65, grid: 5 }
+layout: { primary_flow: top-to-bottom, min_node_gap: 18, min_layer_gap: 22, node_padding: { x: 20, y: 14 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    record: { fill: "#FFFFFF", stroke: "#082542" }
+groups:
+  - id: agent_system_card
+    label: "AGENT / SYSTEM CARD"
+    bounds: { x: 180, y: 300, width: 1240, height: 450 }
+nodes:
+  - { id: identity, label: "IDENTITY", subtitle: "agent_id • version • owner • business unit", type: record, group: agent_system_card, bounds: { x: 235, y: 375, width: 520, height: 38 } }
+  - { id: purpose, label: "PURPOSE", subtitle: "intended use • prohibited use • users", type: record, group: agent_system_card, bounds: { x: 830, y: 375, width: 510, height: 38 } }
+  - { id: autonomy, label: "AUTONOMY", subtitle: "classification • delegated authority • limits", type: record, group: agent_system_card, bounds: { x: 235, y: 453, width: 520, height: 38 } }
+  - { id: dependencies, label: "DEPENDENCIES", subtitle: "model • data • RAG • memory • tools • MCP", type: record, group: agent_system_card, bounds: { x: 830, y: 453, width: 510, height: 38 } }
+  - { id: risk, label: "RISK", subtitle: "tier • impacts • threat model • regulatory scope", type: record, group: agent_system_card, bounds: { x: 235, y: 531, width: 520, height: 38 } }
+  - { id: controls, label: "CONTROLS", subtitle: "authorization • approval • guardrails • kill switch", type: record, group: agent_system_card, bounds: { x: 830, y: 531, width: 510, height: 38 } }
+  - { id: evidence, label: "EVIDENCE", subtitle: "evaluations • red team • attestations • incidents", type: record, group: agent_system_card, bounds: { x: 235, y: 609, width: 520, height: 38 } }
+  - { id: lifecycle, label: "LIFECYCLE", subtitle: "approval • deployment • review • retirement", type: record, group: agent_system_card, bounds: { x: 830, y: 609, width: 510, height: 38 } }
+edges: []
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 14, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }
+source:
+  renderer: "deterministic hand-authored SVG"
+  note: "Coordinates, labels and colors in this specification are authoritative."

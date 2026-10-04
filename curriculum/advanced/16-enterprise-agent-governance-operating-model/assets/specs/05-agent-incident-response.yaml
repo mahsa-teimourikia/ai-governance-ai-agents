@@ -1,0 +1,38 @@
+version: 1
+id: course16-agent-incident-response
+title: "Agent Incident Response"
+purpose: "Show the end-to-end response path for containing an agent while preserving reconstructable evidence."
+output:
+  svg: ../05-agent-incident-response.svg
+  medium: documentation
+  alt_text: "An incident-response sequence detects an event, contains agent authority, preserves evidence, assesses impact, recovers under independent review and feeds lessons into remediation."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 60, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 94, min_layer_gap: 80, node_padding: { x: 18, y: 14 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    detection: { fill: "#FFFFFF", stroke: "#1769C2" }
+    containment: { fill: "#FFFFFF", stroke: "#C53030" }
+    evidence: { fill: "#FFFFFF", stroke: "#805AD5" }
+    impact: { fill: "#FFFFFF", stroke: "#B9571D" }
+    recovery: { fill: "#FFFFFF", stroke: "#2F855A" }
+    learning: { fill: "#FFFFFF", stroke: "#129B96" }
+groups: []
+nodes:
+  - { id: detect, label: "DETECT", type: detection, bounds: { x: 62, y: 367, width: 156, height: 156 }, ports: { out: { side: right, offset: 0.5 } } }
+  - { id: contain, label: "CONTAIN", type: containment, bounds: { x: 312, y: 367, width: 156, height: 156 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: preserve_evidence, label: "PRESERVE EVIDENCE", type: evidence, bounds: { x: 562, y: 367, width: 156, height: 156 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: assess_impact, label: "ASSESS IMPACT", type: impact, bounds: { x: 812, y: 367, width: 156, height: 156 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: recover, label: "RECOVER", type: recovery, bounds: { x: 1062, y: 367, width: 156, height: 156 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: learn_remediate, label: "LEARN / REMEDIATE", type: learning, bounds: { x: 1312, y: 367, width: 156, height: 156 }, ports: { in: { side: left, offset: 0.5 } } }
+edges:
+  - { id: detect_to_contain, from: { node: detect, port: out }, to: { node: contain, port: in }, route: [[218, 445], [312, 445]] }
+  - { id: contain_to_preserve, from: { node: contain, port: out }, to: { node: preserve_evidence, port: in }, route: [[468, 445], [562, 445]] }
+  - { id: preserve_to_assess, from: { node: preserve_evidence, port: out }, to: { node: assess_impact, port: in }, route: [[718, 445], [812, 445]] }
+  - { id: assess_to_recover, from: { node: assess_impact, port: out }, to: { node: recover, port: in }, route: [[968, 445], [1062, 445]] }
+  - { id: recover_to_learn, from: { node: recover, port: out }, to: { node: learn_remediate, port: in }, route: [[1218, 445], [1312, 445]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 14, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }
+source:
+  renderer: "deterministic hand-authored SVG"
+  note: "Coordinates, labels, colors and routes in this specification are authoritative."

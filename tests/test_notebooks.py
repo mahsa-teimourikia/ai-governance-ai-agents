@@ -194,3 +194,14 @@ def test_course_15_notebook_executes_top_to_bottom(monkeypatch):
         / "15_governance_control_plane_architecture.ipynb"
     )
     execute_notebook(path, monkeypatch)
+
+
+def test_course_16_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the sixteenth fully audited notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/advanced/16-enterprise-agent-governance-operating-model"
+        / "16_enterprise_agent_governance_operating_model.ipynb"
+    )
+    execute_notebook(path, monkeypatch)
