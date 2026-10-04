@@ -51,7 +51,7 @@ Each course pass will:
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Implemented in PR #28 |
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Implemented in PR #29 |
 | 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Implemented in PR #30 |
-| 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Implemented in PR (pending number) |
+| 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Implemented in PR #31 |
 
 ## Course 8 claim-to-proof map
 
