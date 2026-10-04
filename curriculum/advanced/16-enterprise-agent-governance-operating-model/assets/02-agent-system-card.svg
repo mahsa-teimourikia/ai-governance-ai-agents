@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<title>Agent cards as governance records</title>
+<desc>An agent system card links identity, ownership, purpose, autonomy, dependencies, risk, controls, evidence, and lifecycle state in one living governance record.</desc>
 <defs>
  <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#B9571D"/></marker>
 </defs>

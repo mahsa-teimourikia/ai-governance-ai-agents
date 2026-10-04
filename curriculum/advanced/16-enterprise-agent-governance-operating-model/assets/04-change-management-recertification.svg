@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<title>Change management and recertification</title>
+<desc>A materiality engine evaluates changes to models, prompts, tools, data, permissions, and authority, then routes them to regression testing, reassessment, reapproval, recertification, or suspension.</desc>
 <defs>
  <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#B9571D"/></marker>
 </defs>
@@ -26,6 +28,6 @@
 <text x="1230" y="460" text-anchor="middle" font-size="16" fill="#B7791F">MATERIAL → targeted reassessment</text>
 <text x="1230" y="500" text-anchor="middle" font-size="16" fill="#C53030">MAJOR → re-approval / recertification</text>
 <text x="1230" y="540" text-anchor="middle" font-size="16" fill="#805AD5">CRITICAL → suspend until approved</text>
-<rect x="360" y="675" width="880" height="80" rx="20" fill="#082542"/>
+<rect x="110" y="675" width="1380" height="80" rx="20" fill="#082542"/>
 <text x="800" y="725" text-anchor="middle" font-size="19" font-weight="700" fill="#FFFFFF">Recertification validates ownership, purpose, dependencies, controls and evidence—not just model performance.</text>
 </g></svg>
