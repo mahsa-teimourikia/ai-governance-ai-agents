@@ -1,0 +1,42 @@
+version: 1
+id: course17-production-architecture
+title: "Governed Autonomous Enterprise Agent"
+purpose: "Show the trusted path from employee request through agent proposal, governance, tool gateway, business API and evidence feedback."
+output:
+  svg: ../01-production-architecture.svg
+  medium: documentation
+  alt_text: "A procurement agent proposes actions through governed context and a governance control plane before a tool gateway reaches business APIs, with evidence returned to a governed store."
+canvas: { width: 1200, height: 700, background: "#F7F9FC", margin: 60, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 60, min_layer_gap: 45, node_padding: { x: 20, y: 14 } }
+style:
+  font_family: "Arial, sans-serif"
+  title_color: "#16324F"
+  semantic_colors:
+    service: { fill: "#EAF0FF", stroke: "#2F6BFF" }
+    governance: { fill: "#F0EDFF", stroke: "#7667E8" }
+    data: { fill: "#E7F8F7", stroke: "#16A3A5" }
+    action: { fill: "#FFF1E3", stroke: "#F59E42" }
+    operations: { fill: "#EDF0F2", stroke: "#52606D" }
+groups:
+  - { id: governance_control_plane, label: "GOVERNANCE CONTROL PLANE", bounds: { x: 650, y: 105, width: 430, height: 290 } }
+nodes:
+  - { id: employee, label: "Employee / goal", subtitle: "identity + tenant scope", type: operations, bounds: { x: 60, y: 125, width: 220, height: 110 }, ports: { out: { side: right, offset: 0.5 } } }
+  - { id: procurement_agent, label: "Procurement agent", subtitle: "plan • retrieve • propose", type: service, bounds: { x: 340, y: 125, width: 250, height: 110 }, ports: { in: { side: left, offset: 0.5 }, governance: { side: right, offset: 0.32 }, policy_return: { side: right, offset: 0.77 }, context: { side: bottom, offset: 0.5 } } }
+  - { id: governed_context, label: "Governed context", subtitle: "RAG + memory provenance", type: data, bounds: { x: 340, y: 280, width: 250, height: 110 }, ports: { agent: { side: top, offset: 0.5 }, gateway: { side: right, offset: 0.5 } } }
+  - { id: evidence_store, label: "Evidence store", subtitle: "traces • approvals • outcomes", type: data, bounds: { x: 340, y: 435, width: 250, height: 110 }, ports: { in: { side: right, offset: 0.5 } } }
+  - { id: policy_authz, group: governance_control_plane, label: "Policy + AuthZ", type: governance, bounds: { x: 680, y: 160, width: 170, height: 70 }, ports: { in: { side: left, offset: 0.0 } } }
+  - { id: risk_approval, group: governance_control_plane, label: "Risk + approval", type: governance, bounds: { x: 880, y: 160, width: 170, height: 70 } }
+  - { id: guardrails, group: governance_control_plane, label: "Guardrails", type: governance, bounds: { x: 680, y: 290, width: 170, height: 70 } }
+  - { id: budgets_halt, group: governance_control_plane, label: "Budgets + halt", type: governance, bounds: { x: 880, y: 290, width: 170, height: 70 } }
+  - { id: tool_gateway, label: "Tool / MCP gateway", subtitle: "schema + egress + idempotency", type: action, bounds: { x: 650, y: 435, width: 250, height: 110 }, ports: { context: { side: left, offset: 0.5 }, governance: { side: top, offset: 0.0 }, out: { side: right, offset: 0.5 } } }
+  - { id: business_apis, label: "Business APIs", subtitle: "PO • vendor • ERP", type: operations, bounds: { x: 970, y: 435, width: 170, height: 110 }, ports: { in: { side: left, offset: 0.5 }, governance: { side: top, offset: 0.0 } } }
+edges:
+  - { id: request, from: { node: employee, port: out }, to: { node: procurement_agent, port: in }, route: [[280, 180], [340, 180]] }
+  - { id: proposal_to_governance, from: { node: procurement_agent, port: governance }, to: { node: policy_authz, port: in }, route: [[590, 160], [650, 160]] }
+  - { id: policy_return, from: { node: policy_authz, port: in }, to: { node: procurement_agent, port: policy_return }, route: [[650, 210], [590, 210]] }
+  - { id: context_request, from: { node: procurement_agent, port: context }, to: { node: governed_context, port: agent }, route: [[465, 235], [465, 280]] }
+  - { id: context_to_gateway, from: { node: governed_context, port: gateway }, to: { node: tool_gateway, port: context }, route: [[590, 335], [620, 335], [620, 490], [650, 490]] }
+  - { id: gateway_to_business, from: { node: tool_gateway, port: out }, to: { node: business_apis, port: in }, route: [[900, 490], [970, 490]] }
+  - { id: evidence_feedback, from: { node: tool_gateway, port: context }, to: { node: evidence_store, port: in }, route: [[650, 490], [590, 490]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 14, min_connector_clearance: 10, verify_port_attachment: true, verify_contrast: true }
+source: { renderer: "deterministic hand-authored SVG", note: "Coordinates, labels, colors and routes are authoritative." }

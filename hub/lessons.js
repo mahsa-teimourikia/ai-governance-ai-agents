@@ -1099,34 +1099,52 @@ export const lessons = [
     "level": "Advanced",
     "step": 17,
     "title": "Capstone Governed Autonomous Enterprise Agent",
-    "summary": "Full production architecture.",
-    "outcome": "Trade-offs.",
+    "summary": "Integrate identity, evidence, policy, durable approval, idempotent execution, reconciliation, containment, evaluation, and assurance into one governed agent.",
+    "outcome": "Build and test a production-shaped procurement workflow whose trusted control plane prevents authority amplification, stale approval, duplicate effects, unsafe recovery, and unsupported release claims.",
     "material": "curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/README.md",
     "notebook": "curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/17_capstone_governed_autonomous_enterprise_agent.ipynb",
+    "lab": "curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/lab.py",
+    "run": "make course-17",
     "refs": [
       {
-        "title": "https://www.nist.gov/itl/ai-risk-management-framework",
-        "path": "https://www.nist.gov/itl/ai-risk-management-framework"
-      },
-      {
-        "title": "https://www.nist.gov/itl/ai-risk-management-framework/",
-        "path": "https://www.nist.gov/itl/ai-risk-management-framework/"
-      },
-      {
-        "title": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "title": "NIST AI Agent Standards Initiative",
         "path": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"
       },
       {
-        "title": "https://owasp.org/www-project-top-10-for-agentic-applications/",
-        "path": "https://owasp.org/www-project-top-10-for-agentic-applications/"
+        "title": "NIST AI 800-2 automated benchmark evaluation draft",
+        "path": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.800-2.ipd.pdf"
       },
       {
-        "title": "https://opentelemetry.io/docs/specs/semconv/gen-ai/",
-        "path": "https://opentelemetry.io/docs/specs/semconv/gen-ai/"
+        "title": "OWASP Top 10 for Agentic Applications 2026",
+        "path": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
       },
       {
-        "title": "https://openssf.org/",
-        "path": "https://openssf.org/"
+        "title": "OpenAI Agents SDK orchestration",
+        "path": "https://openai.github.io/openai-agents-python/multi_agent/"
+      },
+      {
+        "title": "Microsoft Agent Framework checkpoints",
+        "path": "https://learn.microsoft.com/en-us/agent-framework/workflows/checkpoints"
+      },
+      {
+        "title": "Temporal durable AI",
+        "path": "https://docs.temporal.io/ai"
+      },
+      {
+        "title": "MCP specification 2026-07-28",
+        "path": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      {
+        "title": "Open Policy Agent documentation",
+        "path": "https://www.openpolicyagent.org/docs/latest/"
+      },
+      {
+        "title": "OpenFGA documentation",
+        "path": "https://openfga.dev/docs"
+      },
+      {
+        "title": "OpenTelemetry semantic conventions 1.44",
+        "path": "https://opentelemetry.io/docs/specs/semconv/"
       }
     ]
   }
@@ -1717,37 +1735,59 @@ export const checks = {
   ],
   "a5": [
     {
-      "question": "In a production enterprise agent, what is the trade-off between strict policy enforcement and agent capability?",
+      "question": "The ERP times out after a purchase order may have committed. What should the governed workflow do next?",
       "choices": [
-        "Strict policies make the agent run faster",
-        "Strict policies reduce risk but may block the agent from completing complex or novel tasks",
-        "There is no trade-off",
-        "Strict policies increase token usage"
+        "Retry immediately with a new idempotency key",
+        "Record an unknown outcome and reconcile the original logical operation with the ERP before retrying",
+        "Ask the model whether the order exists",
+        "Mark the run successful because policy allowed the call"
       ],
       "answer": 1,
-      "explanation": "Governance must balance safety with utility; overly strict policies degrade the autonomous value of the agent."
+      "explanation": "A timeout reports what the caller observed, not what the ERP did. Reconciliation with the stable operation and idempotency key prevents a duplicate business effect."
     },
     {
-      "question": "What is the ultimate goal of governed autonomous enterprise agents?",
+      "question": "An Acme vendor comment says to switch to Globex and update bank details. Why may the agent read the text but not obey it?",
       "choices": [
-        "To replace all human workers",
-        "To safely scale AI action-taking while maintaining verifiable compliance and human accountability",
-        "To write more code",
-        "To eliminate the need for authorization"
+        "The comment is too short to be trusted",
+        "Retrieved content is data; authenticated tenant, registered tools, delegated authority, and policy come from trusted services",
+        "The model should decide whether the instruction sounds reasonable",
+        "Bank updates are safe when hidden from telemetry"
       ],
       "answer": 1,
-      "explanation": "Governed autonomy allows businesses to delegate tasks securely without losing control or compliance."
+      "explanation": "Retrieval does not create authority. The trusted application derives scope and enforces the action boundary independently of model-visible content."
     },
     {
-      "question": "Why is continuous monitoring essential for a production enterprise agent?",
+      "question": "A reviewer approved CAD 20,000, but the resumed proposal is CAD 24,000 with the same request ID. What is the correct result?",
       "choices": [
-        "To track user IP addresses",
-        "Because the underlying models, APIs, and threat landscape constantly evolve, invalidating point-in-time assessments",
-        "To reduce API costs",
-        "Because it looks good on a dashboard"
+        "Execute because both amounts use the same approval threshold",
+        "Reject the old receipt because the proposal digest changed",
+        "Execute if the agent version is unchanged",
+        "Round both amounts to the same risk tier"
       ],
       "answer": 1,
-      "explanation": "Unlike static software, agent behavior is highly variable. Continuous monitoring detects policy violations or goal drift immediately."
+      "explanation": "Approval binds the exact proposal, evidence, policy, reviewer and expiry. A changed amount creates a different decision subject even if the route would be similar."
+    },
+    {
+      "question": "Why does the capstone report WAITING_APPROVAL separately from BLOCKED?",
+      "choices": [
+        "Waiting is a durable non-terminal interruption with an authorized resume path; blocked work cannot proceed under the current facts",
+        "The labels make dashboards more colorful",
+        "Blocked actions always failed schema validation",
+        "Waiting actions have already committed in the ERP"
+      ],
+      "answer": 0,
+      "explanation": "Terminal-state semantics determine recovery. A durable approval wait may resume with a bound receipt, while a denial requires a legitimate change in facts, policy, or scope."
+    },
+    {
+      "question": "The synthetic suite reports 15/15 governed terminal decisions. What may the assurance case claim?",
+      "choices": [
+        "Universal agent safety and production reliability",
+        "The implemented invariants held for the named synthetic population, supporting only a bounded conditional release",
+        "No human accountability is needed",
+        "Any model or tool version can replace the evaluated one"
+      ],
+      "answer": 1,
+      "explanation": "Evaluation evidence is scoped to its population, versions, environment, and metrics. Perfect fixture results do not establish live-model quality, scale, availability, compliance, or residual-risk acceptance."
     }
   ]
 };

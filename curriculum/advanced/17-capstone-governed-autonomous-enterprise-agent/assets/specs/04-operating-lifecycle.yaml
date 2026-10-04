@@ -1,0 +1,40 @@
+version: 1
+id: course17-operating-lifecycle
+title: "Governed Agent Operating Lifecycle"
+purpose: "Show the operating lifecycle and feedback from material change, incidents, audit and improvement."
+output:
+  svg: ../04-operating-lifecycle.svg
+  medium: documentation
+  alt_text: "The agent lifecycle moves from registration through assessment, approval, operation and change, with recertification, incident, audit and improvement feedback."
+canvas: { width: 1200, height: 520, background: "#F7F9FC", margin: 60, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 30, min_layer_gap: 105, node_padding: { x: 18, y: 12 } }
+style:
+  font_family: "Arial, sans-serif"
+  title_color: "#16324F"
+  semantic_colors:
+    lifecycle: { fill: "#FFFFFF", stroke: "#D7DEE8" }
+    governance: { fill: "#F0EDFF", stroke: "#7667E8" }
+    operations: { fill: "#E7F8F7", stroke: "#16A3A5" }
+    response: { fill: "#FFF1E3", stroke: "#F59E42" }
+groups: []
+nodes:
+  - { id: register, label: "Register", subtitle: "agent card", type: lifecycle, bounds: { x: 70, y: 190, width: 150, height: 85 }, ports: { in: { side: bottom, offset: 0.83 }, out: { side: right, offset: 0.5 } } }
+  - { id: assess, label: "Assess", subtitle: "risk + supply chain", type: governance, bounds: { x: 270, y: 190, width: 150, height: 85 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: approve, label: "Approve", subtitle: "controls + gate", type: governance, bounds: { x: 470, y: 190, width: 150, height: 85 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: operate, label: "Operate", subtitle: "monitor + evidence", type: operations, bounds: { x: 670, y: 190, width: 150, height: 85 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: change, label: "Change", subtitle: "materiality check", type: response, bounds: { x: 870, y: 190, width: 150, height: 85 }, ports: { in: { side: left, offset: 0.5 }, feedback: { side: bottom, offset: 0.5 } } }
+  - { id: recertify, label: "Recertify", subtitle: "renew / suspend", type: lifecycle, bounds: { x: 70, y: 380, width: 170, height: 80 }, ports: { out: { side: right, offset: 0.5 } } }
+  - { id: incident, label: "Incident", subtitle: "contain + learn", type: response, bounds: { x: 350, y: 380, width: 170, height: 80 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: audit, label: "Audit", subtitle: "assurance package", type: operations, bounds: { x: 630, y: 380, width: 170, height: 80 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: improve, label: "Improve", subtitle: "policy + tests", type: governance, bounds: { x: 910, y: 380, width: 170, height: 80 }, ports: { in: { side: left, offset: 0.5 } } }
+edges:
+  - { id: register_to_assess, from: { node: register, port: out }, to: { node: assess, port: in }, route: [[220, 232], [270, 232]] }
+  - { id: assess_to_approve, from: { node: assess, port: out }, to: { node: approve, port: in }, route: [[420, 232], [470, 232]] }
+  - { id: approve_to_operate, from: { node: approve, port: out }, to: { node: operate, port: in }, route: [[620, 232], [670, 232]] }
+  - { id: operate_to_change, from: { node: operate, port: out }, to: { node: change, port: in }, route: [[820, 232], [870, 232]] }
+  - { id: change_to_register, from: { node: change, port: feedback }, to: { node: register, port: in }, route: [[945, 275], [945, 365], [195, 365], [195, 275]] }
+  - { id: recertify_to_incident, from: { node: recertify, port: out }, to: { node: incident, port: in }, route: [[240, 420], [350, 420]] }
+  - { id: incident_to_audit, from: { node: incident, port: out }, to: { node: audit, port: in }, route: [[520, 420], [630, 420]] }
+  - { id: audit_to_improve, from: { node: audit, port: out }, to: { node: improve, port: in }, route: [[800, 420], [910, 420]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 12, min_connector_clearance: 10, verify_port_attachment: true, verify_contrast: true }
+source: { renderer: "deterministic hand-authored SVG", note: "Coordinates, labels, colors and routes are authoritative." }

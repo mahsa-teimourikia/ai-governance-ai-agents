@@ -19,7 +19,7 @@ def test_quiz_has_comprehensive_questions():
     lessons = (ROOT / "hub" / "lessons.js").read_text()
     # Count occurrences of "question": "..."
     questions = re.findall(r'"question":\s*"([^"]+)"', lessons)
-    assert len(questions) == 53
+    assert len(questions) == 55
 
 def test_js_modules_are_valid_syntax():
     # Only tests files that don't depend heavily on DOM being present

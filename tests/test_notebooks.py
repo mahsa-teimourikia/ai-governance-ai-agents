@@ -205,3 +205,14 @@ def test_course_16_notebook_executes_top_to_bottom(monkeypatch):
         / "16_enterprise_agent_governance_operating_model.ipynb"
     )
     execute_notebook(path, monkeypatch)
+
+
+def test_course_17_notebook_executes_top_to_bottom(monkeypatch):
+    """Execute the capstone notebook without a Jupyter server."""
+
+    path = (
+        ROOT
+        / "curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent"
+        / "17_capstone_governed_autonomous_enterprise_agent.ipynb"
+    )
+    execute_notebook(path, monkeypatch)
