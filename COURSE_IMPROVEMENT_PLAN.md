@@ -51,7 +51,7 @@ Each course pass will:
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Implemented in PR #28 |
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Implemented in PR #29 |
 | 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Implemented in PR #30 |
-| 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Planned |
+| 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Implemented in PR #31 |
 
 ## Course 8 claim-to-proof map
 
@@ -610,3 +610,41 @@ Each course pass will:
 | Effects are protected and observable | Gateway, credential, error, and evidence sections | gateway capability, brokered credential simulation, effect receipt | Direct bypass, unknown-before/after-commit, and malformed output tests |
 | URL tools enforce network intent | SSRF section | allowlist plus HTTPS/credential/port and resolved-address checks | Localhost, link-local, private, IPv6-local, mixed-answer, and redirect-hop exercises |
 | Evaluation names its populations | Testing and notebook sections | nine labelled cases and `EvaluationSummary` | Exact forbidden-allowed and missed-escalation counts expose the schema-only baseline |
+
+## Course 17 claim-to-proof map
+
+### Course 17 audit decisions
+
+- **Retain:** the procurement scenario, model-proposes/control-plane-authorizes
+  thesis, manager-versus-handoff comparison, architecture/evaluation/lifecycle
+  diagrams, bounded-autonomy framing, failure-injection intent and assurance-case
+  goal.
+- **Deepen:** authenticated identity, signed attenuated delegation,
+  authorization-before-retrieval, governed memory admission, exact evidence and
+  resource binding, deterministic policy, durable checkpoints, multi-role
+  approval, idempotency, uncertain-outcome reconciliation, time-of-use lifecycle
+  checks, independent containment, privacy-conscious telemetry, architecture
+  exposure measures and bounded assurance claims.
+- **Consolidate:** replace notebook-local demonstrations and hard-coded metrics
+  with one reusable typed `lab.py`, a guided nine-code-cell notebook, 43 focused
+  invariants and a top-to-bottom notebook execution test.
+- **Repair:** remove wall-clock approval semantics, mutable string permissions,
+  approval records without tenant/role/policy/evidence binding, unverified
+  evidence links, unchecked checkpoint replay, duplicate-only idempotency logic,
+  hard-coded release scores, generic Hub metadata and duplicate/outdated sources.
+- **Add:** real Pydantic, PyJWT, JSON Schema and OpenTelemetry artifacts; a
+  15-case terminal-state corpus; transient-versus-unknown failure drills; signed
+  assurance evidence and limitations; current NIST/OWASP/MCP/framework sources;
+  five architecture-judgment checkpoints; and a Course 17 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Identity and delegation remain trusted | identity/delegation sections | authenticated `Principal`, signed JWT fixture and capability intersection | signature, parent, expiry, tenant and amplification tests |
+| Retrieval and memory cannot grant authority | data boundary sections | authorize-before-select retriever and provenance-bound memory admission | other tenant never scanned; poison, stale, tamper and cross-scope cases fail |
+| Policy owns consequential decisions | mechanics and policy sections | registered version, tenant, action, amount, evidence and policy checks | bank update, capability, stale evidence, policy outage and autonomy ceiling block |
+| Approval is exact and durable | approval/checkpoint sections | role-bound signed receipts and signed single-claim checkpoint | self-approval, mutation, expiry, replay and concurrency fail |
+| External effects are recoverable | execution/recovery sections | stable operation/idempotency IDs and ERP receipts | transient-before-commit retries; unknown-after-commit reconciles without a second call |
+| Incidents revoke authority independently | containment section | trusted alert suspends registry with optimistic versioning | untrusted role/source fails; gateway rejects post-approval suspension |
+| Evidence is useful and minimized | observability/assurance sections | real in-memory OpenTelemetry spans and signed evidence digests | payload absence and assurance-tamper tests |
+| Architecture claims are measurable | orchestration comparison | declared exposure, revocation, coordination and ownership profiles | results explicitly excluded from latency/model-quality claims |
+| Release evidence is population-bound | evaluation section | 15 labelled cases with exact terminal states and metric populations | baseline 3/15; governed 15/15; limitations prevent universal claims |

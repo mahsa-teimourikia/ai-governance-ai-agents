@@ -1,4 +1,4 @@
-.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 course-10 course-11 course-12 course-13 course-14 course-15 course-16 clean
+.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 course-10 course-11 course-12 course-13 course-14 course-15 course-16 course-17 clean
 
 setup:
 	uv venv
@@ -74,6 +74,10 @@ course-15:
 course-16:
 	uv run python scripts/execute-notebooks.py curriculum/advanced/16-enterprise-agent-governance-operating-model/16_enterprise_agent_governance_operating_model.ipynb
 	uv run pytest -q tests/test_module16_enterprise_operating_model.py tests/test_notebooks.py::test_course_16_notebook_executes_top_to_bottom
+
+course-17:
+	uv run python scripts/execute-notebooks.py curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/17_capstone_governed_autonomous_enterprise_agent.ipynb
+	uv run pytest -q tests/test_module17_governed_enterprise_capstone.py tests/test_notebooks.py::test_course_17_notebook_executes_top_to_bottom
 
 clean:
 	rm -rf .venv

@@ -1,23 +1,22 @@
-version: 1
+version: 2
 brand: One+i
-canvas: {width: 1200, height: 700, background: '#F7F9FC'}
 typography: {family: Arial, heading: 30, body: 16}
 palette: {navy: '#16324F', blue: '#2F6BFF', purple: '#7667E8', teal: '#16A3A5', orange: '#F59E42', slate: '#52606D'}
 diagrams:
   - id: production-architecture
     file: assets/01-production-architecture.svg
-    flow: left-to-right
-    groups: [agent, governance-control-plane, tool-gateway, evidence-loop]
+    spec: assets/specs/01-production-architecture.yaml
+    canvas: {width: 1200, height: 700}
   - id: authority-approval
     file: assets/02-authority-and-approval.svg
-    flow: left-to-right
-    groups: [authority-chain, approval-binding]
+    spec: assets/specs/02-authority-and-approval.yaml
+    canvas: {width: 1200, height: 620}
   - id: release-gates
     file: assets/03-evaluation-release-gates.svg
-    flow: left-to-right
-    groups: [candidate, evaluation, governance-gate, outcome]
+    spec: assets/specs/03-evaluation-release-gates.yaml
+    canvas: {width: 1200, height: 560}
   - id: operating-lifecycle
     file: assets/04-operating-lifecycle.svg
-    flow: left-to-right
-    groups: [lifecycle, assurance-feedback]
+    spec: assets/specs/04-operating-lifecycle.yaml
+    canvas: {width: 1200, height: 520}
 accessibility: Each SVG includes a title and description and uses an opaque light background.
