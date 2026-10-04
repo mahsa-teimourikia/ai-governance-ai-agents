@@ -50,7 +50,7 @@ Each course pass will:
 | 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Implemented in PR #27 |
 | 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Implemented in PR #28 |
 | 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Implemented in PR #29 |
-| 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Planned |
+| 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Implemented in PR (pending number) |
 | 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Planned |
 
 ## Course 8 claim-to-proof map
@@ -185,6 +185,44 @@ Each course pass will:
 | Containment is independent of the agent | incident-response section | current, scoped `security_operator` methods | agent, cross-tenant and future-session operators cannot pause a run |
 | Framework examples are real but bounded | tools and framework sections | real SDK/Guardrails/FIDES objects construct offline | tests inspect exact hooks while application policy owns every effect |
 | Metrics name exact populations | evaluation section | 8 detector and 12 trajectory cases | baseline allows 8/9 dangerous cases; governed path allows 0/9 |
+
+## Course 16 claim-to-proof map
+
+### Course 16 audit decisions
+
+- **Retain:** the federated enterprise operating model, named ownership,
+  agent/system card, risk tiers, onboarding lifecycle, supply-chain, change,
+  recertification, incident, exception, audit and portfolio-metric foundations,
+  the procurement scenario, and five diagrams.
+- **Deepen:** Three Lines decision rights, trusted registry administration,
+  explicit risk reason codes, signed evidence, exact release-package binding,
+  distinct approver roles, atomic consumption, non-waivable controls, real
+  lifecycle containment, recovery separation, audit integrity, regulatory
+  timelines, and established/emerging/open-practice distinctions.
+- **Consolidate:** replace 65 notebook-only cells with one deterministic typed
+  `lab.py`, an eight-code-cell guided notebook, 36 focused invariant tests,
+  and a top-to-bottom notebook execution test.
+- **Repair:** remove runtime installs, wall-clock and random identifiers,
+  mutable global registries, opaque multiplicative risk scores, evidence URIs
+  treated as proof, string approvers, unconstrained transitions, printed-only
+  incident actions, count-only metrics, and an unlinked bibliography.
+- **Add:** real CycloneDX 1.7 AI/ML-BOM generation, Sigstore identity-policy,
+  SLSA v1 provenance and in-memory OpenTelemetry artifacts; a 15-case release
+  corpus; bounded signed exceptions; authenticated administrative facade;
+  tamper-evident audit packages; current NIST/ISO/EU/OWASP/SPDX sources; Hub
+  judgment checkpoints; and a Course 16 CI target.
+
+| Promise | Prose | Executable proof | Negative/evaluation proof |
+|---|---|---|---|
+| Inventory and lifecycle state are trusted | system-card and lifecycle sections | authenticated `RegistryAdminService`, typed card, optimistic record versions | wrong role/tenant, stale version, duplicate record and illegal transition fail |
+| Risk tiers remain explainable | classification and baseline sections | ordered rules return tier plus reason codes and policy version | read-only, consequential, regulated and irreversible cases select distinct tiers |
+| Evidence is exact and current | evidence/release-package section | signed artifacts bind tenant, agent/version, manifest, control, policy and time | forged, stale, failed, cross-tenant, wrong-version and wrong-policy evidence fail |
+| Approval is bounded and non-replayable | release and decision-rights sections | distinct role receipts bind the exact evidence/exception package and consume atomically | tamper, expiry, mutation, missing role, replay and concurrent consumption fail |
+| Exceptions cannot become blanket bypass | exceptions section | signed control-specific record with compensation, expiry and exit plan | non-waivable, long-lived, tampered, expired and post-approval exception cases fail |
+| Change invalidates the right proof | change/recertification section | typed manifest diff returns class, route and invalidated controls | unchanged version, identity change, permission and critical-authority changes fail or suspend |
+| Incident response changes real authority | incident section | trusted alert admission plus independent commander transitions registry to suspended | untrusted/duplicate alerts, wrong role, empty evidence and premature closure fail |
+| Audit and interoperability claims are honest | supply-chain/audit/tool sections | CycloneDX, SLSA, Sigstore policy, OTel span and signed audit package build offline | audit tamper and record/gate mismatch fail; prose rejects BOM as safety proof |
+| Metrics name exact populations | evaluation section | two valid and thirteen unsafe labelled packages with explicit fractions | presence-only baseline is 2/15; governed path is 15/15 and blocks 13/13 unsafe packages |
 
 ## Course 15 claim-to-proof map
 

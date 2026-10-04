@@ -1,28 +1,55 @@
 apiVersion: governance.oneplusi.io/v1
 kind: AgentCard
 metadata:
+  tenantId: tenant-acme
   id: procurement-agent
   version: 3.2.0
+  sourceRevision: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 spec:
-  businessOwner: Procurement VP
-  technicalOwner: AI Procurement Team
-  purpose: Bounded purchasing
+  name: Procurement Agent
+  purpose: Prepare and create bounded purchase orders for approved vendors.
+  intendedUsers:
+    - procurement-analyst
+  prohibitedUses:
+    - vendor-creation
+    - unapproved-vendor-payment
+  ownership:
+    businessOwner: owner-procurement
+    technicalOwner: owner-ai-engineering
+    dataOwner: owner-procurement-data
+  deployment:
+    environment: production-ca
+    jurisdictions:
+      - CA-BC
+      - CA-ON
   autonomy: A2
   riskTier: HIGH
-  permissions:
-    - vendor.read
-    - po.prepare
-    - po.create
+  authority:
+    financialLimitCad: 15000
+    permissions:
+      - vendor.read
+      - purchase-order.create
   dependencies:
     - kind: model
       name: foundation-model-x
-      version: "2026-07"
+      version: "2026-09"
       provider: Vendor A
-    - kind: mcp
+      digest: sha256:1111111111111111111111111111111111111111111111111111111111111111
+      license: LicenseRef-Commercial
+      thirdParty: true
+      reviewExpiresAt: "2027-04-02T12:00:00Z"
+    - kind: mcp_server
       name: procurement-mcp
       version: 1.4.2
       provider: Internal Platform
+      digest: sha256:2222222222222222222222222222222222222222222222222222222222222222
+      license: Apache-2.0
+      capabilities:
+        - vendor.read
+        - purchase-order.create
   controls:
-    policyBundle: procurement-v7
-    humanApproval: risk-based
+    policyBundle: enterprise-agent-governance/16.1
+    promptDigest: sha256:3333333333333333333333333333333333333333333333333333333333333333
+    humanApproval: risk-based-distinct-roles
     killSwitch: true
+    recertificationDays: 90
