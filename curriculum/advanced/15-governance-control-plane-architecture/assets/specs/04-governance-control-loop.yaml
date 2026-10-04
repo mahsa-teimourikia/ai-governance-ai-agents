@@ -1,0 +1,37 @@
+version: 1
+id: course15-governance-control-loop
+title: "The Control Plane Closes the Governance Loop"
+purpose: "Show continuous feedback from registration through runtime evidence and policy update."
+output:
+  svg: ../04-governance-control-loop.svg
+  medium: documentation
+  alt_text: "A cycle moves through register, authorize, enforce, observe, evaluate and update, then feeds updates back to registration."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 65, grid: 5 }
+layout: { primary_flow: left-to-right-with-feedback, min_node_gap: 82, min_layer_gap: 80, node_padding: { x: 18, y: 18 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    register: { fill: "#FFFFFF", stroke: "#1769C2" }
+    authorize: { fill: "#FFFFFF", stroke: "#805AD5" }
+    enforce: { fill: "#FFFFFF", stroke: "#C53030" }
+    observe: { fill: "#FFFFFF", stroke: "#129B96" }
+    evaluate: { fill: "#FFFFFF", stroke: "#2F855A" }
+    update: { fill: "#FFFFFF", stroke: "#B9571D" }
+groups: []
+nodes:
+  - { id: register, label: "REGISTER", type: register, bounds: { x: 65, y: 360, width: 170, height: 170 }, padding: { x: 18, y: 18 }, ports: { out: { side: right, offset: 0.5 }, feedback: { side: bottom, offset: 0.68 } } }
+  - { id: authorize, label: "AUTHORIZE", type: authorize, bounds: { x: 317, y: 360, width: 170, height: 170 }, padding: { x: 18, y: 18 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: enforce, label: "ENFORCE", type: enforce, bounds: { x: 569, y: 360, width: 170, height: 170 }, padding: { x: 18, y: 18 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: observe, label: "OBSERVE", type: observe, bounds: { x: 821, y: 360, width: 170, height: 170 }, padding: { x: 18, y: 18 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: evaluate, label: "EVALUATE", type: evaluate, bounds: { x: 1073, y: 360, width: 170, height: 170 }, padding: { x: 18, y: 18 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: update, label: "UPDATE", type: update, bounds: { x: 1325, y: 360, width: 170, height: 170 }, padding: { x: 18, y: 18 }, ports: { in: { side: left, offset: 0.5 }, feedback: { side: bottom, offset: 0.5 } } }
+edges:
+  - { id: register_to_authorize, from: { node: register, port: out }, to: { node: authorize, port: in }, kind: primary, route: [[235, 445], [317, 445]] }
+  - { id: authorize_to_enforce, from: { node: authorize, port: out }, to: { node: enforce, port: in }, kind: primary, route: [[487, 445], [569, 445]] }
+  - { id: enforce_to_observe, from: { node: enforce, port: out }, to: { node: observe, port: in }, kind: primary, route: [[739, 445], [821, 445]] }
+  - { id: observe_to_evaluate, from: { node: observe, port: out }, to: { node: evaluate, port: in }, kind: primary, route: [[991, 445], [1073, 445]] }
+  - { id: evaluate_to_update, from: { node: evaluate, port: out }, to: { node: update, port: in }, kind: primary, route: [[1243, 445], [1325, 445]] }
+  - { id: update_feedback, from: { node: update, port: feedback }, to: { node: register, port: feedback }, label: "evidence-driven policy and lifecycle update", kind: feedback, route: [[1410, 530], [1410, 700], [180, 700], [180, 530]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 16, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }
+source: { renderer: "deterministic hand-authored SVG", note: "Circle bounds are represented as boxes in the source spec; rendered radius is 85 pixels." }

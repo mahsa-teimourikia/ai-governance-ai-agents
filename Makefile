@@ -1,4 +1,4 @@
-.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 course-10 course-11 course-12 course-13 course-14 clean
+.PHONY: setup setup-contributor test course-01 course-02 course-03 course-04 course-05 course-06 course-07 course-08 course-09 course-10 course-11 course-12 course-13 course-14 course-15 clean
 
 setup:
 	uv venv
@@ -66,6 +66,10 @@ course-13:
 course-14:
 	uv run python scripts/execute-notebooks.py curriculum/advanced/14-agent-evaluation-and-continuous-governance/14_agent_evaluation_and_continuous_governance.ipynb
 	uv run pytest -q tests/test_module14_agent_evaluation.py tests/test_notebooks.py::test_course_14_notebook_executes_top_to_bottom
+
+course-15:
+	uv run python scripts/execute-notebooks.py curriculum/advanced/15-governance-control-plane-architecture/15_governance_control_plane_architecture.ipynb
+	uv run pytest -q tests/test_module15_governance_control_plane.py tests/test_notebooks.py::test_course_15_notebook_executes_top_to_bottom
 
 clean:
 	rm -rf .venv

@@ -1,0 +1,36 @@
+version: 1
+id: course15-runtime-decision-pipeline
+title: "Runtime Governance Decision Pipeline"
+purpose: "Show the trusted facts and evaluations required before a consequential action."
+output:
+  svg: ../02-runtime-decision-pipeline.svg
+  medium: documentation
+  alt_text: "A left-to-right pipeline evaluates identity, authority, context, policy and risk before producing a governance decision."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 45, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 50, min_layer_gap: 80, node_padding: { x: 20, y: 16 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    identity: { fill: "#FFFFFF", stroke: "#1769C2" }
+    authority: { fill: "#FFFFFF", stroke: "#805AD5" }
+    context: { fill: "#FFFFFF", stroke: "#129B96" }
+    policy: { fill: "#FFFFFF", stroke: "#B9571D" }
+    risk: { fill: "#FFFFFF", stroke: "#C53030" }
+    decision: { fill: "#FFFFFF", stroke: "#2F855A" }
+groups: []
+nodes:
+  - { id: identity, label: "IDENTITY", type: identity, bounds: { x: 45, y: 365, width: 205, height: 145 }, padding: { x: 20, y: 16 }, ports: { out: { side: right, offset: 0.5 } } }
+  - { id: authority, label: "AUTHORITY", type: authority, bounds: { x: 300, y: 365, width: 205, height: 145 }, padding: { x: 20, y: 16 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: context, label: "CONTEXT", type: context, bounds: { x: 555, y: 365, width: 205, height: 145 }, padding: { x: 20, y: 16 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: policy, label: "POLICY", type: policy, bounds: { x: 810, y: 365, width: 205, height: 145 }, padding: { x: 20, y: 16 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: risk, label: "RISK", type: risk, bounds: { x: 1065, y: 365, width: 205, height: 145 }, padding: { x: 20, y: 16 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: decision, label: "DECISION", type: decision, bounds: { x: 1320, y: 365, width: 205, height: 145 }, padding: { x: 20, y: 16 }, ports: { in: { side: left, offset: 0.5 } } }
+edges:
+  - { id: identity_to_authority, from: { node: identity, port: out }, to: { node: authority, port: in }, kind: primary, route: [[250, 438], [300, 438]] }
+  - { id: authority_to_context, from: { node: authority, port: out }, to: { node: context, port: in }, kind: primary, route: [[505, 438], [555, 438]] }
+  - { id: context_to_policy, from: { node: context, port: out }, to: { node: policy, port: in }, kind: primary, route: [[760, 438], [810, 438]] }
+  - { id: policy_to_risk, from: { node: policy, port: out }, to: { node: risk, port: in }, kind: primary, route: [[1015, 438], [1065, 438]] }
+  - { id: risk_to_decision, from: { node: risk, port: out }, to: { node: decision, port: in }, kind: primary, route: [[1270, 438], [1320, 438]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 16, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }
+source: { renderer: "deterministic hand-authored SVG", note: "The dark outcome panel is explanatory text, not a routed node." }
