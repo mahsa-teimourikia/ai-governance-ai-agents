@@ -1,11 +1,13 @@
 """Focused invariants for Course 16 enterprise governance operating model."""
 
 import sys
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from pathlib import Path
 
 import pytest
+import yaml
 from pydantic import ValidationError
 
 MODULE = (
@@ -725,3 +727,52 @@ def test_notebook_is_clean_and_imports_canonical_lab():
         for cell in notebook["cells"]
         if cell["cell_type"] == "code"
     )
+
+
+def test_diagram_specs_are_accessible_and_geometry_safe():
+    specs = sorted((MODULE / "assets/specs").glob("*.yaml"))
+    assert len(specs) == 5
+
+    for spec_path in specs:
+        spec = yaml.safe_load(spec_path.read_text())
+        canvas = spec["canvas"]
+        assert spec["version"] == 1
+        assert spec["output"]["alt_text"]
+
+        nodes = spec["nodes"]
+        node_by_id = {node["id"]: node for node in nodes}
+        assert len(node_by_id) == len(nodes)
+        for node in nodes:
+            bounds = node["bounds"]
+            assert 0 <= bounds["x"] < bounds["x"] + bounds["width"] <= canvas["width"]
+            assert 0 <= bounds["y"] < bounds["y"] + bounds["height"] <= canvas["height"]
+
+        for index, left in enumerate(nodes):
+            a = left["bounds"]
+            for right in nodes[index + 1 :]:
+                b = right["bounds"]
+                assert (
+                    a["x"] + a["width"] <= b["x"]
+                    or b["x"] + b["width"] <= a["x"]
+                    or a["y"] + a["height"] <= b["y"]
+                    or b["y"] + b["height"] <= a["y"]
+                )
+
+        edge_ids = {edge["id"] for edge in spec["edges"]}
+        assert len(edge_ids) == len(spec["edges"])
+        for edge in spec["edges"]:
+            for endpoint_name in ("from", "to"):
+                endpoint = edge[endpoint_name]
+                assert endpoint["node"] in node_by_id
+                assert endpoint["port"] in node_by_id[endpoint["node"]]["ports"]
+            assert all(
+                0 <= point[0] <= canvas["width"] and 0 <= point[1] <= canvas["height"]
+                for point in edge["route"]
+            )
+
+        svg_path = (spec_path.parent / spec["output"]["svg"]).resolve()
+        svg_root = ET.parse(svg_path).getroot()
+        assert svg_root.attrib["width"] == str(canvas["width"])
+        assert svg_root.attrib["height"] == str(canvas["height"])
+        assert svg_root.find("{http://www.w3.org/2000/svg}title") is not None
+        assert svg_root.find("{http://www.w3.org/2000/svg}desc") is not None

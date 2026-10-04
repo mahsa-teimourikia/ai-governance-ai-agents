@@ -200,7 +200,7 @@ Each course pass will:
   lifecycle containment, recovery separation, audit integrity, regulatory
   timelines, and established/emerging/open-practice distinctions.
 - **Consolidate:** replace 65 notebook-only cells with one deterministic typed
-  `lab.py`, an eight-code-cell guided notebook, 36 focused invariant tests,
+  `lab.py`, an eight-code-cell guided notebook, 37 focused invariant tests,
   and a top-to-bottom notebook execution test.
 - **Repair:** remove runtime installs, wall-clock and random identifiers,
   mutable global registries, opaque multiplicative risk scores, evidence URIs
@@ -210,7 +210,8 @@ Each course pass will:
   SLSA v1 provenance and in-memory OpenTelemetry artifacts; a 15-case release
   corpus; bounded signed exceptions; authenticated administrative facade;
   tamper-evident audit packages; current NIST/ISO/EU/OWASP/SPDX sources; Hub
-  judgment checkpoints; and a Course 16 CI target.
+  judgment checkpoints; accessible diagrams with versioned layout
+  specifications; and a Course 16 CI target.
 
 | Promise | Prose | Executable proof | Negative/evaluation proof |
 |---|---|---|---|

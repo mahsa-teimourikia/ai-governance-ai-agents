@@ -1,0 +1,42 @@
+version: 1
+id: course16-enterprise-agent-onboarding-lifecycle
+title: "Enterprise Agent Onboarding Lifecycle"
+purpose: "Show the governed lifecycle from registration through recertification and the feedback path to reassessment."
+output:
+  svg: ../01-enterprise-agent-onboarding-lifecycle.svg
+  medium: documentation
+  alt_text: "Seven-stage enterprise agent lifecycle: register, assess, test, approve, deploy, monitor and recertify, with material changes, incidents and expired attestations returning to reassessment."
+canvas: { width: 1600, height: 900, background: "#F7F9FC", margin: 35, grid: 5 }
+layout: { primary_flow: left-to-right, min_node_gap: 40, min_layer_gap: 80, node_padding: { x: 20, y: 16 } }
+style:
+  font_family: "Arial, Helvetica, sans-serif"
+  title_color: "#082542"
+  semantic_colors:
+    identity: { fill: "#FFFFFF", stroke: "#1769C2" }
+    assessment: { fill: "#FFFFFF", stroke: "#805AD5" }
+    assurance: { fill: "#FFFFFF", stroke: "#C53030" }
+    approval: { fill: "#FFFFFF", stroke: "#B9571D" }
+    operation: { fill: "#FFFFFF", stroke: "#2F855A" }
+    monitoring: { fill: "#FFFFFF", stroke: "#129B96" }
+    recertification: { fill: "#FFFFFF", stroke: "#B7791F" }
+groups: []
+nodes:
+  - { id: register, label: "REGISTER", subtitle: "Agent card", type: identity, bounds: { x: 35, y: 350, width: 180, height: 170 }, ports: { out: { side: right, offset: 0.5 }, loop_in: { side: bottom, offset: 0.53 } } }
+  - { id: assess, label: "ASSESS", subtitle: "Risk + autonomy", type: assessment, bounds: { x: 255, y: 350, width: 180, height: 170 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: test, label: "TEST", subtitle: "Security + eval", type: assurance, bounds: { x: 475, y: 350, width: 180, height: 170 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: approve, label: "APPROVE", subtitle: "Control attestation", type: approval, bounds: { x: 695, y: 350, width: 180, height: 170 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: deploy, label: "DEPLOY", subtitle: "CI/CD gate", type: operation, bounds: { x: 915, y: 350, width: 180, height: 170 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: monitor, label: "MONITOR", subtitle: "Evidence + KRIs", type: monitoring, bounds: { x: 1135, y: 350, width: 180, height: 170 }, ports: { in: { side: left, offset: 0.5 }, out: { side: right, offset: 0.5 } } }
+  - { id: recertify, label: "RECERTIFY", subtitle: "Owner + controls", type: recertification, bounds: { x: 1355, y: 350, width: 180, height: 170 }, ports: { in: { side: left, offset: 0.5 }, loop_out: { side: bottom, offset: 0.33 } } }
+edges:
+  - { id: register_to_assess, from: { node: register, port: out }, to: { node: assess, port: in }, route: [[215, 435], [255, 435]] }
+  - { id: assess_to_test, from: { node: assess, port: out }, to: { node: test, port: in }, route: [[435, 435], [475, 435]] }
+  - { id: test_to_approve, from: { node: test, port: out }, to: { node: approve, port: in }, route: [[655, 435], [695, 435]] }
+  - { id: approve_to_deploy, from: { node: approve, port: out }, to: { node: deploy, port: in }, route: [[875, 435], [915, 435]] }
+  - { id: deploy_to_monitor, from: { node: deploy, port: out }, to: { node: monitor, port: in }, route: [[1095, 435], [1135, 435]] }
+  - { id: monitor_to_recertify, from: { node: monitor, port: out }, to: { node: recertify, port: in }, route: [[1315, 435], [1355, 435]] }
+  - { id: lifecycle_feedback, from: { node: recertify, port: loop_out }, to: { node: register, port: loop_in }, label: "material change, incident or expired attestation", route: [[1415, 555], [1415, 705], [130, 705], [130, 555]] }
+validation: { no_overlaps: true, route_around_nodes: true, min_text_padding: 14, min_connector_clearance: 12, verify_port_attachment: true, verify_contrast: true }
+source:
+  renderer: "deterministic hand-authored SVG"
+  note: "Coordinates, labels, colors and routes in this specification are authoritative."

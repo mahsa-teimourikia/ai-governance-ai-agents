@@ -421,6 +421,8 @@ make course-16
 ```
 
 The notebook imports [lab.py](lab.py). It contains no runtime package installation or paid credential path.
+The five course diagrams include accessible SVG titles and descriptions and
+versioned layout specifications in [`assets/specs/`](assets/specs/).
 
 ### Claim-to-proof map
 
