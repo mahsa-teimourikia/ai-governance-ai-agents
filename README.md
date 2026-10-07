@@ -17,6 +17,10 @@ claim-to-proof expectations, and the completed review record.
 
 ### Environment Setup
 
+Use Python 3.11, 3.12, or 3.13 and install
+[uv](https://docs.astral.sh/uv/getting-started/installation/). The supported
+range is enforced in project metadata and tested in CI.
+
 Install the exact Python environment recorded in `uv.lock`:
 ```bash
 make setup-contributor
