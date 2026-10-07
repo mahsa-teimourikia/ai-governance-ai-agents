@@ -718,8 +718,8 @@ export const lessons = [
         "path": "https://www.rfc-editor.org/rfc/rfc8693"
       },
       {
-        "title": "OWASP APTS: Multi-Agent Coordination",
-        "path": "https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html"
+        "title": "OWASP Multi-Agentic System Threat Modeling Guide v1.0",
+        "path": "https://genai.owasp.org/resource/multi-agentic-system-threat-modeling-guide-v1-0/"
       },
       {
         "title": "OpenTelemetry: Trace specification",
@@ -1050,6 +1050,7 @@ export const lessons = [
     "outcome": "Gate exact releases, govern AI supply chains and change, contain incidents, and recertify accountable authority.",
     "material": "curriculum/advanced/16-enterprise-agent-governance-operating-model/README.md",
     "notebook": "curriculum/advanced/16-enterprise-agent-governance-operating-model/16_enterprise_agent_governance_operating_model.ipynb",
+    "lab": "curriculum/advanced/16-enterprise-agent-governance-operating-model/lab.py",
     "run": "make course-16",
     "refs": [
       {

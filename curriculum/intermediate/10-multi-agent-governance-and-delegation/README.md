@@ -525,7 +525,7 @@ The notebook follows this sequence:
 11. NIST — [AI Agent Standards Initiative](https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative)
 12. NIST — [Software and AI Agent Identity and Authorization concept paper](https://www.nccoe.nist.gov/sites/default/files/2026-02/accelerating-the-adoption-of-software-and-ai-agent-identity-and-authorization-concept-paper.pdf)
 13. IETF — [RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693)
-14. OWASP APTS — [Multi-Agent Coordination](https://owasp.org/APTS/standard/appendix/Multi_Agent_Coordination.html)
+14. OWASP — [Multi-Agentic System Threat Modeling Guide v1.0](https://genai.owasp.org/resource/multi-agentic-system-threat-modeling-guide-v1-0/)
 15. OpenTelemetry — [Trace specification](https://opentelemetry.io/docs/specs/otel/trace/)
 
 ## 24. Next module

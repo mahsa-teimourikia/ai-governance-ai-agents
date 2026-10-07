@@ -349,7 +349,7 @@ tool guardrails for each custom function call rather than relying only on first
 input and final output guardrails
 ([guardrails](https://openai.github.io/openai-agents-python/guardrails/)).
 
-## 8. State of the art as of 2026-10-04
+## 8. State of the art as of 2026-10-07
 
 ### Established practice
 
@@ -440,7 +440,7 @@ The course target executes the notebook top-to-bottom and runs the focused
 invariant suite. To run only the reusable implementation:
 
 ```bash
-uv run python curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/lab.py
+uv run --locked python curriculum/advanced/17-capstone-governed-autonomous-enterprise-agent/lab.py
 ```
 
 The notebook imports [`lab.py`](lab.py); it does not duplicate the runtime or

@@ -8,40 +8,32 @@ version = "0.1.0"
 description = "AI Governance for Agents Curriculum"
 requires-python = ">=3.11"
 dependencies = [
-  "pydantic>=2.0",
-  "pandas>=2.0",
-  "numpy",
-  "scikit-learn",
-  "networkx",
-  "matplotlib",
-  "openpyxl",
-  "requests",
-  "jsonschema",
-  "jinja2",
-  "PyYAML>=6.0",
-  "openai",
-  "openai-agents",
-  "agent-framework",
-  "agent-framework-core",
-  "langgraph",
-  "mcp",
-  "PyJWT",
-  "cryptography",
-  "openfga_sdk",
-  "opa-python-client",
-  "sigstore",
-  "openai-guardrails",
-  "opentelemetry-api>=1.30",
-  "opentelemetry-sdk>=1.30",
-  "opentelemetry-exporter-otlp",
-  "pytest",
-  "cyclonedx-bom"
+  "agent-framework-core>=1.20,<2",
+  "agent-framework-orchestrations>=1.3,<2",
+  "cryptography>=50,<51",
+  "cyclonedx-bom>=7.5,<8",
+  "jsonschema>=4.26,<5",
+  "langgraph>=1.2,<2",
+  "mcp>=2,<3",
+  "networkx>=3.6,<4",
+  "opa-python-client>=3,<4",
+  "openai-agents>=0.23,<0.24",
+  "openai-guardrails>=0.3,<0.4",
+  "openfga_sdk>=0.10,<0.11",
+  "opentelemetry-api>=1.45,<2",
+  "opentelemetry-sdk>=1.45,<2",
+  "pandas>=3,<4",
+  "pydantic>=2.13,<3",
+  "PyJWT>=2.15,<3",
+  "PyYAML>=6,<7",
+  "scikit-learn>=1.9,<2",
+  "sigstore>=4.5,<5"
 ]
 
 [project.optional-dependencies]
 contributor = [
-  "pytest",
-  "ipykernel"
+  "ipykernel>=7.3,<8",
+  "pytest>=9.1,<10"
 ]
 
 [tool.setuptools]

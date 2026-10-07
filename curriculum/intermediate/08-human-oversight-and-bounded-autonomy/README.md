@@ -440,7 +440,7 @@ make course-08
 Or run the focused invariant suite:
 
 ```bash
-uv run pytest -q tests/test_module08_human_oversight.py
+uv run --locked pytest -q tests/test_module08_human_oversight.py
 ```
 
 ### Production extension assignment
