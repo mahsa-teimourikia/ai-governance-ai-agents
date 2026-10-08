@@ -366,7 +366,7 @@ make course-09
 Or run focused tests:
 
 ```bash
-uv run pytest -q tests/test_module09_data_rag_memory.py
+uv run --locked pytest -q tests/test_module09_data_rag_memory.py
 ```
 
 ### Production extension assignment

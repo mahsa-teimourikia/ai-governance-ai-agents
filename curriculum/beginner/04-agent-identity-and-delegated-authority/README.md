@@ -508,10 +508,11 @@ Its current documentation includes:
 - conditions,
 - cleanup/revocation after task completion.
 
-Python SDK:
+The Python SDK is part of the repository's locked environment. Install the
+course dependencies from the repository root:
 
 ```bash
-pip install openfga_sdk
+make setup-contributor
 ```
 
 Official docs:

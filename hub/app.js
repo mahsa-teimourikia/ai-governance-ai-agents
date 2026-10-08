@@ -11,7 +11,7 @@ let completed = JSON.parse(localStorage.getItem("course-hub-progress") || "[]");
 const link = (path) => path.startsWith("http") ? path : base + path;
 
 function renderFilters() {
-  filters.innerHTML = ["All", "Beginner", "Intermediate", "Advanced", "Enterprise"].map((value) => `<button class="${level === value ? "active" : ""}" data-level="${value}">${value}</button>`).join("");
+  filters.innerHTML = ["All", "Beginner", "Intermediate", "Advanced"].map((value) => `<button class="${level === value ? "active" : ""}" data-level="${value}">${value}</button>`).join("");
   filters.querySelectorAll("button").forEach((button) => button.onclick = () => { level = button.dataset.level; renderFilters(); renderCards(); });
 }
 

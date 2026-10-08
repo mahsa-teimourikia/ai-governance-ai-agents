@@ -12,22 +12,22 @@ official ``mcp`` SDK's ``Tool`` type, but does not start a network server.
 
 from __future__ import annotations
 
-from collections import defaultdict
-from datetime import datetime, timedelta, timezone
-from enum import Enum
 import hashlib
 import ipaddress
 import json
+from collections import defaultdict
+from collections.abc import Callable, Iterable
+from datetime import UTC, datetime, timedelta
+from enum import Enum
 from threading import Lock
-from typing import Any, Callable, Iterable
+from typing import Any
 from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator
 from mcp.types import Tool
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-
-REFERENCE_TIME = datetime(2026, 9, 21, 12, 0, tzinfo=timezone.utc)
+REFERENCE_TIME = datetime(2026, 9, 21, 12, 0, tzinfo=UTC)
 POLICY_VERSION = "tool-gateway/2026-09-21"
 MCP_ISSUER = "https://idp.example.test"
 
@@ -43,7 +43,11 @@ def _canonical(value: object) -> object:
         return {str(k): _canonical(v) for k, v in sorted(value.items())}
     if isinstance(value, (set, frozenset, tuple, list)):
         values = [_canonical(v) for v in value]
-        return sorted(values, key=lambda v: json.dumps(v, sort_keys=True)) if isinstance(value, (set, frozenset)) else values
+        return (
+            sorted(values, key=lambda v: json.dumps(v, sort_keys=True))
+            if isinstance(value, (set, frozenset))
+            else values
+        )
     if isinstance(value, datetime):
         return value.isoformat()
     if isinstance(value, Enum):
@@ -86,7 +90,7 @@ class AuthenticatedContext(FrozenModel):
     )
 
     @model_validator(mode="after")
-    def positive_lifetime(self) -> "AuthenticatedContext":
+    def positive_lifetime(self) -> AuthenticatedContext:
         if self.valid_until <= self.authenticated_at:
             raise ValueError("authentication lifetime must be positive")
         return self
@@ -318,8 +322,7 @@ def authorization_challenge(
     return AuthorizationChallenge(
         status_code=403 if insufficient_scope else 401,
         www_authenticate=(
-            f'Bearer error="{error}", '
-            f'resource_metadata="{resource_metadata_url}"'
+            f'Bearer error="{error}", resource_metadata="{resource_metadata_url}"'
         ),
     )
 
@@ -333,7 +336,9 @@ class ToolRegistry:
     def get(self, server_id: str, tool_name: str) -> ToolContract | None:
         return self._contracts.get((server_id, tool_name))
 
-    def discover(self, context: AuthenticatedContext, now: datetime) -> tuple[Tool, ...]:
+    def discover(
+        self, context: AuthenticatedContext, now: datetime
+    ) -> tuple[Tool, ...]:
         return tuple(
             to_mcp_tool(c)
             for c in self._contracts.values()
@@ -357,10 +362,10 @@ def to_mcp_tool(contract: ToolContract) -> Tool:
         name=contract.name,
         title=contract.title,
         description=contract.description,
-        inputSchema=contract.input_schema,
-        outputSchema=contract.output_schema,
+        input_schema=contract.input_schema,
+        output_schema=contract.output_schema,
         annotations={"readOnlyHint": contract.risk_tier == "T0"},
-        _meta={
+        meta={
             "governance/manifestDigest": contract.manifest_digest,
             "governance/riskTier": contract.risk_tier,
             "governance/owner": contract.owner,
@@ -469,13 +474,17 @@ class ProcurementAdapter:
             return self._effects[key], self._outputs[key]
         if self.failure_mode == "before_commit":
             raise UnknownEffect("backend timed out before effect status was known")
-        self.last_credential_used = True  # brokered internally; never returned or logged
+        self.last_credential_used = (
+            True  # brokered internally; never returned or logged
+        )
         effect_id = "EF-" + stable_digest({"tenant": key[0], "operation": key[1]})[:16]
         if proposal.tool_name == "procurement.cancel_po":
             original_operation = str(proposal.arguments["original_operation_id"])
             original = self._effects.get((context.tenant_id, original_operation))
             if original is None or original.tool_name != "procurement.create_po":
-                raise UnknownEffect("original tenant-scoped effect could not be established")
+                raise UnknownEffect(
+                    "original tenant-scoped effect could not be established"
+                )
             receipt = EffectReceipt(
                 effect_id=effect_id,
                 tenant_id=context.tenant_id,
@@ -500,13 +509,19 @@ class ProcurementAdapter:
             request_digest=request_digest,
             status=EffectStatus.APPLIED,
         )
-        output = {"effect_id": effect_id, "status": "created", "tenant_id": context.tenant_id}
+        output = {
+            "effect_id": effect_id,
+            "status": "created",
+            "tenant_id": context.tenant_id,
+        }
         self._effects[key], self._outputs[key] = receipt, output
         if self.failure_mode == "after_commit":
             raise UnknownEffect("backend committed before transport timed out")
         return receipt, output
 
-    def reconcile(self, tenant_id: str, operation_id: str) -> tuple[EffectReceipt, dict[str, Any]] | None:
+    def reconcile(
+        self, tenant_id: str, operation_id: str
+    ) -> tuple[EffectReceipt, dict[str, Any]] | None:
         key = (tenant_id, operation_id)
         if key not in self._effects:
             return None
@@ -555,7 +570,10 @@ class ToolGateway:
         facts: TrustedFacts | None = None,
     ) -> ToolDecision:
         return ToolDecision(
-            decision_id="TD-" + stable_digest({"request": digest, "outcome": outcome, "reasons": tuple(reasons)})[:16],
+            decision_id="TD-"
+            + stable_digest(
+                {"request": digest, "outcome": outcome, "reasons": tuple(reasons)}
+            )[:16],
             outcome=outcome,
             reason_codes=tuple(reasons),
             request_digest=digest,
@@ -599,35 +617,80 @@ class ToolGateway:
         if contract is None:
             return self._decision(Outcome.DENY, ("TOOL_NOT_REGISTERED",), digest, now)
         if contract.status != "active" or contract.review_expires_at < now:
-            return self._decision(Outcome.DENY, ("TOOL_NOT_ACTIVE",), digest, now, contract)
+            return self._decision(
+                Outcome.DENY, ("TOOL_NOT_ACTIVE",), digest, now, contract
+            )
         if proposal.observed_manifest_digest != contract.manifest_digest:
-            return self._decision(Outcome.DENY, ("MANIFEST_ATTESTATION_FAILED",), digest, now, contract)
+            return self._decision(
+                Outcome.DENY, ("MANIFEST_ATTESTATION_FAILED",), digest, now, contract
+            )
         if context.valid_until < now or context.authenticated_at > now:
-            return self._decision(Outcome.DENY, ("AUTHENTICATION_STALE",), digest, now, contract)
+            return self._decision(
+                Outcome.DENY, ("AUTHENTICATION_STALE",), digest, now, contract
+            )
         oauth = self._oauth_boundary(context, contract, now)
         if not oauth.allowed:
-            return self._decision(Outcome.DENY, (oauth.reason_code,), digest, now, contract)
+            return self._decision(
+                Outcome.DENY, (oauth.reason_code,), digest, now, contract
+            )
         if context.workload_id not in contract.allowed_workloads:
-            return self._decision(Outcome.DENY, ("WORKLOAD_NOT_AUTHORIZED",), digest, now, contract)
-        errors = sorted(Draft202012Validator(contract.input_schema).iter_errors(proposal.arguments), key=lambda e: list(e.path))
+            return self._decision(
+                Outcome.DENY, ("WORKLOAD_NOT_AUTHORIZED",), digest, now, contract
+            )
+        errors = sorted(
+            Draft202012Validator(contract.input_schema).iter_errors(proposal.arguments),
+            key=lambda e: list(e.path),
+        )
         if errors:
-            return self._decision(Outcome.DENY, ("INPUT_SCHEMA_INVALID",), digest, now, contract)
+            return self._decision(
+                Outcome.DENY, ("INPUT_SCHEMA_INVALID",), digest, now, contract
+            )
         if facts is None or facts.valid_until < now or facts.observed_at > now:
-            return self._decision(Outcome.DENY, ("TRUSTED_FACTS_STALE",), digest, now, contract, facts)
+            return self._decision(
+                Outcome.DENY, ("TRUSTED_FACTS_STALE",), digest, now, contract, facts
+            )
         if facts.tenant_id != context.tenant_id:
-            return self._decision(Outcome.DENY, ("TENANT_BINDING_MISMATCH",), digest, now, contract, facts)
+            return self._decision(
+                Outcome.DENY, ("TENANT_BINDING_MISMATCH",), digest, now, contract, facts
+            )
 
         amount = int(proposal.arguments.get("amount_cents", 0))
         vendor = proposal.arguments.get("vendor_id")
         if vendor is not None and vendor not in facts.approved_vendor_ids:
-            return self._decision(Outcome.DENY, ("VENDOR_NOT_APPROVED",), digest, now, contract, facts)
+            return self._decision(
+                Outcome.DENY, ("VENDOR_NOT_APPROVED",), digest, now, contract, facts
+            )
         if amount > facts.task_amount_limit_cents:
-            return self._decision(Outcome.DENY, ("TASK_AMOUNT_LIMIT_EXCEEDED",), digest, now, contract, facts)
+            return self._decision(
+                Outcome.DENY,
+                ("TASK_AMOUNT_LIMIT_EXCEEDED",),
+                digest,
+                now,
+                contract,
+                facts,
+            )
         if contract.hard_limit_cents is not None and amount > contract.hard_limit_cents:
-            return self._decision(Outcome.DENY, ("TOOL_HARD_LIMIT_EXCEEDED",), digest, now, contract, facts)
-        if contract.max_autonomous_cents is not None and amount > contract.max_autonomous_cents:
+            return self._decision(
+                Outcome.DENY,
+                ("TOOL_HARD_LIMIT_EXCEEDED",),
+                digest,
+                now,
+                contract,
+                facts,
+            )
+        if (
+            contract.max_autonomous_cents is not None
+            and amount > contract.max_autonomous_cents
+        ):
             if not consume_approval:
-                return self._decision(Outcome.ESCALATE, ("APPROVAL_REQUIRED",), digest, now, contract, facts)
+                return self._decision(
+                    Outcome.ESCALATE,
+                    ("APPROVAL_REQUIRED",),
+                    digest,
+                    now,
+                    contract,
+                    facts,
+                )
             approval_error = self.approvals.consume(
                 approval_receipt_id,
                 context=context,
@@ -637,13 +700,23 @@ class ToolGateway:
                 now=now,
             )
             if approval_error:
-                outcome = Outcome.ESCALATE if approval_error == "APPROVAL_REQUIRED" else Outcome.DENY
-                return self._decision(outcome, (approval_error,), digest, now, contract, facts)
+                outcome = (
+                    Outcome.ESCALATE
+                    if approval_error == "APPROVAL_REQUIRED"
+                    else Outcome.DENY
+                )
+                return self._decision(
+                    outcome, (approval_error,), digest, now, contract, facts
+                )
         if reserve_budget:
             budget_error = self.budgets.reserve(context, amount)
             if budget_error:
-                return self._decision(Outcome.DENY, (budget_error,), digest, now, contract, facts)
-        return self._decision(Outcome.ALLOW, ("ALL_CONTROLS_SATISFIED",), digest, now, contract, facts)
+                return self._decision(
+                    Outcome.DENY, (budget_error,), digest, now, contract, facts
+                )
+        return self._decision(
+            Outcome.ALLOW, ("ALL_CONTROLS_SATISFIED",), digest, now, contract, facts
+        )
 
     def invoke(
         self,
@@ -659,18 +732,24 @@ class ToolGateway:
         contract = self.registry.get(proposal.server_id, proposal.tool_name)
         if contract is not None:
             if context.valid_until < now or context.authenticated_at > now:
-                decision = self._decision(Outcome.DENY, ("AUTHENTICATION_STALE",), digest, now, contract)
+                decision = self._decision(
+                    Outcome.DENY, ("AUTHENTICATION_STALE",), digest, now, contract
+                )
                 return self._finish(context, proposal, decision, None, now)
             oauth = self._oauth_boundary(context, contract, now)
             if not oauth.allowed:
-                decision = self._decision(Outcome.DENY, (oauth.reason_code,), digest, now, contract)
+                decision = self._decision(
+                    Outcome.DENY, (oauth.reason_code,), digest, now, contract
+                )
                 return self._finish(context, proposal, decision, None, now)
         with self._lock:
             replay = self._idempotency.get(key)
             if replay:
                 old_digest, result = replay
                 if old_digest != digest:
-                    decision = self._decision(Outcome.DENY, ("IDEMPOTENCY_MUTATION",), digest, now)
+                    decision = self._decision(
+                        Outcome.DENY, ("IDEMPOTENCY_MUTATION",), digest, now
+                    )
                     return self._finish(context, proposal, decision, None, now)
                 return result
 
@@ -686,19 +765,32 @@ class ToolGateway:
             if decision.outcome is not Outcome.ALLOW:
                 return self._finish(context, proposal, decision, None, now)
             try:
-                receipt, output = self.adapter.execute(self._capability, context, proposal, digest)
+                receipt, output = self.adapter.execute(
+                    self._capability, context, proposal, digest
+                )
                 contract = self.registry.get(proposal.server_id, proposal.tool_name)
                 assert contract is not None
-                if sorted(Draft202012Validator(contract.output_schema).iter_errors(output), key=lambda e: list(e.path)):
-                    unknown = receipt.model_copy(update={"status": EffectStatus.UNKNOWN})
+                if sorted(
+                    Draft202012Validator(contract.output_schema).iter_errors(output),
+                    key=lambda e: list(e.path),
+                ):
+                    unknown = receipt.model_copy(
+                        update={"status": EffectStatus.UNKNOWN}
+                    )
                     result = self._finish(context, proposal, decision, unknown, now)
                 else:
-                    result = self._finish(context, proposal, decision, receipt, now, output)
+                    result = self._finish(
+                        context, proposal, decision, receipt, now, output
+                    )
             except UnknownEffect:
-                reconciled = self.adapter.reconcile(context.tenant_id, proposal.operation_id)
+                reconciled = self.adapter.reconcile(
+                    context.tenant_id, proposal.operation_id
+                )
                 if reconciled:
                     receipt, output = reconciled
-                    result = self._finish(context, proposal, decision, receipt, now, output)
+                    result = self._finish(
+                        context, proposal, decision, receipt, now, output
+                    )
                 else:
                     unknown = EffectReceipt(
                         effect_id=None,
@@ -759,7 +851,12 @@ def validate_outbound_url(
     """Validate scheme/host and every resolved A/AAAA address before connect."""
 
     parsed = urlsplit(url)
-    if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+    if (
+        parsed.scheme != "https"
+        or not parsed.hostname
+        or parsed.username
+        or parsed.password
+    ):
         raise ValueError("URL must be credential-free HTTPS")
     if parsed.fragment or parsed.port not in (None, 443):
         raise ValueError("URL fragments and non-standard ports are forbidden")
@@ -910,10 +1007,14 @@ def sample_proposal(contract: ToolContract, **changes: object) -> ToolProposal:
     return base.model_copy(update=changes)
 
 
-def unsafe_schema_only_dispatch(contract: ToolContract, proposal: ToolProposal) -> Outcome:
+def unsafe_schema_only_dispatch(
+    contract: ToolContract, proposal: ToolProposal
+) -> Outcome:
     """Baseline: trusts discovery and checks only the JSON schema."""
 
-    errors = list(Draft202012Validator(contract.input_schema).iter_errors(proposal.arguments))
+    errors = list(
+        Draft202012Validator(contract.input_schema).iter_errors(proposal.arguments)
+    )
     return Outcome.DENY if errors else Outcome.ALLOW
 
 
@@ -922,15 +1023,110 @@ def labelled_evaluation() -> tuple[EvaluationCase, ...]:
     context, facts = sample_context(), sample_facts()
     proposal = sample_proposal(contract)
     return (
-        EvaluationCase(name="safe autonomous PO", context=context, proposal=proposal, facts=facts, expected=Outcome.ALLOW),
-        EvaluationCase(name="approval threshold", context=context, proposal=proposal.model_copy(update={"operation_id": "OP-1002", "arguments": {"vendor_id": "VEN-101", "amount_cents": 700_000, "currency": "CAD"}}), facts=facts, expected=Outcome.ESCALATE),
-        EvaluationCase(name="unapproved vendor", context=context, proposal=proposal.model_copy(update={"operation_id": "OP-1003", "arguments": {"vendor_id": "VEN-999", "amount_cents": 10_000, "currency": "CAD"}}), facts=facts, expected=Outcome.DENY),
-        EvaluationCase(name="hard amount limit", context=context, proposal=proposal.model_copy(update={"operation_id": "OP-1004", "arguments": {"vendor_id": "VEN-101", "amount_cents": 2_100_000, "currency": "CAD"}}), facts=facts, expected=Outcome.DENY),
-        EvaluationCase(name="wrong workload", context=context.model_copy(update={"workload_id": "email-agent"}), proposal=proposal.model_copy(update={"operation_id": "OP-1005"}), facts=facts, expected=Outcome.DENY),
-        EvaluationCase(name="wrong tenant facts", context=context, proposal=proposal.model_copy(update={"operation_id": "OP-1006"}), facts=facts.model_copy(update={"tenant_id": "tenant-south"}), expected=Outcome.DENY),
-        EvaluationCase(name="poisoned manifest", context=context, proposal=proposal.model_copy(update={"operation_id": "OP-1007", "observed_manifest_digest": "0" * 64}), facts=facts, expected=Outcome.DENY),
-        EvaluationCase(name="stale facts", context=context, proposal=proposal.model_copy(update={"operation_id": "OP-1008"}), facts=facts.model_copy(update={"valid_until": REFERENCE_TIME - timedelta(seconds=1)}), expected=Outcome.DENY),
-        EvaluationCase(name="schema injection", context=context, proposal=proposal.model_copy(update={"operation_id": "OP-1009", "arguments": {"vendor_id": "VEN-101", "amount_cents": 10_000, "currency": "CAD", "admin": True}}), facts=facts, expected=Outcome.DENY),
+        EvaluationCase(
+            name="safe autonomous PO",
+            context=context,
+            proposal=proposal,
+            facts=facts,
+            expected=Outcome.ALLOW,
+        ),
+        EvaluationCase(
+            name="approval threshold",
+            context=context,
+            proposal=proposal.model_copy(
+                update={
+                    "operation_id": "OP-1002",
+                    "arguments": {
+                        "vendor_id": "VEN-101",
+                        "amount_cents": 700_000,
+                        "currency": "CAD",
+                    },
+                }
+            ),
+            facts=facts,
+            expected=Outcome.ESCALATE,
+        ),
+        EvaluationCase(
+            name="unapproved vendor",
+            context=context,
+            proposal=proposal.model_copy(
+                update={
+                    "operation_id": "OP-1003",
+                    "arguments": {
+                        "vendor_id": "VEN-999",
+                        "amount_cents": 10_000,
+                        "currency": "CAD",
+                    },
+                }
+            ),
+            facts=facts,
+            expected=Outcome.DENY,
+        ),
+        EvaluationCase(
+            name="hard amount limit",
+            context=context,
+            proposal=proposal.model_copy(
+                update={
+                    "operation_id": "OP-1004",
+                    "arguments": {
+                        "vendor_id": "VEN-101",
+                        "amount_cents": 2_100_000,
+                        "currency": "CAD",
+                    },
+                }
+            ),
+            facts=facts,
+            expected=Outcome.DENY,
+        ),
+        EvaluationCase(
+            name="wrong workload",
+            context=context.model_copy(update={"workload_id": "email-agent"}),
+            proposal=proposal.model_copy(update={"operation_id": "OP-1005"}),
+            facts=facts,
+            expected=Outcome.DENY,
+        ),
+        EvaluationCase(
+            name="wrong tenant facts",
+            context=context,
+            proposal=proposal.model_copy(update={"operation_id": "OP-1006"}),
+            facts=facts.model_copy(update={"tenant_id": "tenant-south"}),
+            expected=Outcome.DENY,
+        ),
+        EvaluationCase(
+            name="poisoned manifest",
+            context=context,
+            proposal=proposal.model_copy(
+                update={"operation_id": "OP-1007", "observed_manifest_digest": "0" * 64}
+            ),
+            facts=facts,
+            expected=Outcome.DENY,
+        ),
+        EvaluationCase(
+            name="stale facts",
+            context=context,
+            proposal=proposal.model_copy(update={"operation_id": "OP-1008"}),
+            facts=facts.model_copy(
+                update={"valid_until": REFERENCE_TIME - timedelta(seconds=1)}
+            ),
+            expected=Outcome.DENY,
+        ),
+        EvaluationCase(
+            name="schema injection",
+            context=context,
+            proposal=proposal.model_copy(
+                update={
+                    "operation_id": "OP-1009",
+                    "arguments": {
+                        "vendor_id": "VEN-101",
+                        "amount_cents": 10_000,
+                        "currency": "CAD",
+                        "admin": True,
+                    },
+                }
+            ),
+            facts=facts,
+            expected=Outcome.DENY,
+        ),
     )
 
 
@@ -939,20 +1135,37 @@ def run_evaluation() -> EvaluationSummary:
     gateway = ToolGateway(ToolRegistry([contract]))
     cases = labelled_evaluation()
     baseline = [unsafe_schema_only_dispatch(contract, case.proposal) for case in cases]
-    candidate = [gateway.evaluate(case.context, case.proposal, case.facts).outcome for case in cases]
+    candidate = [
+        gateway.evaluate(case.context, case.proposal, case.facts).outcome
+        for case in cases
+    ]
     forbidden = [i for i, case in enumerate(cases) if case.expected is Outcome.DENY]
-    escalations = [i for i, case in enumerate(cases) if case.expected is Outcome.ESCALATE]
+    escalations = [
+        i for i, case in enumerate(cases) if case.expected is Outcome.ESCALATE
+    ]
     return EvaluationSummary(
         case_count=len(cases),
         expected_allow_count=sum(c.expected is Outcome.ALLOW for c in cases),
         expected_deny_count=len(forbidden),
         expected_escalate_count=len(escalations),
-        baseline_correct_count=sum(got is case.expected for got, case in zip(baseline, cases)),
-        candidate_correct_count=sum(got is case.expected for got, case in zip(candidate, cases)),
+        baseline_correct_count=sum(
+            got is case.expected for got, case in zip(baseline, cases)
+        ),
+        candidate_correct_count=sum(
+            got is case.expected for got, case in zip(candidate, cases)
+        ),
         forbidden_case_count=len(forbidden),
-        baseline_forbidden_allowed_count=sum(baseline[i] is Outcome.ALLOW for i in forbidden),
-        candidate_forbidden_allowed_count=sum(candidate[i] is Outcome.ALLOW for i in forbidden),
+        baseline_forbidden_allowed_count=sum(
+            baseline[i] is Outcome.ALLOW for i in forbidden
+        ),
+        candidate_forbidden_allowed_count=sum(
+            candidate[i] is Outcome.ALLOW for i in forbidden
+        ),
         escalation_case_count=len(escalations),
-        baseline_missed_escalation_count=sum(baseline[i] is not Outcome.ESCALATE for i in escalations),
-        candidate_missed_escalation_count=sum(candidate[i] is not Outcome.ESCALATE for i in escalations),
+        baseline_missed_escalation_count=sum(
+            baseline[i] is not Outcome.ESCALATE for i in escalations
+        ),
+        candidate_missed_escalation_count=sum(
+            candidate[i] is not Outcome.ESCALATE for i in escalations
+        ),
     )

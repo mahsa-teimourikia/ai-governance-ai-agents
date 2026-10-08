@@ -42,16 +42,38 @@ Each course pass will:
 | 5 | Fine-Grained Authorization for Agents | RBAC/ABAC/ReBAC comparison, OpenFGA/Cedar/OPA selection, dual user/task authorization | Merged in PR #13; evidence follow-up in PR #14 |
 | 6 | Policy-as-Code & Runtime Governance | PDP/PEP separation, Rego/Cedar policy tests, versioning, fail-closed and cached-decision trade-offs | Merged in PR #16; release-evidence follow-up in PR #17 |
 | 7 | Tool & MCP Governance | Tool discovery, MCP authorization, confused-deputy defense, schema/output validation, gateway controls | Merged in PR #19 |
-| 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Implemented in PR #21 |
-| 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Implemented in PR #22 |
-| 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Implemented in PR #24 |
-| 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Implemented in PR #25 |
-| 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Implemented in PR #26 |
-| 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Implemented in PR #27 |
-| 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Implemented in PR #28 |
-| 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Implemented in PR #29 |
-| 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Implemented in PR #30 |
-| 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Implemented in PR #31 |
+| 8 | Human Oversight & Bounded Autonomy | Meaningful approval, receipt integrity, queues, expiry, concurrency, fatigue and progressive autonomy | Merged in PR #21 |
+| 9 | Data, RAG & Memory Governance | Authorization-before-retrieval, provenance/freshness, injection defense, scoped memory lifecycle | Merged in PR #22 |
+| 10 | Multi-Agent Governance & Delegation | Capability attenuation, handoff contracts, shared-state integrity, budgets and coordination tax | Merged in PR #24 |
+| 11 | Guardrails & Agent Security | Defense in depth, OWASP agentic threats, sandboxing, deterministic enforcement and containment | Merged in PR #25 |
+| 12 | Agent Red Teaming & Adversarial Testing | Threat-led campaigns, PyRIT/custom harnesses, reproducible attacks, severity and regression gates | Merged in PR #26 |
+| 13 | Observability as Governance Evidence | OpenTelemetry semantics, evidence integrity, privacy, trace completeness and outcome verification | Merged in PR #27 |
+| 14 | Agent Evaluation & Continuous Governance | Labelled datasets, trajectory and safety metrics, slicing, uncertainty, release decisions | Merged in PR #28 |
+| 15 | Governance Control Plane Architecture | Registry, distributed policy/evidence planes, lifecycle state, resilience and multi-tenant isolation | Merged in PR #29 |
+| 16 | Enterprise Agent Governance Operating Model | Intake, ownership, supply chain, change control, recertification, incidents and exceptions | Merged in PR #30 |
+| 17 | Capstone: Governed Autonomous Enterprise Agent | Integrated realistic system, failure/recovery drills, architecture comparison and operational evidence | Merged in PR #31 |
+
+## Curriculum-wide release audit
+
+The 7 October 2026 release audit treats the completed curriculum as one
+learner-facing system rather than seventeen independent pull requests.
+
+| Release promise | Executable or repository proof |
+|---|---|
+| Every published course has one canonical lesson, notebook and reusable lab | tracked-file validator reconciles all 17 course directories with the Learning Hub registry |
+| Learners can run a reproducible credential-free path | `uv.lock`, locked setup/course targets and 17 top-to-bottom notebook execution tests |
+| Navigation and checkpoints match the published curriculum | validator resolves tracked local links and checks 17 unique lesson IDs plus 55 unique, answerable checkpoints |
+| Current SDK examples share one compatible environment | bounded direct dependencies, MCP v2 adapter tests and `uv lock --check`/`uv pip check` |
+| Diagrams remain understandable outside visual presentation | all tracked course SVGs parse and include non-empty titles and descriptions |
+| The published Hub represents the completed program | Beginner, Intermediate and Advanced filters expose all 17 lessons; the quiz derives its count from the registry |
+| Release checks are enforced in CI | `make validate` checks the lock, installed dependency compatibility, Hub syntax, curriculum links and the full test suite |
+
+The audit also removed the redundant capstone requirements file, corrected
+stale release copy and source links, refreshed fast-moving tool snapshots,
+smoke-tested the local Hub routes, and checked the installed locked environment
+for known published vulnerabilities. These checks establish repository release
+readiness; they do not convert synthetic lab results into claims about production
+reliability or legal compliance.
 
 ## Course 8 claim-to-proof map
 

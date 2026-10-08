@@ -736,7 +736,7 @@ OSCAL can help create a standards-based representation that tools can exchange.
 
 ## Compliance Trestle
 
-The OSCAL Compass **compliance-trestle** project is an actively developed open-source compliance-as-code platform. As of the course snapshot, its current release is **v5.1.0** and its documentation reports OSCAL 1.2.1 support; NIST's current OSCAL patch release is **v1.2.3**. Version-pin the selected toolchain, test compatibility, and review security advisories before resolving remote or untrusted OSCAL imports.
+The OSCAL Compass **compliance-trestle** project is an actively developed open-source compliance-as-code platform. As of 5 October 2026, its current release is **v5.2.0** and its documentation reports OSCAL 1.2.1 support; NIST's current OSCAL patch release is **v1.2.3**. Version-pin the selected toolchain, test compatibility, and review security advisories before resolving remote or untrusted OSCAL imports.
 
 Project:
 

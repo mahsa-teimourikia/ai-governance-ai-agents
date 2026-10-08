@@ -922,9 +922,9 @@ make course-06
 or:
 
 ```bash
-uv run python scripts/execute-notebooks.py \
+uv run --locked python scripts/execute-notebooks.py \
   curriculum/intermediate/06-policy-as-code-and-runtime-governance/06_policy_as_code_and_runtime_governance.ipynb
-uv run pytest -q tests/test_module06_runtime_policy.py
+uv run --locked pytest -q tests/test_module06_runtime_policy.py
 ```
 
 The lab implements:
@@ -1044,16 +1044,16 @@ The notebook does **not** install packages at runtime, contact a live OPA server
 
 Versions are a reproducibility snapshot, not evergreen recommendations:
 
-- OPA `v1.20.2`, released 3 September 2026;
-- Regal `v0.42.0`, released 16 July 2026;
-- Conftest `v0.70.1`, released 19 September 2026;
+- OPA `v1.21.1`, released 29 September 2026;
+- Regal `v0.43.0`, released 29 September 2026;
+- Conftest `v0.71.1`, released 6 October 2026;
 - Cedar CLI `v4.13.0`, released 15 September 2026;
-- local Pydantic `2.13.4`.
+- locked Pydantic `2.13.5`.
 
-Release records: https://github.com/open-policy-agent/opa/releases,
-https://github.com/open-policy-agent/regal/releases,
-https://github.com/open-policy-agent/conftest/releases, and
-https://github.com/cedar-policy/cedar/releases.
+Release records: [OPA](https://github.com/open-policy-agent/opa/releases),
+[Regal](https://github.com/open-policy-agent/regal/releases),
+[Conftest](https://github.com/open-policy-agent/conftest/releases), and
+[Cedar](https://github.com/cedar-policy/cedar/releases).
 
 Recheck upstream release notes and compatibility before adopting these versions
 in production.

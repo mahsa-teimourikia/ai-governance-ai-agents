@@ -1,12 +1,12 @@
 # AI Governance for Agents
 
-A comprehensive curriculum for transitioning from AI model governance to Autonomous Agent governance. This repository hosts the learning hub, an initial knowledge check quiz, and deterministic Jupyter notebooks for every module in the curriculum.
+A comprehensive curriculum for transitioning from AI model governance to autonomous-agent governance. This repository hosts the complete 17-course Learning Hub, a 55-question knowledge check, and deterministic Jupyter notebooks for every module.
 
-🚀 **[Access the Learning Hub](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/)** | 📝 **[Take the Initial Knowledge Quiz](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/quiz/)**
+🚀 **[Access the Learning Hub](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/)** | 📝 **[Take the 55-question Knowledge Check](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/quiz/)**
 
-The curriculum is being deepened one module at a time. See the
+The curriculum was improved and validated one module at a time. See the
 **[course improvement plan](COURSE_IMPROVEMENT_PLAN.md)** for quality gates,
-claim-to-proof expectations, current status, and the ordered roadmap.
+claim-to-proof expectations, and the completed review record.
 
 ## Quickstart
 
@@ -17,20 +17,53 @@ claim-to-proof expectations, current status, and the ordered roadmap.
 
 ### Environment Setup
 
-Run the following command to set up both the Python and Node.js environments:
+Use Python 3.11, 3.12, or 3.13 and install
+[uv](https://docs.astral.sh/uv/getting-started/installation/). The supported
+range is enforced in project metadata and tested in CI.
+
+Install the exact Python environment recorded in `uv.lock`:
 ```bash
 make setup-contributor
 ```
 
+Node.js is used only for dependency-free Learning Hub validation; there is no
+separate JavaScript package installation.
+
 ### Viewing the Learning Hub locally
 
-Simply open `hub/index.html` in your web browser. No local development server is required for the hub!
+Serve the Hub locally so browser module imports use HTTP rather than the
+restricted `file://` protocol:
+
+```bash
+make serve-hub
+```
+
+Then open [http://localhost:8000](http://localhost:8000).
 
 ### Running Tests
 
 ```bash
-make test
+make validate
 ```
+
+This verifies the lock file and installed packages, validates Hub JavaScript,
+checks every tracked local curriculum link and quiz record, and runs the full
+Python and notebook test suite. `make test` runs only the Python tests.
+
+### Dependency policy
+
+`pyproject.toml` declares only libraries imported by the tracked labs, with
+compatibility bounds around fast-moving SDKs. `uv.lock` records the exact tested
+environment, and setup, CI, tests, and course targets all enforce that lock.
+Inspect the current direct versions with:
+
+```bash
+uv tree --locked --depth 1
+```
+
+When intentionally refreshing dependencies, run `uv lock --upgrade`, reinstall
+with `make setup-contributor`, and require `make validate` to pass before
+committing the new lock.
 
 To run any fully audited Course 1–17 lab and its focused invariant tests:
 

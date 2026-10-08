@@ -98,12 +98,12 @@ Primary sources: [MCP 2026-07-28 announcement](https://blog.modelcontextprotocol
 
 ## SDK compatibility boundary
 
-The official Python SDK is Tier 1. As of this research snapshot, v2.2.0 is the current line and v1.30.0 is the maintained v1 release. The v2 line supports the 2026 protocol and renamed `FastMCP` to `MCPServer`. This repository's lock currently resolves MCP 1.29 because Microsoft Agent Framework requires `mcp>=1.24,<2`. The canonical lab therefore uses the real SDK type available here, `mcp.types.Tool`, and does not pretend that v2 server code executes in this environment.
+The official Python SDK is Tier 1. As of 2 October 2026, v2.3.0 is the current stable line and v1.30.0 is the maintained v1 release. The v2 line supports the 2026 protocol, renamed `FastMCP` to `MCPServer`, and exposes Pythonic snake-case model attributes while preserving protocol aliases such as `inputSchema` in serialized JSON. This repository uses MCP v2 directly. It installs Microsoft Agent Framework's core and orchestration packages rather than the all-integrations meta-package, whose MCP v1 constraint is unnecessary for these credential-free labs.
 
 For production migration:
 
 1. inventory v1 imports, transports, auth middleware, and generated schemas;
-2. isolate an MCP v2 server in its own service/environment if the host still pins v1;
+2. isolate an MCP v2 server in its own service/environment if another host still pins v1;
 3. pin and test the v2 minor version;
 4. migrate `FastMCP` to `MCPServer` and test discovery, calls, errors, and auth end to end;
 5. compare serialized manifests and require review for security-relevant diffs; and
@@ -429,7 +429,7 @@ make course-07
 Or:
 
 ```bash
-uv run pytest -q tests/test_module07_tool_mcp_governance.py \
+uv run --locked pytest -q tests/test_module07_tool_mcp_governance.py \
   tests/test_notebooks.py::test_course_07_notebook_executes_top_to_bottom
 ```
 

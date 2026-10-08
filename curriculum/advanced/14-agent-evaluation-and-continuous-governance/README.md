@@ -536,13 +536,13 @@ label, dataset/report digests and evaluator version. It captures no prompt or
 content and configures no external exporter. It also constructs an unstarted
 OpenAI Agents SDK trace and custom evaluation span without exporting them.
 
-As of September 2026, OpenTelemetry's main semantic-convention registry points
+As of October 2026, OpenTelemetry's main semantic-convention registry points
 GenAI conventions to the dedicated `semantic-conventions-genai` repository.
 Treat names and stability as versioned integration decisions. Telemetry
 transports evidence; it does not make that evidence authorized, complete, or
 correct.
 
-## 23. Current tool landscape — September 2026
+## 23. Current tool landscape — October 2026
 
 ### Inspect AI
 
