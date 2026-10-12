@@ -4,9 +4,6 @@ A comprehensive curriculum for transitioning from AI model governance to autonom
 
 🚀 **[Access the Learning Hub](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/)** | 📝 **[Take the 55-question Knowledge Check](https://mahsa-teimourikia.github.io/ai-governance-ai-agents/quiz/)**
 
-The curriculum was improved and validated one module at a time. See the
-**[course improvement plan](COURSE_IMPROVEMENT_PLAN.md)** for quality gates,
-claim-to-proof expectations, and the completed review record.
 
 ## Quickstart
 
